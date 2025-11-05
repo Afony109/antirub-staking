@@ -1411,16 +1411,35 @@
         // Check and Switch to Sepolia
         async function checkAndSwitchNetwork(ethereum) {
             try {
+                console.log('Checking network...');
                 const chainId = await ethereum.request({ method: 'eth_chainId' });
+                console.log('Current chain ID:', chainId);
+                console.log('Expected chain ID:', SEPOLIA_CHAIN_ID);
                 
                 if (chainId !== SEPOLIA_CHAIN_ID) {
+                    console.log('Wrong network detected!');
+                    showNotification('⚠️ Необходимо переключиться на Sepolia Testnet', 'warning');
+                    
                     try {
+                        console.log('Requesting network switch...');
                         await ethereum.request({
                             method: 'wallet_switchEthereumChain',
                             params: [{ chainId: SEPOLIA_CHAIN_ID }],
                         });
+                        console.log('Network switched successfully');
+                        showNotification('✅ Переключено на Sepolia', 'success');
+                        
+                        // Wait for network to fully switch
+                        await new Promise(resolve => setTimeout(resolve, 1000));
+                        
                     } catch (switchError) {
+                        console.error('Switch error:', switchError);
+                        
                         if (switchError.code === 4902) {
+                            // Network not found, add it
+                            console.log('Network not found, adding Sepolia...');
+                            showNotification('Добавление Sepolia Testnet...', 'info');
+                            
                             try {
                                 await ethereum.request({
                                     method: 'wallet_addEthereumChain',
@@ -1436,15 +1455,35 @@
                                         blockExplorerUrls: ['https://sepolia.etherscan.io']
                                     }],
                                 });
-                                location.reload();
+                                console.log('Network added successfully');
+                                showNotification('✅ Sepolia добавлена! Переключаюсь...', 'success');
+                                
+                                // Reload after adding network
+                                setTimeout(() => location.reload(), 1500);
+                                
                             } catch (addError) {
-                                showNotification(translations[currentLang]['switch-network'], 'error');
+                                console.error('Add network error:', addError);
+                                throw new Error('Не удалось добавить Sepolia. Добавьте вручную в настройках кошелька.');
                             }
+                        } else if (switchError.code === 4001) {
+                            // User rejected
+                            throw new Error('Вы отклонили переключение сети. Переключитесь на Sepolia вручную.');
+                        } else {
+                            throw new Error('Не удалось переключить сеть: ' + switchError.message);
                         }
                     }
+                    
+                    // Double check after switch
+                    const newChainId = await ethereum.request({ method: 'eth_chainId' });
+                    if (newChainId !== SEPOLIA_CHAIN_ID) {
+                        throw new Error('Сеть не переключена на Sepolia. Переключите вручную.');
+                    }
+                } else {
+                    console.log('Already on Sepolia ✓');
                 }
             } catch (error) {
                 console.error('Network check error:', error);
+                throw error; // Re-throw to stop connection
             }
         }
         
@@ -1564,6 +1603,24 @@
                 
             } catch (error) {
                 console.error('Error loading data:', error);
+                
+                // Check if it's a network error
+                if (error.code === 'CALL_EXCEPTION' || error.message.includes('revert')) {
+                    showNotification('⚠️ Контракты не найдены в текущей сети. Убедитесь что вы на Sepolia Testnet!', 'error');
+                    
+                    // Try to get current network
+                    try {
+                        const network = await provider.getNetwork();
+                        console.error('Current network:', network);
+                        if (network.chainId !== 11155111) {
+                            showNotification(`❌ Неправильная сеть! Текущая: ${network.name} (${network.chainId}). Нужна: Sepolia (11155111)`, 'error');
+                        }
+                    } catch (netError) {
+                        console.error('Could not get network:', netError);
+                    }
+                } else {
+                    showNotification('Ошибка загрузки данных: ' + error.message, 'error');
+                }
             }
         }
         
