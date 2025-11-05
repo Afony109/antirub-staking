@@ -941,13 +941,42 @@
             "function transfer(address to, uint256 amount) returns (bool)"
         ];
         
+        // Extended ABI with multiple possible function names
         const STAKING_ABI = [
+            // Stake functions
             "function stake(uint256 amount)",
+            "function deposit(uint256 amount)",
+            
+            // Unstake functions  
             "function unstake(uint256 amount)",
+            "function withdraw(uint256 amount)",
+            
+            // Claim rewards
             "function claimRewards()",
+            "function claim()",
+            "function harvest()",
+            
+            // View staked amount - try multiple names
             "function getStakedAmount(address user) view returns (uint256)",
+            "function stakedBalance(address user) view returns (uint256)",
+            "function balanceOf(address user) view returns (uint256)",
+            "function stakes(address user) view returns (uint256)",
+            "function getUserStake(address user) view returns (uint256)",
+            "function userStakes(address user) view returns (uint256)",
+            
+            // View rewards - try multiple names
             "function getRewards(address user) view returns (uint256)",
-            "function totalStaked() view returns (uint256)"
+            "function pendingRewards(address user) view returns (uint256)",
+            "function earned(address user) view returns (uint256)",
+            "function rewardsOf(address user) view returns (uint256)",
+            
+            // Total staked
+            "function totalStaked() view returns (uint256)",
+            "function totalSupply() view returns (uint256)",
+            
+            // Stake info struct (in case contract returns struct)
+            "function getStakeInfo(address user) view returns (uint256 stakedAmount, uint256 startTime, uint256 pendingRewards)",
+            "function stakeInfo(address user) view returns (uint256, uint256, uint256)"
         ];
         
         let tokenContract = null;
@@ -1527,88 +1556,154 @@
                     // DEMO MODE: Show simulated balances
                     console.log('🎭 DEMO MODE: Showing simulated balances');
                     
-                    // Simulated token balance (1000-5000 random)
                     const demoBalance = Math.floor(Math.random() * 4000) + 1000;
-                    document.getElementById('userBalance').textContent = 
-                        demoBalance.toFixed(2);
+                    document.getElementById('userBalance').textContent = demoBalance.toFixed(2);
                     
-                    // USD Value
                     const usdValue = demoBalance * 0.001;
-                    document.getElementById('usdValue').textContent = 
-                        `$${usdValue.toFixed(2)}`;
+                    document.getElementById('usdValue').textContent = `$${usdValue.toFixed(2)}`;
                     
-                    // Simulated staked amount
                     const demoStaked = Math.floor(demoBalance * 0.3);
-                    document.getElementById('stakedAmount').textContent = 
-                        demoStaked.toFixed(2);
+                    document.getElementById('stakedAmount').textContent = demoStaked.toFixed(2);
                     
-                    // Simulated rewards (10-50)
                     const demoRewards = (Math.random() * 40 + 10).toFixed(2);
                     document.getElementById('rewardsEarned').textContent = demoRewards;
                     document.getElementById('rewardsDisplay').textContent = demoRewards;
                     
-                    // Total staked (simulated)
                     const demoTotalStaked = Math.floor(Math.random() * 900000) + 100000;
-                    document.getElementById('totalStaked').textContent = 
-                        demoTotalStaked.toLocaleString();
+                    document.getElementById('totalStaked').textContent = demoTotalStaked.toLocaleString();
                     
                     return;
                 }
                 
-                // REAL MODE: Load from contracts
+                // REAL MODE: Load from contracts with smart function detection
+                console.log('Loading token balance...');
                 if (tokenContract && TOKEN_ADDRESS !== '0x0000000000000000000000000000000000000000') {
-                    // Token Balance
-                    const balance = await tokenContract.balanceOf(userAddress);
-                    const balanceFormatted = ethers.utils.formatEther(balance);
-                    document.getElementById('userBalance').textContent = 
-                        parseFloat(balanceFormatted).toFixed(2);
-                    
-                    // USD Value
-                    const usdValue = parseFloat(balanceFormatted) * 0.001;
-                    document.getElementById('usdValue').textContent = 
-                        `$${usdValue.toFixed(2)}`;
+                    try {
+                        const balance = await tokenContract.balanceOf(userAddress);
+                        const balanceFormatted = ethers.utils.formatEther(balance);
+                        console.log('Token balance:', balanceFormatted, 'ARUB');
+                        
+                        document.getElementById('userBalance').textContent = 
+                            parseFloat(balanceFormatted).toFixed(2);
+                        
+                        const usdValue = parseFloat(balanceFormatted) * 0.001;
+                        document.getElementById('usdValue').textContent = 
+                            `$${usdValue.toFixed(2)}`;
+                    } catch (error) {
+                        console.error('Error loading token balance:', error);
+                        document.getElementById('userBalance').textContent = 'Error';
+                        document.getElementById('usdValue').textContent = '$0.00';
+                    }
                 } else {
-                    // No contract deployed
                     document.getElementById('userBalance').textContent = '0.00';
                     document.getElementById('usdValue').textContent = '$0.00';
                 }
                 
+                console.log('Loading staking data...');
                 if (stakingContract && STAKING_ADDRESS !== '0x0000000000000000000000000000000000000000') {
-                    // Staked Amount
-                    const staked = await stakingContract.getStakedAmount(userAddress);
-                    const stakedFormatted = ethers.utils.formatEther(staked);
-                    document.getElementById('stakedAmount').textContent = 
-                        parseFloat(stakedFormatted).toFixed(2);
+                    // Try multiple methods to get staked amount
+                    let stakedAmount = null;
+                    const methodsToTry = [
+                        'getStakedAmount',
+                        'stakedBalance', 
+                        'stakes',
+                        'balanceOf',
+                        'getUserStake',
+                        'userStakes'
+                    ];
                     
-                    // Rewards
-                    const rewards = await stakingContract.getRewards(userAddress);
-                    const rewardsFormatted = ethers.utils.formatEther(rewards);
-                    document.getElementById('rewardsEarned').textContent = 
-                        parseFloat(rewardsFormatted).toFixed(2);
-                    document.getElementById('rewardsDisplay').textContent = 
-                        parseFloat(rewardsFormatted).toFixed(2);
+                    for (const method of methodsToTry) {
+                        try {
+                            console.log(`Trying method: ${method}(address)`);
+                            stakedAmount = await stakingContract[method](userAddress);
+                            console.log(`✓ ${method} worked! Staked:`, ethers.utils.formatEther(stakedAmount));
+                            break;
+                        } catch (e) {
+                            console.log(`✗ ${method} failed`);
+                        }
+                    }
                     
-                    // Total Staked
-                    const totalStaked = await stakingContract.totalStaked();
-                    const totalStakedFormatted = ethers.utils.formatEther(totalStaked);
-                    document.getElementById('totalStaked').textContent = 
-                        parseFloat(totalStakedFormatted).toFixed(0);
+                    if (stakedAmount !== null) {
+                        const stakedFormatted = ethers.utils.formatEther(stakedAmount);
+                        document.getElementById('stakedAmount').textContent = 
+                            parseFloat(stakedFormatted).toFixed(2);
+                    } else {
+                        console.warn('Could not find staked amount method');
+                        document.getElementById('stakedAmount').textContent = '0';
+                    }
+                    
+                    // Try multiple methods to get rewards
+                    let rewards = null;
+                    const rewardMethodsToTry = [
+                        'getRewards',
+                        'pendingRewards',
+                        'earned',
+                        'rewardsOf'
+                    ];
+                    
+                    for (const method of rewardMethodsToTry) {
+                        try {
+                            console.log(`Trying reward method: ${method}(address)`);
+                            rewards = await stakingContract[method](userAddress);
+                            console.log(`✓ ${method} worked! Rewards:`, ethers.utils.formatEther(rewards));
+                            break;
+                        } catch (e) {
+                            console.log(`✗ ${method} failed`);
+                        }
+                    }
+                    
+                    if (rewards !== null) {
+                        const rewardsFormatted = ethers.utils.formatEther(rewards);
+                        document.getElementById('rewardsEarned').textContent = 
+                            parseFloat(rewardsFormatted).toFixed(2);
+                        document.getElementById('rewardsDisplay').textContent = 
+                            parseFloat(rewardsFormatted).toFixed(2);
+                    } else {
+                        console.warn('Could not find rewards method');
+                        document.getElementById('rewardsEarned').textContent = '0';
+                        document.getElementById('rewardsDisplay').textContent = '0.00';
+                    }
+                    
+                    // Try to get total staked
+                    let totalStaked = null;
+                    const totalMethodsToTry = ['totalStaked', 'totalSupply'];
+                    
+                    for (const method of totalMethodsToTry) {
+                        try {
+                            console.log(`Trying total method: ${method}()`);
+                            totalStaked = await stakingContract[method]();
+                            console.log(`✓ ${method} worked! Total:`, ethers.utils.formatEther(totalStaked));
+                            break;
+                        } catch (e) {
+                            console.log(`✗ ${method} failed`);
+                        }
+                    }
+                    
+                    if (totalStaked !== null) {
+                        const totalStakedFormatted = ethers.utils.formatEther(totalStaked);
+                        document.getElementById('totalStaked').textContent = 
+                            parseFloat(totalStakedFormatted).toFixed(0);
+                    } else {
+                        console.warn('Could not find total staked method');
+                        document.getElementById('totalStaked').textContent = '0';
+                    }
+                    
                 } else {
-                    // No staking contract
                     document.getElementById('stakedAmount').textContent = '0';
                     document.getElementById('rewardsEarned').textContent = '0';
                     document.getElementById('rewardsDisplay').textContent = '0.00';
                     document.getElementById('totalStaked').textContent = '0';
                 }
                 
+                console.log('✓ Data loaded successfully');
+                
             } catch (error) {
                 console.error('Error loading data:', error);
                 
                 // Check if it's a network error
                 if (error.code === 'CALL_EXCEPTION' || error.message.includes('revert')) {
-                    showNotification('⚠️ Контракты не найдены в текущей сети. Убедитесь что вы на Sepolia Testnet!', 'error');
+                    showNotification('⚠️ Ошибка контракта. Проверьте что вы на Sepolia Testnet!', 'error');
                     
-                    // Try to get current network
                     try {
                         const network = await provider.getNetwork();
                         console.error('Current network:', network);
