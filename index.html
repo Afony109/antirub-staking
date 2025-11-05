@@ -903,12 +903,25 @@
         }
         
         // ==========================================
-        // WALLET DETECTION & CONNECTION
+        // WALLET DETECTION & CONNECTION - EIP-6963
         // ==========================================
         let provider = null;
         let signer = null;
         let userAddress = null;
         let currentWalletType = null;
+        
+        // Store discovered providers from EIP-6963
+        const discoveredProviders = new Map();
+        
+        // Listen for EIP-6963 announcements
+        window.addEventListener('eip6963:announceProvider', (event) => {
+            console.log('EIP-6963 provider announced:', event.detail);
+            const { info, provider } = event.detail;
+            discoveredProviders.set(info.uuid, { info, provider });
+        });
+        
+        // Request providers to announce themselves
+        window.dispatchEvent(new Event('eip6963:requestProvider'));
         
         // Contract addresses (Arbitrum Sepolia Testnet)
         const TOKEN_ADDRESS = '0x0000000000000000000000000000000000000000';
@@ -1021,153 +1034,195 @@
             }
         ];
         
-        // Detect available wallets
+        // Detect available wallets using EIP-6963 and legacy methods
         function detectWallets() {
             const detected = [];
             const notDetected = [];
             
             console.log('=== WALLET DETECTION START ===');
+            console.log('EIP-6963 providers:', discoveredProviders);
             
-            if (typeof window.ethereum === 'undefined') {
-                console.log('No window.ethereum found');
-                knownWallets.forEach(wallet => {
-                    notDetected.push({
-                        ...wallet,
-                        detected: false
-                    });
-                });
-                return { detected, notDetected };
-            }
-            
-            console.log('window.ethereum exists');
-            console.log('window.ethereum.providers:', window.ethereum.providers);
-            console.log('window.ethereum.providerMap:', window.ethereum.providerMap);
-            
-            // Check for multiple providers in different locations
-            let providers = [];
-            
-            // Method 1: Standard providers array
-            if (window.ethereum.providers && Array.isArray(window.ethereum.providers)) {
-                providers = [...window.ethereum.providers];
-            }
-            
-            // Method 2: ProviderMap (newer method)
-            if (window.ethereum.providerMap) {
-                const providerMap = window.ethereum.providerMap;
-                if (providerMap.get) {
-                    // Try to get MetaMask specifically
-                    const metamaskProvider = providerMap.get('MetaMask');
-                    if (metamaskProvider && !providers.includes(metamaskProvider)) {
-                        providers.push(metamaskProvider);
+            // Method 1: EIP-6963 (Modern standard - most reliable)
+            if (discoveredProviders.size > 0) {
+                console.log('Using EIP-6963 providers');
+                discoveredProviders.forEach(({ info, provider }, uuid) => {
+                    console.log('EIP-6963 provider:', info.name, info);
+                    
+                    let walletId = 'unknown';
+                    let walletIcon = '💎';
+                    let walletDescription = info.name;
+                    
+                    // Map known wallets
+                    const name = info.name.toLowerCase();
+                    if (name.includes('metamask')) {
+                        walletId = 'metamask';
+                        walletIcon = '🦊';
+                        walletDescription = 'Популярный браузерный кошелек';
+                    } else if (name.includes('bybit')) {
+                        walletId = 'bybit';
+                        walletIcon = '🐦';
+                        walletDescription = 'Кошелек от Bybit';
+                    } else if (name.includes('coinbase')) {
+                        walletId = 'coinbase';
+                        walletIcon = '💼';
+                        walletDescription = 'Официальный кошелек Coinbase';
+                    } else if (name.includes('rabby')) {
+                        walletId = 'rabby';
+                        walletIcon = '🐰';
+                        walletDescription = 'Мульти-чейн кошелек';
+                    } else if (name.includes('trust')) {
+                        walletId = 'trust';
+                        walletIcon = '🛡️';
+                        walletDescription = 'Trust Wallet';
+                    } else if (name.includes('uniswap')) {
+                        walletId = 'uniswap';
+                        walletIcon = '🦄';
+                        walletDescription = 'Кошелек от Uniswap';
                     }
                     
-                    // Try to get all providers from the map
+                    detected.push({
+                        id: walletId + '_' + uuid.substring(0, 8),
+                        name: info.name,
+                        icon: info.icon || walletIcon,
+                        description: walletDescription,
+                        detected: true,
+                        provider: provider,
+                        eip6963: true
+                    });
+                });
+            }
+            
+            // Method 2: Legacy window.ethereum with providerMap
+            if (typeof window.ethereum !== 'undefined') {
+                console.log('Checking legacy providers');
+                
+                // Check providerMap (newer method)
+                if (window.ethereum.providerMap) {
+                    console.log('Found providerMap:', window.ethereum.providerMap);
                     try {
-                        providerMap.forEach((provider) => {
-                            if (!providers.includes(provider)) {
-                                providers.push(provider);
+                        window.ethereum.providerMap.forEach((provider, key) => {
+                            console.log('ProviderMap entry:', key, provider);
+                            
+                            // Skip if already added via EIP-6963
+                            const alreadyAdded = detected.some(w => w.provider === provider);
+                            if (alreadyAdded) {
+                                console.log('Provider already added via EIP-6963');
+                                return;
                             }
+                            
+                            let walletId = key.toLowerCase();
+                            let walletName = key;
+                            let walletIcon = '💎';
+                            let walletDescription = key;
+                            
+                            if (key.toLowerCase().includes('metamask')) {
+                                walletId = 'metamask';
+                                walletName = 'MetaMask';
+                                walletIcon = '🦊';
+                                walletDescription = 'Популярный браузерный кошелек';
+                            } else if (key.toLowerCase().includes('coinbase')) {
+                                walletId = 'coinbase';
+                                walletName = 'Coinbase Wallet';
+                                walletIcon = '💼';
+                                walletDescription = 'Официальный кошелек Coinbase';
+                            }
+                            
+                            detected.push({
+                                id: walletId + '_map',
+                                name: walletName,
+                                icon: walletIcon,
+                                description: walletDescription,
+                                detected: true,
+                                provider: provider,
+                                fromProviderMap: true
+                            });
                         });
                     } catch (e) {
-                        console.log('Could not iterate providerMap:', e);
+                        console.error('Error iterating providerMap:', e);
                     }
                 }
-            }
-            
-            // Method 3: Default to window.ethereum if no providers found
-            if (providers.length === 0) {
-                providers = [window.ethereum];
-            }
-            
-            // SPECIAL: Try to find hidden MetaMask via _metamask property
-            if (window.ethereum._metamask && !providers.find(p => p._metamask)) {
-                console.log('Found hidden MetaMask via _metamask property');
-                providers = [...providers, window.ethereum._metamask];
-            }
-            
-            console.log('Total providers found:', providers.length);
-            
-            providers.forEach((p, index) => {
-                console.log(`Provider ${index}:`, {
-                    isMetaMask: p.isMetaMask,
-                    isCoinbaseWallet: p.isCoinbaseWallet,
-                    isRabby: p.isRabby,
-                    isTrust: p.isTrust,
-                    isBraveWallet: p.isBraveWallet,
-                    isUniswap: p.isUniswap,
-                    isUniswapWallet: p.isUniswapWallet,
-                    isBybitWallet: p.isBybitWallet,
-                    has_metamask: p._metamask !== undefined,
-                    hasIsUnlocked: typeof p.isUnlocked === 'function',
-                    constructor: p.constructor?.name,
-                    chainId: p.chainId
-                });
-            });
-            
-            // Check known wallets in order of priority
-            // First check for specific wallets (non-MetaMask forks)
-            const sortedWallets = [...knownWallets].sort((a, b) => a.priority - b.priority);
-            
-            sortedWallets.forEach(walletDef => {
-                // Skip if already found
-                if (detected.find(d => d.id === walletDef.id)) {
-                    return;
-                }
                 
-                const foundProvider = providers.find(p => {
-                    // Don't reuse providers that are already assigned
-                    const alreadyUsed = detected.some(d => d.provider === p);
-                    if (alreadyUsed) return false;
+                // Check providers array (legacy)
+                const providers = window.ethereum.providers || [window.ethereum];
+                console.log('Legacy providers array:', providers.length);
+                
+                providers.forEach((p, index) => {
+                    // Skip if already added
+                    const alreadyAdded = detected.some(w => w.provider === p);
+                    if (alreadyAdded) {
+                        console.log('Provider', index, 'already added');
+                        return;
+                    }
                     
-                    return walletDef.check(p);
-                });
-                
-                if (foundProvider) {
-                    console.log(`✓ ${walletDef.name} detected`);
-                    detected.push({
-                        ...walletDef,
-                        detected: true,
-                        provider: foundProvider
+                    console.log(`Legacy Provider ${index}:`, {
+                        isMetaMask: p.isMetaMask,
+                        isCoinbaseWallet: p.isCoinbaseWallet,
+                        isRabby: p.isRabby,
+                        isBybitWallet: p.isBybitWallet
                     });
-                } else {
-                    console.log(`✗ ${walletDef.name} not found`);
-                    notDetected.push({
-                        ...walletDef,
-                        detected: false
-                    });
-                }
-            });
-            
-            // Check for unknown wallets
-            providers.forEach((p, index) => {
-                const isKnown = knownWallets.some(w => w.check(p));
-                if (!isKnown) {
-                    let walletName = 'Неизвестный кошелек';
+                    
+                    // Identify wallet
+                    let walletId = 'unknown';
+                    let walletName = 'Unknown Wallet';
                     let walletIcon = '💎';
+                    let walletDescription = 'Web3 кошелек';
                     
-                    // Try to identify by constructor name or other properties
-                    const constructorName = p.constructor?.name || '';
-                    
-                    if (constructorName.includes('Uniswap') || p.isUniswap) {
+                    if (p.isMetaMask && !p.isBybitWallet && !p.isUniswapWallet) {
+                        walletId = 'metamask';
+                        walletName = 'MetaMask';
+                        walletIcon = '🦊';
+                        walletDescription = 'Популярный браузерный кошелек';
+                    } else if (p.isBybitWallet) {
+                        walletId = 'bybit';
+                        walletName = 'Bybit Wallet';
+                        walletIcon = '🐦';
+                        walletDescription = 'Кошелек от Bybit';
+                    } else if (p.isCoinbaseWallet) {
+                        walletId = 'coinbase';
+                        walletName = 'Coinbase Wallet';
+                        walletIcon = '💼';
+                        walletDescription = 'Официальный кошелек Coinbase';
+                    } else if (p.isRabby) {
+                        walletId = 'rabby';
+                        walletName = 'Rabby Wallet';
+                        walletIcon = '🐰';
+                        walletDescription = 'Мульти-чейн кошелек';
+                    } else if (p.isUniswapWallet) {
+                        walletId = 'uniswap';
                         walletName = 'Uniswap Extension';
                         walletIcon = '🦄';
+                        walletDescription = 'Кошелек от Uniswap';
                     }
                     
-                    console.log(`✓ Unknown wallet detected (Provider ${index}): ${walletName}`);
-                    
-                    detected.push({
-                        id: 'unknown_' + index,
-                        name: walletName,
-                        icon: walletIcon,
-                        description: 'Обнаруженный Web3 кошелек',
-                        detected: true,
-                        provider: p
-                    });
-                }
-            });
+                    if (walletId !== 'unknown') {
+                        detected.push({
+                            id: walletId + '_legacy_' + index,
+                            name: walletName,
+                            icon: walletIcon,
+                            description: walletDescription,
+                            detected: true,
+                            provider: p,
+                            legacy: true
+                        });
+                    }
+                });
+            }
             
             console.log('=== WALLET DETECTION END ===');
+            console.log('Total detected:', detected.length);
             console.log('Detected wallets:', detected.map(w => w.name));
+            
+            // Add not detected wallets for installation links
+            if (detected.length === 0 || !detected.find(w => w.name.includes('MetaMask'))) {
+                notDetected.push({
+                    id: 'metamask',
+                    name: 'MetaMask',
+                    icon: '🦊',
+                    description: 'Установите расширение',
+                    detected: false,
+                    installUrl: 'https://metamask.io/download/'
+                });
+            }
             
             return { detected, notDetected };
         }
@@ -1206,6 +1261,14 @@
                 option.className = 'wallet-option';
                 option.onclick = () => connectWallet(wallet);
                 
+                let warningHTML = '';
+                if (wallet.id === 'metamask') {
+                    const bybitDetected = detected.find(w => w.id === 'bybit');
+                    if (bybitDetected) {
+                        warningHTML = '<div style="grid-column: 1/-1; margin-top: 10px; padding: 10px; background: rgba(255,165,0,0.1); border: 1px solid orange; border-radius: 8px; font-size: 0.85em; color: orange;">⚠️ Если откроется Bybit вместо MetaMask - отключите Bybit Wallet в chrome://extensions/</div>';
+                    }
+                }
+                
                 option.innerHTML = `
                     <div class="wallet-icon">${wallet.icon}</div>
                     <div class="wallet-details">
@@ -1213,6 +1276,7 @@
                         <div class="wallet-description">${wallet.description}</div>
                     </div>
                     <span class="wallet-tag detected">✓ Обнаружен</span>
+                    ${warningHTML}
                 `;
                 
                 container.appendChild(option);
@@ -1240,7 +1304,10 @@
         }
         
         // Modal Functions
-        function openWalletModal() {
+        async function openWalletModal() {
+            // Wait a bit for EIP-6963 providers to announce themselves
+            await new Promise(resolve => setTimeout(resolve, 100));
+            
             renderWalletOptions();
             document.getElementById('walletModal').classList.add('show');
         }
@@ -1652,6 +1719,14 @@
         // INITIALIZATION
         // ==========================================
         window.addEventListener('DOMContentLoaded', async () => {
+            // Request EIP-6963 providers
+            console.log('Requesting EIP-6963 providers...');
+            window.dispatchEvent(new Event('eip6963:requestProvider'));
+            
+            // Wait a bit for providers to respond
+            await new Promise(resolve => setTimeout(resolve, 100));
+            console.log('EIP-6963 providers received:', discoveredProviders.size);
+            
             await fetchUsdtRubRate();
             
             // Update rate every 5 minutes (300000ms) to avoid rate limiting
