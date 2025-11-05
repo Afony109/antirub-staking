@@ -941,42 +941,31 @@
             "function transfer(address to, uint256 amount) returns (bool)"
         ];
         
-        // Extended ABI with multiple possible function names
+        // ARUB Staking ABI (from actual contract)
         const STAKING_ABI = [
-            // Stake functions
+            // Staking functions
             "function stake(uint256 amount)",
-            "function deposit(uint256 amount)",
-            
-            // Unstake functions  
             "function unstake(uint256 amount)",
-            "function withdraw(uint256 amount)",
+            "function claimRewards(bool compound)",
+            "function emergencyWithdraw()",
             
-            // Claim rewards
-            "function claimRewards()",
-            "function claim()",
-            "function harvest()",
+            // View functions
+            "function pendingRewards(address account) view returns (uint256)",
+            "function getUserInfo(address account) view returns (uint256 stakedAmount, uint256 pendingRewardsAmount, uint256 totalClaimedAmount, uint256 lastStakeTimestamp, uint256 estimatedAPY)",
+            "function userInfo(address account) view returns (uint256 stakedAmount, uint256 rewardDebt, uint256 pendingRewards, uint256 lastStakeTime, uint256 totalClaimed)",
+            "function getProtocolStats() view returns (uint256 _totalStaked, uint256 _totalStakers, uint256 _totalRewardsDistributed, uint256 _currentAPY, uint256 _totalStakeEvents, uint256 _totalUnstakeEvents, uint256 _totalClaimEvents)",
+            "function estimateRewards(address account, uint256 daysAhead) view returns (uint256)",
+            "function getCurrentAPY() view returns (uint256)",
             
-            // View staked amount - try multiple names
-            "function getStakedAmount(address user) view returns (uint256)",
-            "function stakedBalance(address user) view returns (uint256)",
-            "function balanceOf(address user) view returns (uint256)",
-            "function stakes(address user) view returns (uint256)",
-            "function getUserStake(address user) view returns (uint256)",
-            "function userStakes(address user) view returns (uint256)",
-            
-            // View rewards - try multiple names
-            "function getRewards(address user) view returns (uint256)",
-            "function pendingRewards(address user) view returns (uint256)",
-            "function earned(address user) view returns (uint256)",
-            "function rewardsOf(address user) view returns (uint256)",
-            
-            // Total staked
+            // State variables (public = auto getter)
             "function totalStaked() view returns (uint256)",
-            "function totalSupply() view returns (uint256)",
+            "function totalStakers() view returns (uint256)",
+            "function totalRewardsDistributed() view returns (uint256)",
+            "function minStakeAmount() view returns (uint256)",
+            "function compoundingEnabled() view returns (bool)",
             
-            // Stake info struct (in case contract returns struct)
-            "function getStakeInfo(address user) view returns (uint256 stakedAmount, uint256 startTime, uint256 pendingRewards)",
-            "function stakeInfo(address user) view returns (uint256, uint256, uint256)"
+            // Admin functions
+            "function distributeRewards(uint256 amount)"
         ];
         
         let tokenContract = null;
@@ -1601,93 +1590,46 @@
                 
                 console.log('Loading staking data...');
                 if (stakingContract && STAKING_ADDRESS !== '0x0000000000000000000000000000000000000000') {
-                    // Try multiple methods to get staked amount
-                    let stakedAmount = null;
-                    const methodsToTry = [
-                        'getStakedAmount',
-                        'stakedBalance', 
-                        'stakes',
-                        'balanceOf',
-                        'getUserStake',
-                        'userStakes'
-                    ];
-                    
-                    for (const method of methodsToTry) {
-                        try {
-                            console.log(`Trying method: ${method}(address)`);
-                            stakedAmount = await stakingContract[method](userAddress);
-                            console.log(`✓ ${method} worked! Staked:`, ethers.utils.formatEther(stakedAmount));
-                            break;
-                        } catch (e) {
-                            console.log(`✗ ${method} failed`);
-                        }
-                    }
-                    
-                    if (stakedAmount !== null) {
-                        const stakedFormatted = ethers.utils.formatEther(stakedAmount);
+                    try {
+                        // Use getUserInfo - returns all data at once!
+                        console.log('Calling getUserInfo...');
+                        const result = await stakingContract.getUserInfo(userAddress);
+                        
+                        // result = [stakedAmount, pendingRewardsAmount, totalClaimedAmount, lastStakeTimestamp, estimatedAPY]
+                        const stakedAmount = result[0];
+                        const pendingRewards = result[1];
+                        
+                        console.log('✅ Staked:', ethers.utils.formatEther(stakedAmount), 'ARUB');
+                        console.log('✅ Rewards:', ethers.utils.formatEther(pendingRewards), 'ARUB');
+                        
+                        // Display staked amount
                         document.getElementById('stakedAmount').textContent = 
-                            parseFloat(stakedFormatted).toFixed(2);
-                    } else {
-                        console.warn('Could not find staked amount method');
-                        document.getElementById('stakedAmount').textContent = '0';
-                    }
-                    
-                    // Try multiple methods to get rewards
-                    let rewards = null;
-                    const rewardMethodsToTry = [
-                        'getRewards',
-                        'pendingRewards',
-                        'earned',
-                        'rewardsOf'
-                    ];
-                    
-                    for (const method of rewardMethodsToTry) {
-                        try {
-                            console.log(`Trying reward method: ${method}(address)`);
-                            rewards = await stakingContract[method](userAddress);
-                            console.log(`✓ ${method} worked! Rewards:`, ethers.utils.formatEther(rewards));
-                            break;
-                        } catch (e) {
-                            console.log(`✗ ${method} failed`);
-                        }
-                    }
-                    
-                    if (rewards !== null) {
-                        const rewardsFormatted = ethers.utils.formatEther(rewards);
+                            parseFloat(ethers.utils.formatEther(stakedAmount)).toFixed(2);
+                        
+                        // Display pending rewards
                         document.getElementById('rewardsEarned').textContent = 
-                            parseFloat(rewardsFormatted).toFixed(2);
+                            parseFloat(ethers.utils.formatEther(pendingRewards)).toFixed(2);
                         document.getElementById('rewardsDisplay').textContent = 
-                            parseFloat(rewardsFormatted).toFixed(2);
-                    } else {
-                        console.warn('Could not find rewards method');
-                        document.getElementById('rewardsEarned').textContent = '0';
-                        document.getElementById('rewardsDisplay').textContent = '0.00';
-                    }
-                    
-                    // Try to get total staked
-                    let totalStaked = null;
-                    const totalMethodsToTry = ['totalStaked', 'totalSupply'];
-                    
-                    for (const method of totalMethodsToTry) {
-                        try {
-                            console.log(`Trying total method: ${method}()`);
-                            totalStaked = await stakingContract[method]();
-                            console.log(`✓ ${method} worked! Total:`, ethers.utils.formatEther(totalStaked));
-                            break;
-                        } catch (e) {
-                            console.log(`✗ ${method} failed`);
-                        }
-                    }
-                    
-                    if (totalStaked !== null) {
-                        const totalStakedFormatted = ethers.utils.formatEther(totalStaked);
+                            parseFloat(ethers.utils.formatEther(pendingRewards)).toFixed(2);
+                        
+                        // Get total staked
+                        console.log('Getting totalStaked...');
+                        const totalStakedAmount = await stakingContract.totalStaked();
+                        console.log('✅ Total staked:', ethers.utils.formatEther(totalStakedAmount), 'ARUB');
+                        
                         document.getElementById('totalStaked').textContent = 
-                            parseFloat(totalStakedFormatted).toFixed(0);
-                    } else {
-                        console.warn('Could not find total staked method');
-                        document.getElementById('totalStaked').textContent = '0';
+                            parseFloat(ethers.utils.formatEther(totalStakedAmount)).toFixed(0);
+                        
+                        console.log('✅ All staking data loaded!');
+                        
+                    } catch (error) {
+                        console.error('❌ Error loading staking data:', error);
+                        document.getElementById('stakedAmount').textContent = 'Error';
+                        document.getElementById('rewardsEarned').textContent = 'Error';
+                        document.getElementById('rewardsDisplay').textContent = '0.00';
+                        document.getElementById('totalStaked').textContent = 'Error';
                     }
-                    
+                } else {
                 } else {
                     document.getElementById('stakedAmount').textContent = '0';
                     document.getElementById('rewardsEarned').textContent = '0';
