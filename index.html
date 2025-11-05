@@ -1569,7 +1569,8 @@
                 if (tokenContract && TOKEN_ADDRESS !== '0x0000000000000000000000000000000000000000') {
                     try {
                         const balance = await tokenContract.balanceOf(userAddress);
-                        const balanceFormatted = ethers.utils.formatEther(balance);
+                        // ARUB uses 6 decimals, not 18!
+                        const balanceFormatted = ethers.utils.formatUnits(balance, 6);
                         console.log('Token balance:', balanceFormatted, 'ARUB');
                         
                         document.getElementById('userBalance').textContent = 
@@ -1599,26 +1600,27 @@
                         const stakedAmount = result[0];
                         const pendingRewards = result[1];
                         
-                        console.log('✅ Staked:', ethers.utils.formatEther(stakedAmount), 'ARUB');
-                        console.log('✅ Rewards:', ethers.utils.formatEther(pendingRewards), 'ARUB');
+                        // ARUB uses 6 decimals!
+                        console.log('✅ Staked:', ethers.utils.formatUnits(stakedAmount, 6), 'ARUB');
+                        console.log('✅ Rewards:', ethers.utils.formatUnits(pendingRewards, 6), 'ARUB');
                         
                         // Display staked amount
                         document.getElementById('stakedAmount').textContent = 
-                            parseFloat(ethers.utils.formatEther(stakedAmount)).toFixed(2);
+                            parseFloat(ethers.utils.formatUnits(stakedAmount, 6)).toFixed(2);
                         
                         // Display pending rewards
                         document.getElementById('rewardsEarned').textContent = 
-                            parseFloat(ethers.utils.formatEther(pendingRewards)).toFixed(2);
+                            parseFloat(ethers.utils.formatUnits(pendingRewards, 6)).toFixed(2);
                         document.getElementById('rewardsDisplay').textContent = 
-                            parseFloat(ethers.utils.formatEther(pendingRewards)).toFixed(2);
+                            parseFloat(ethers.utils.formatUnits(pendingRewards, 6)).toFixed(2);
                         
                         // Get total staked
                         console.log('Getting totalStaked...');
                         const totalStakedAmount = await stakingContract.totalStaked();
-                        console.log('✅ Total staked:', ethers.utils.formatEther(totalStakedAmount), 'ARUB');
+                        console.log('✅ Total staked:', ethers.utils.formatUnits(totalStakedAmount, 6), 'ARUB');
                         
                         document.getElementById('totalStaked').textContent = 
-                            parseFloat(ethers.utils.formatEther(totalStakedAmount)).toFixed(0);
+                            parseFloat(ethers.utils.formatUnits(totalStakedAmount, 6)).toFixed(0);
                         
                         console.log('✅ All staking data loaded!');
                         
@@ -1696,7 +1698,8 @@
             try {
                 showNotification(translations[currentLang]['approving']);
                 
-                const amountWei = ethers.utils.parseEther(amount);
+                // ARUB uses 6 decimals!
+                const amountWei = ethers.utils.parseUnits(amount, 6);
                 const tx = await tokenContract.approve(STAKING_ADDRESS, amountWei);
                 await tx.wait();
                 
@@ -1742,7 +1745,8 @@
             try {
                 showNotification(translations[currentLang]['staking']);
                 
-                const amountWei = ethers.utils.parseEther(amount);
+                // ARUB uses 6 decimals!
+                const amountWei = ethers.utils.parseUnits(amount, 6);
                 const tx = await stakingContract.stake(amountWei);
                 await tx.wait();
                 
@@ -1786,7 +1790,8 @@
             try {
                 showNotification(translations[currentLang]['unstaking']);
                 
-                const amountWei = ethers.utils.parseEther(amount);
+                // ARUB uses 6 decimals!
+                const amountWei = ethers.utils.parseUnits(amount, 6);
                 const tx = await stakingContract.unstake(amountWei);
                 await tx.wait();
                 
