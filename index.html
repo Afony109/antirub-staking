@@ -1520,11 +1520,17 @@
         // ==========================================
         async function fetchUsdtRubRate() {
             try {
-                const response = await fetch('https://api.exchangerate-api.com/v4/latest/USD');
+                // Using CoinGecko API with CORS support
+                const response = await fetch('https://api.coingecko.com/api/v3/simple/price?ids=tether&vs_currencies=rub');
+                
+                if (!response.ok) {
+                    throw new Error('API response not ok');
+                }
+                
                 const data = await response.json();
                 
-                if (data && data.rates && data.rates.RUB) {
-                    const rate = data.rates.RUB;
+                if (data && data.tether && data.tether.rub) {
+                    const rate = data.tether.rub;
                     document.getElementById('usdtRubRate').textContent = 
                         `${rate.toFixed(2)} ₽`;
                     
@@ -1532,16 +1538,29 @@
                     document.getElementById('rateTimestamp').textContent = 
                         `Обновлено: ${now.toLocaleTimeString('ru-RU')}`;
                     
-                    // Calculate devaluation (mock data)
-                    const devaluation = 5.2;
+                    // Calculate devaluation (mock data based on rate)
+                    const devaluation = ((rate - 90) / 90 * 100).toFixed(1);
                     document.getElementById('devaluation').textContent = 
-                        `${devaluation.toFixed(1)}%`;
+                        `${Math.abs(devaluation)}%`;
                     document.getElementById('devaluationChange').textContent = 
-                        `↓ -${(devaluation * 0.2).toFixed(1)}% за месяц`;
+                        `↓ -${(Math.abs(devaluation) * 0.2).toFixed(1)}% за месяц`;
+                } else {
+                    throw new Error('Invalid data format');
                 }
             } catch (error) {
                 console.error('Error fetching rate:', error);
-                document.getElementById('usdtRubRate').textContent = 'Н/Д';
+                // Set fallback data - don't spam errors
+                const fallbackRate = 95.50;
+                document.getElementById('usdtRubRate').textContent = 
+                    `${fallbackRate.toFixed(2)} ₽`;
+                document.getElementById('rateTimestamp').textContent = 
+                    'Курс (статичные данные)';
+                
+                const devaluation = 5.2;
+                document.getElementById('devaluation').textContent = 
+                    `${devaluation.toFixed(1)}%`;
+                document.getElementById('devaluationChange').textContent = 
+                    `↓ -${(devaluation * 0.2).toFixed(1)}% за месяц`;
             }
         }
         
@@ -1564,8 +1583,8 @@
         window.addEventListener('DOMContentLoaded', async () => {
             await fetchUsdtRubRate();
             
-            // Update rate every 60 seconds
-            setInterval(fetchUsdtRubRate, 60000);
+            // Update rate every 5 minutes (300000ms) to avoid rate limiting
+            setInterval(fetchUsdtRubRate, 300000);
         });
     </script>
 </body>
