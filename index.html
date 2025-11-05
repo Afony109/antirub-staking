@@ -816,12 +816,13 @@
     <footer>
         <p>ANTI RUB - Защита от девальвации рубля через децентрализованный стейкинг</p>
         <div class="footer-links">
-            <a href="#">Документация</a>
-            <a href="#">GitHub</a>
-            <a href="#">Telegram</a>
-            <a href="#">Twitter</a>
+            <a href="https://sepolia.etherscan.io/address/0xe4A39E3D2C64C2D3a1d9c7C6B9eB63db55277b71" target="_blank">Token Contract</a>
+            <a href="https://sepolia.etherscan.io/address/0x47B302F223ae94e9efcABc27DE19C0a2eC268Df3" target="_blank">Staking Contract</a>
+            <a href="https://github.com" target="_blank">GitHub</a>
+            <a href="https://t.me" target="_blank">Telegram</a>
         </div>
-        <p style="margin-top: 20px; font-size: 0.85em;">⚠️ Проект в стадии разработки. Используйте на свой риск.</p>
+        <p style="margin-top: 20px; font-size: 0.85em;">⚠️ Проект в стадии разработки на Sepolia Testnet. Используйте на свой риск.</p>
+        <p style="margin-top: 10px; font-size: 0.9em; color: #4ade80;">✅ <strong>РАБОТАЕТ С РЕАЛЬНЫМИ КОНТРАКТАМИ</strong> на Ethereum Sepolia Testnet</p>
     </footer>
     
     <!-- Notification -->
@@ -852,7 +853,7 @@
                 'claim-error': 'Ошибка получения наград: ',
                 'wallet-not-found': 'Кошелек не найден',
                 'wallet-rejected': 'Подключение отклонено',
-                'switch-network': 'Переключитесь на Arbitrum',
+                'switch-network': 'Переключитесь на Sepolia',
                 'copied': 'Адрес скопирован!',
                 'connecting': 'Подключение...'
             },
@@ -876,7 +877,7 @@
                 'claim-error': 'Claim error: ',
                 'wallet-not-found': 'Wallet not found',
                 'wallet-rejected': 'Connection rejected',
-                'switch-network': 'Please switch to Arbitrum',
+                'switch-network': 'Please switch to Sepolia',
                 'copied': 'Address copied!',
                 'connecting': 'Connecting...'
             }
@@ -923,13 +924,15 @@
         // Request providers to announce themselves
         window.dispatchEvent(new Event('eip6963:requestProvider'));
         
-        // Contract addresses (Arbitrum Sepolia Testnet)
-        const TOKEN_ADDRESS = '0x0000000000000000000000000000000000000000';
-        const STAKING_ADDRESS = '0x0000000000000000000000000000000000000000';
+        // Contract addresses (Ethereum Sepolia Testnet)
+        const TOKEN_ADDRESS = '0xe4A39E3D2C64C2D3a1d9c7C6B9eB63db55277b71'; // ARUB Token
+        const STAKING_ADDRESS = '0x47B302F223ae94e9efcABc27DE19C0a2eC268Df3'; // ARUB Staking
         
-        // Arbitrum Chain ID
-        const ARBITRUM_CHAIN_ID = '0xA4B1'; // Mainnet
-        const ARBITRUM_TESTNET_CHAIN_ID = '0x66EEE'; // Sepolia
+        // DEMO MODE - false для работы с реальными контрактами
+        const DEMO_MODE = false;
+        
+        // Ethereum Sepolia Chain ID
+        const SEPOLIA_CHAIN_ID = '0xaa36a7'; // Sepolia Testnet (11155111)
         
         // Contract ABIs (simplified)
         const TOKEN_ABI = [
@@ -1405,16 +1408,16 @@
             }
         }
         
-        // Check and Switch to Arbitrum
+        // Check and Switch to Sepolia
         async function checkAndSwitchNetwork(ethereum) {
             try {
                 const chainId = await ethereum.request({ method: 'eth_chainId' });
                 
-                if (chainId !== ARBITRUM_CHAIN_ID && chainId !== ARBITRUM_TESTNET_CHAIN_ID) {
+                if (chainId !== SEPOLIA_CHAIN_ID) {
                     try {
                         await ethereum.request({
                             method: 'wallet_switchEthereumChain',
-                            params: [{ chainId: ARBITRUM_CHAIN_ID }],
+                            params: [{ chainId: SEPOLIA_CHAIN_ID }],
                         });
                     } catch (switchError) {
                         if (switchError.code === 4902) {
@@ -1422,15 +1425,15 @@
                                 await ethereum.request({
                                     method: 'wallet_addEthereumChain',
                                     params: [{
-                                        chainId: ARBITRUM_CHAIN_ID,
-                                        chainName: 'Arbitrum One',
+                                        chainId: SEPOLIA_CHAIN_ID,
+                                        chainName: 'Sepolia Testnet',
                                         nativeCurrency: {
                                             name: 'Ethereum',
                                             symbol: 'ETH',
                                             decimals: 18
                                         },
-                                        rpcUrls: ['https://arb1.arbitrum.io/rpc'],
-                                        blockExplorerUrls: ['https://arbiscan.io']
+                                        rpcUrls: ['https://sepolia.infura.io/v3/1c87f73ab8754dc38ceafba1d3ece1a0'],
+                                        blockExplorerUrls: ['https://sepolia.etherscan.io']
                                     }],
                                 });
                                 location.reload();
@@ -1481,7 +1484,40 @@
                 document.getElementById('walletBalance').textContent = 
                     `${parseFloat(ethFormatted).toFixed(4)} ETH`;
                 
-                if (tokenContract) {
+                if (DEMO_MODE) {
+                    // DEMO MODE: Show simulated balances
+                    console.log('🎭 DEMO MODE: Showing simulated balances');
+                    
+                    // Simulated token balance (1000-5000 random)
+                    const demoBalance = Math.floor(Math.random() * 4000) + 1000;
+                    document.getElementById('userBalance').textContent = 
+                        demoBalance.toFixed(2);
+                    
+                    // USD Value
+                    const usdValue = demoBalance * 0.001;
+                    document.getElementById('usdValue').textContent = 
+                        `$${usdValue.toFixed(2)}`;
+                    
+                    // Simulated staked amount
+                    const demoStaked = Math.floor(demoBalance * 0.3);
+                    document.getElementById('stakedAmount').textContent = 
+                        demoStaked.toFixed(2);
+                    
+                    // Simulated rewards (10-50)
+                    const demoRewards = (Math.random() * 40 + 10).toFixed(2);
+                    document.getElementById('rewardsEarned').textContent = demoRewards;
+                    document.getElementById('rewardsDisplay').textContent = demoRewards;
+                    
+                    // Total staked (simulated)
+                    const demoTotalStaked = Math.floor(Math.random() * 900000) + 100000;
+                    document.getElementById('totalStaked').textContent = 
+                        demoTotalStaked.toLocaleString();
+                    
+                    return;
+                }
+                
+                // REAL MODE: Load from contracts
+                if (tokenContract && TOKEN_ADDRESS !== '0x0000000000000000000000000000000000000000') {
                     // Token Balance
                     const balance = await tokenContract.balanceOf(userAddress);
                     const balanceFormatted = ethers.utils.formatEther(balance);
@@ -1492,9 +1528,13 @@
                     const usdValue = parseFloat(balanceFormatted) * 0.001;
                     document.getElementById('usdValue').textContent = 
                         `$${usdValue.toFixed(2)}`;
+                } else {
+                    // No contract deployed
+                    document.getElementById('userBalance').textContent = '0.00';
+                    document.getElementById('usdValue').textContent = '$0.00';
                 }
                 
-                if (stakingContract) {
+                if (stakingContract && STAKING_ADDRESS !== '0x0000000000000000000000000000000000000000') {
                     // Staked Amount
                     const staked = await stakingContract.getStakedAmount(userAddress);
                     const stakedFormatted = ethers.utils.formatEther(staked);
@@ -1514,6 +1554,12 @@
                     const totalStakedFormatted = ethers.utils.formatEther(totalStaked);
                     document.getElementById('totalStaked').textContent = 
                         parseFloat(totalStakedFormatted).toFixed(0);
+                } else {
+                    // No staking contract
+                    document.getElementById('stakedAmount').textContent = '0';
+                    document.getElementById('rewardsEarned').textContent = '0';
+                    document.getElementById('rewardsDisplay').textContent = '0.00';
+                    document.getElementById('totalStaked').textContent = '0';
                 }
                 
             } catch (error) {
@@ -1533,8 +1579,18 @@
         }
         
         async function approveTokens() {
-            if (!userAddress || !tokenContract) {
+            if (!userAddress) {
                 showNotification(translations[currentLang]['connect-first'], 'error');
+                return;
+            }
+            
+            if (DEMO_MODE) {
+                showNotification('🎭 DEMO: Одобрение токенов симулировано', 'success');
+                return;
+            }
+            
+            if (!tokenContract) {
+                showNotification('Контракт токена не настроен', 'error');
                 return;
             }
             
@@ -1563,7 +1619,7 @@
         }
         
         async function stakeTokens() {
-            if (!userAddress || !stakingContract) {
+            if (!userAddress) {
                 showNotification(translations[currentLang]['connect-first'], 'error');
                 return;
             }
@@ -1571,6 +1627,22 @@
             const amount = document.getElementById('stakeAmount').value;
             if (!amount || parseFloat(amount) <= 0) {
                 showNotification(translations[currentLang]['invalid-amount'], 'error');
+                return;
+            }
+            
+            if (DEMO_MODE) {
+                showNotification('🎭 DEMO: Стейкинг симулирован. В реальном режиме токены будут застейканы в контракт.', 'success');
+                document.getElementById('stakeAmount').value = '';
+                
+                // Update demo values
+                setTimeout(async () => {
+                    await loadAllData();
+                }, 500);
+                return;
+            }
+            
+            if (!stakingContract) {
+                showNotification('Контракт стейкинга не настроен', 'error');
                 return;
             }
             
@@ -1596,7 +1668,7 @@
         }
         
         async function unstakeTokens() {
-            if (!userAddress || !stakingContract) {
+            if (!userAddress) {
                 showNotification(translations[currentLang]['connect-first'], 'error');
                 return;
             }
@@ -1604,6 +1676,17 @@
             const amount = document.getElementById('stakeAmount').value;
             if (!amount || parseFloat(amount) <= 0) {
                 showNotification(translations[currentLang]['invalid-amount'], 'error');
+                return;
+            }
+            
+            if (DEMO_MODE) {
+                showNotification('🎭 DEMO: Вывод симулирован', 'success');
+                document.getElementById('stakeAmount').value = '';
+                return;
+            }
+            
+            if (!stakingContract) {
+                showNotification('Контракт стейкинга не настроен', 'error');
                 return;
             }
             
@@ -1629,8 +1712,18 @@
         }
         
         async function claimRewards() {
-            if (!userAddress || !stakingContract) {
+            if (!userAddress) {
                 showNotification(translations[currentLang]['connect-first'], 'error');
+                return;
+            }
+            
+            if (DEMO_MODE) {
+                showNotification('🎭 DEMO: Получение наград симулировано', 'success');
+                return;
+            }
+            
+            if (!stakingContract) {
+                showNotification('Контракт стейкинга не настроен', 'error');
                 return;
             }
             
