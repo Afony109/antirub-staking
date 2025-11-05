@@ -944,7 +944,7 @@
                 name: 'Uniswap Extension',
                 icon: '🦄',
                 description: 'Кошелек от Uniswap',
-                check: (p) => p.isUniswap || (p.constructor && p.constructor.name && p.constructor.name.includes('Uniswap')),
+                check: (p) => p.isUniswapWallet || p.isUniswap || (p.constructor && p.constructor.name && p.constructor.name.includes('Uniswap')),
                 installUrl: 'https://uniswap.org/',
                 priority: 1
             },
@@ -953,7 +953,7 @@
                 name: 'Coinbase Wallet',
                 icon: '💼',
                 description: 'Официальный кошелек Coinbase',
-                check: (p) => p.isCoinbaseWallet && !p.isMetaMask,
+                check: (p) => p.isCoinbaseWallet && !p.isMetaMask && !p.isUniswapWallet,
                 installUrl: 'https://www.coinbase.com/wallet',
                 priority: 2
             },
@@ -962,7 +962,7 @@
                 name: 'Rabby Wallet',
                 icon: '🐰',
                 description: 'Мульти-чейн кошелек',
-                check: (p) => p.isRabby,
+                check: (p) => p.isRabby && !p.isUniswapWallet,
                 installUrl: 'https://rabby.io/',
                 priority: 2
             },
@@ -971,7 +971,7 @@
                 name: 'Trust Wallet',
                 icon: '🛡️',
                 description: 'Браузерное расширение',
-                check: (p) => p.isTrust,
+                check: (p) => p.isTrust && !p.isUniswapWallet,
                 installUrl: 'https://trustwallet.com/',
                 priority: 2
             },
@@ -980,7 +980,7 @@
                 name: 'Brave Wallet',
                 icon: '🦁',
                 description: 'Встроенный кошелек Brave',
-                check: (p) => p.isBraveWallet,
+                check: (p) => p.isBraveWallet && !p.isUniswapWallet,
                 installUrl: 'https://brave.com/wallet/',
                 priority: 2
             },
@@ -989,7 +989,7 @@
                 name: 'MetaMask',
                 icon: '🦊',
                 description: 'Популярный браузерный кошелек',
-                check: (p) => p.isMetaMask && !p.isUniswap && !p.overrideIsMetaMask,
+                check: (p) => p.isMetaMask && !p.isUniswapWallet && !p.isUniswap && !p.overrideIsMetaMask,
                 installUrl: 'https://metamask.io/download/',
                 priority: 3
             }
@@ -1027,6 +1027,8 @@
                     isRabby: p.isRabby,
                     isTrust: p.isTrust,
                     isBraveWallet: p.isBraveWallet,
+                    isUniswap: p.isUniswap,
+                    isUniswapWallet: p.isUniswapWallet,
                     constructor: p.constructor?.name
                 });
             });
