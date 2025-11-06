@@ -1267,7 +1267,7 @@
                 <div class="feature-icon">📊</div>
                 <h3 class="feature-title">Заробіток на падінні рубля</h3>
                 <p class="feature-description">
-                    Ціна токена ARUB = курс USDT/RUB. Купуйте дешевше, продавайте дорожче. Чим слабший рубль, тим більша вартість вашого токена у доларах.
+                    Ціна ARUB = курс USD/RUB. Коли рубль падає і курс USD/RUB зростає з 80 до 100, ваш ARUB дорожчає з $80 до $100. Купуйте ARUB зараз, продавайте дорожче коли рубль падає ще більше. Чим слабший рубль, тим вища ціна вашого токена!
                 </p>
             </div>
             <div class="feature-card">
@@ -1350,7 +1350,7 @@
                     <span>▼</span>
                 </div>
                 <div class="faq-answer">
-                    Ціна токена ARUB прив'язана до курсу USDT/RUB. 1 ARUB = поточний курс USDT/RUB в доларах. Наприклад, якщо курс USDT/RUB = 81.22₽, то 1 ARUB = 81.22 USDT. Чим слабший рубль (вищий курс), тим дорожчий токен ARUB. Це робить ARUB справжнім "антирублем".
+                    Ціна токена ARUB прив'язана до курсу USD/RUB. 1 ARUB = поточний курс USD/RUB в доларах. Наприклад, якщо курс USD/RUB = 100₽, то 1 ARUB = 100 USDT. Чим слабший рубль (вищий курс USD/RUB), тим дорожчий токен ARUB у доларах. Це робить ARUB справжнім "антирублем" - чим гірше для рубля, тим краще для власників ARUB!
                 </div>
             </div>
             
@@ -1644,11 +1644,12 @@
                 currentRate = usdToRub;
                 
                 document.getElementById('currentRate').textContent = `${usdToRub.toFixed(2)} ₽`;
+                // 1 ARUB = курс USD/RUB в доларах
                 document.getElementById('arubPrice').textContent = `$${usdToRub.toFixed(2)}`;
-                console.log('USDT/RUB rate updated:', usdToRub);
-                console.log('ARUB price:', usdToRub, 'USDT');
+                console.log('USD/RUB rate updated:', usdToRub);
+                console.log('ARUB price:', usdToRub, 'USDT per 1 ARUB');
             } catch (error) {
-                console.error('Error fetching USDT/RUB rate:', error);
+                console.error('Error fetching USD/RUB rate:', error);
                 document.getElementById('currentRate').textContent = '—';
                 document.getElementById('arubPrice').textContent = '—';
             }
@@ -2005,10 +2006,10 @@
                 // Continue with zero balances
             }
             
-            // ВАЖЛИВО: Ціна ARUB = поточний курс USDT/RUB
-            // 1 ARUB = курс USDT/RUB в доларах
-            // Наприклад: якщо USDT/RUB = 81.22, то 1 ARUB = 81.22 USDT
-            const arubPriceInUsdt = currentRate || 81.22; // Використовуємо поточний курс USDT/RUB
+            // ВАЖЛИВО: Ціна ARUB прив'язана до курсу USD/RUB
+            // 1 ARUB = поточний курс USD/RUB в доларах
+            // Наприклад: якщо USD/RUB = 100₽, то 1 ARUB = 100 USDT
+            const arubPriceInUsdt = currentRate || 81.22; // Використовуємо поточний курс USD/RUB
             
             const testModeWarning = (usdtBalance.eq(0) && arubBalance.eq(0)) ? 
                 '<div style="background: rgba(255,215,0,0.1); padding: 20px; border-radius: 15px; margin-bottom: 30px; border: 2px solid var(--ukraine-yellow);">' +
@@ -2125,19 +2126,19 @@
                         
                         <div style="padding: 20px 0;">
                             <div class="info-row">
-                                <span class="info-label">Ціна ARUB:</span>
+                                <span class="info-label">Ціна 1 ARUB:</span>
                                 <span class="info-value">${arubPriceInUsdt.toFixed(2)} USDT</span>
                             </div>
                             
                             <div class="info-row">
-                                <span class="info-label">Курс USDT/RUB:</span>
+                                <span class="info-label">Курс USD/RUB:</span>
                                 <span class="info-value">${arubPriceInUsdt.toFixed(2)} ₽</span>
                             </div>
                             
                             <div style="background: rgba(0,87,183,0.1); padding: 12px; border-radius: 8px; margin: 15px 0;">
                                 <p style="color: var(--gray); font-size: 0.85em; line-height: 1.5; margin: 0;">
-                                    💡 <strong style="color: white;">Логіка ціни:</strong> 1 ARUB = поточний курс USDT/RUB. 
-                                    Чим слабший рубль, тим дорожчий токен!
+                                    💡 <strong style="color: white;">Логіка ціни:</strong> 1 ARUB = ${arubPriceInUsdt.toFixed(2)} USDT (= курс USD/RUB). 
+                                    Чим слабший рубль і вищий курс, тим дорожчий токен ARUB!
                                 </p>
                             </div>
                             
@@ -2180,8 +2181,8 @@
             if (buyAmount > 0) {
                 const fee = buyAmount * 0.005; // 0.5%
                 const amountAfterFee = buyAmount - fee;
-                const arubPrice = currentRate || 81.22; // 1 ARUB = курс USDT/RUB
-                const arubReceived = amountAfterFee / arubPrice;
+                const arubPrice = currentRate || 81.22; // 1 ARUB = курс USDT/RUB в доларах
+                const arubReceived = amountAfterFee / arubPrice; // За 1 USDT купуємо 1/курс ARUB
                 
                 document.getElementById('buyReceiveAmount').textContent = `${arubReceived.toFixed(4)} ARUB`;
                 document.getElementById('buyFeeAmount').textContent = `${fee.toFixed(4)} USDT`;
@@ -2194,8 +2195,8 @@
         function calculateSellAmount() {
             const sellAmount = parseFloat(document.getElementById('sellAmount')?.value || 0);
             if (sellAmount > 0) {
-                const arubPrice = currentRate || 81.22; // 1 ARUB = курс USDT/RUB
-                const usdtValue = sellAmount * arubPrice;
+                const arubPrice = currentRate || 81.22; // 1 ARUB = курс USDT/RUB в доларах
+                const usdtValue = sellAmount * arubPrice; // 1 ARUB продаємо за курс USDT
                 const fee = usdtValue * 0.01; // 1%
                 const usdtReceived = usdtValue - fee;
                 
@@ -2330,7 +2331,7 @@
                 document.getElementById('arubValueInUsdt').textContent = '0 USDT';
                 return;
             }
-            const valueInUsdt = parseFloat(arubAmount) * (currentRate || 81.22);
+            const valueInUsdt = parseFloat(arubAmount) * (currentRate || 81.22); // 1 ARUB = курс USDT
             document.getElementById('arubValueInUsdt').textContent = `${valueInUsdt.toFixed(2)} USDT`;
         }
         
@@ -2696,7 +2697,7 @@
                 },
                 stake: {
                     title: '🔒 Як працює стейкінг',
-                    text: 'Стейкаємо ARUB і USDT — отримуємо ще більше ARUB! Мінімум: 10 USDT або 0.1 ARUB. Винагороди нараховуються автоматично в токенах ARUB. Можете зняти в будь-який час без штрафів. Чим слабший рубль, тим дорожчий кожен ваш токен!'
+                    text: 'Стейкаємо ARUB і USDT — отримуємо ще більше ARUB! Мінімум: 10 USDT або 0.1 ARUB. Винагороди нараховуються автоматично в токенах ARUB. Можете зняти в будь-який час без штрафів. Чим слабший рубль і чим вищий курс USD/RUB, тим дорожчий кожен ваш ARUB токен!'
                 },
                 fees: {
                     title: '💳 Комісії платформи',
