@@ -1805,17 +1805,17 @@
                 // Continue with zero balances
             }
             
+            const testModeWarningStaking = (usdtBalance.eq(0) && stakedBalance.eq(0) && arubBalance.eq(0)) ?
+                '<div style="background: rgba(255,215,0,0.1); padding: 20px; border-radius: 15px; margin-bottom: 30px; border: 2px solid var(--ukraine-yellow);">' +
+                    '<h3 style="color: var(--ukraine-yellow); margin-bottom: 10px;">⚠️ Тестовий режим</h3>' +
+                    '<p style="color: var(--gray); margin: 0;">' +
+                        'Платформа працює з тестовими адресами смарт-контрактів. ' +
+                        'Після розгортання реальних контрактів всі функції будуть доступні.' +
+                    '</p>' +
+                '</div>' : '';
+            
             const stakingInterface = document.getElementById('stakingInterface');
-            stakingInterface.innerHTML = `
-                    ${usdtBalance.eq(0) && stakedBalance.eq(0) && arubBalance.eq(0) ? `
-                    <div style="background: rgba(255,215,0,0.1); padding: 20px; border-radius: 15px; margin-bottom: 30px; border: 2px solid var(--ukraine-yellow);">
-                        <h3 style="color: var(--ukraine-yellow); margin-bottom: 10px;">⚠️ Тестовий режим</h3>
-                        <p style="color: var(--gray); margin: 0;">
-                            Платформа працює з тестовими адресами смарт-контрактів. 
-                            Після розгортання реальних контрактів всі функції будуть доступні.
-                        </p>
-                    </div>
-                    ` : ''}
+            stakingInterface.innerHTML = testModeWarningStaking + `
                     <div class="staking-grid">
                         <!-- Stake Card -->
                         <div class="staking-card">
@@ -1944,17 +1944,17 @@
             // Get current ARUB price (example: 1 ARUB = 0.01 USDT, you can adjust)
             const arubPriceInUsdt = 0.01; // This should be fetched from your contract
             
+            const testModeWarning = (usdtBalance.eq(0) && arubBalance.eq(0)) ? 
+                '<div style="background: rgba(255,215,0,0.1); padding: 20px; border-radius: 15px; margin-bottom: 30px; border: 2px solid var(--ukraine-yellow);">' +
+                    '<h3 style="color: var(--ukraine-yellow); margin-bottom: 10px;">⚠️ Тестовий режим</h3>' +
+                    '<p style="color: var(--gray); margin: 0;">' +
+                        'Платформа працює з тестовими адресами смарт-контрактів. ' +
+                        'Після розгортання реальних контрактів всі функції будуть доступні.' +
+                    '</p>' +
+                '</div>' : '';
+            
             const tradingInterface = document.getElementById('tradingInterface');
-            tradingInterface.innerHTML = `
-                ${usdtBalance.eq(0) && arubBalance.eq(0) ? `
-                <div style="background: rgba(255,215,0,0.1); padding: 20px; border-radius: 15px; margin-bottom: 30px; border: 2px solid var(--ukraine-yellow);">
-                    <h3 style="color: var(--ukraine-yellow); margin-bottom: 10px;">⚠️ Тестовий режим</h3>
-                    <p style="color: var(--gray); margin: 0;">
-                        Платформа працює з тестовими адресами смарт-контрактів. 
-                        Після розгортання реальних контрактів всі функції будуть доступні.
-                    </p>
-                </div>
-                ` : ''}
+            tradingInterface.innerHTML = testModeWarning + `
                 <div class="staking-grid">
                     <!-- Buy ARUB Card -->
                     <div class="staking-card">
@@ -2090,9 +2090,6 @@
                             </p>
                         </div>
                     </div>
-                </div>
-            `;
-        }
                 </div>
             `;
         }
