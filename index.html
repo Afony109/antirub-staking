@@ -1777,21 +1777,45 @@
         async function updateUI() {
             if (!userAddress) return;
             
+            let usdtBalance = ethers.BigNumber.from(0);
+            let stakedBalance = ethers.BigNumber.from(0);
+            let arubBalance = ethers.BigNumber.from(0);
+            let rewards = ethers.BigNumber.from(0);
+            let totalStaked = ethers.BigNumber.from(0);
+            
             try {
-                const [usdtBalance, stakedBalance, arubBalance, rewards] = await Promise.all([
-                    usdtContract.balanceOf(userAddress),
-                    stakingContract.getStakedBalance(userAddress),
-                    tokenContract.balanceOf(userAddress),
-                    stakingContract.getRewards(userAddress)
+                const balances = await Promise.all([
+                    usdtContract.balanceOf(userAddress).catch(() => ethers.BigNumber.from(0)),
+                    stakingContract.getStakedBalance(userAddress).catch(() => ethers.BigNumber.from(0)),
+                    tokenContract.balanceOf(userAddress).catch(() => ethers.BigNumber.from(0)),
+                    stakingContract.getRewards(userAddress).catch(() => ethers.BigNumber.from(0))
                 ]);
                 
-                const totalStaked = await stakingContract.getTotalStaked();
+                usdtBalance = balances[0];
+                stakedBalance = balances[1];
+                arubBalance = balances[2];
+                rewards = balances[3];
+                
+                totalStaked = await stakingContract.getTotalStaked().catch(() => ethers.BigNumber.from(0));
                 
                 document.getElementById('totalStaked').textContent = 
                     `$${ethers.utils.formatUnits(totalStaked, 6)}`;
-                
-                const stakingInterface = document.getElementById('stakingInterface');
-                stakingInterface.innerHTML = `
+            } catch (error) {
+                console.warn('Не вдалося отримати баланси для стейкінгу, показуємо 0:', error);
+                // Continue with zero balances
+            }
+            
+            const stakingInterface = document.getElementById('stakingInterface');
+            stakingInterface.innerHTML = `
+                    ${usdtBalance.eq(0) && stakedBalance.eq(0) && arubBalance.eq(0) ? `
+                    <div style="background: rgba(255,215,0,0.1); padding: 20px; border-radius: 15px; margin-bottom: 30px; border: 2px solid var(--ukraine-yellow);">
+                        <h3 style="color: var(--ukraine-yellow); margin-bottom: 10px;">⚠️ Тестовий режим</h3>
+                        <p style="color: var(--gray); margin: 0;">
+                            Платформа працює з тестовими адресами смарт-контрактів. 
+                            Після розгортання реальних контрактів всі функції будуть доступні.
+                        </p>
+                    </div>
+                    ` : ''}
                     <div class="staking-grid">
                         <!-- Stake Card -->
                         <div class="staking-card">
@@ -1894,10 +1918,6 @@
                         </div>
                     </div>
                 `;
-                
-            } catch (error) {
-                console.error('Error updating UI:', error);
-            }
         }
         
         // ==========================================
@@ -1906,158 +1926,175 @@
         async function updateTradingUI() {
             if (!userAddress) return;
             
+            let usdtBalance = ethers.BigNumber.from(0);
+            let arubBalance = ethers.BigNumber.from(0);
+            
             try {
-                const [usdtBalance, arubBalance] = await Promise.all([
-                    usdtContract.balanceOf(userAddress),
-                    tokenContract.balanceOf(userAddress)
+                const balances = await Promise.all([
+                    usdtContract.balanceOf(userAddress).catch(() => ethers.BigNumber.from(0)),
+                    tokenContract.balanceOf(userAddress).catch(() => ethers.BigNumber.from(0))
                 ]);
-                
-                // Get current ARUB price (example: 1 ARUB = 0.01 USDT, you can adjust)
-                const arubPriceInUsdt = 0.01; // This should be fetched from your contract
-                
-                const tradingInterface = document.getElementById('tradingInterface');
-                tradingInterface.innerHTML = `
-                    <div class="staking-grid">
-                        <!-- Buy ARUB Card -->
-                        <div class="staking-card">
-                            <div class="card-header">
-                                <div class="card-icon">💰</div>
-                                <h3 class="card-title">Купити ARUB</h3>
-                            </div>
-                            
-                            <div class="input-group">
-                                <label class="input-label">Сума USDT для купівлі</label>
-                                <div class="input-wrapper">
-                                    <input type="number" 
-                                           class="input-field" 
-                                           id="buyAmount" 
-                                           placeholder="0.00"
-                                           step="0.01"
-                                           min="1"
-                                           oninput="calculateBuyAmount()">
-                                    <button class="max-btn" onclick="setMaxBuy()">MAX</button>
-                                </div>
-                            </div>
-                            
-                            <div class="info-row">
-                                <span class="info-label">Отримаєте ARUB:</span>
-                                <span class="info-value" id="buyReceiveAmount">0</span>
-                            </div>
-                            
-                            <div class="info-row">
-                                <span class="info-label">Комісія (0.5%):</span>
-                                <span class="info-value" id="buyFeeAmount">0 USDT</span>
-                            </div>
-                            
-                            <div class="info-row">
-                                <span class="info-label">Ваш баланс USDT:</span>
-                                <span class="info-value">${ethers.utils.formatUnits(usdtBalance, 6)} USDT</span>
-                            </div>
-                            
-                            <div style="background: rgba(0,87,183,0.1); padding: 15px; border-radius: 10px; margin-top: 15px; margin-bottom: 15px;">
-                                <p style="color: var(--gray); font-size: 0.9em; line-height: 1.6;">
-                                    💡 Комісія 0.5% йде на: аудит смарт-контрактів, розвиток проекту та оплату команді
-                                </p>
-                            </div>
-                            
-                            <button class="action-btn" onclick="buyTokens()">
-                                💰 Купити ARUB
-                            </button>
+                usdtBalance = balances[0];
+                arubBalance = balances[1];
+            } catch (error) {
+                console.warn('Не вдалося отримати баланси, показуємо 0:', error);
+                // Continue with zero balances
+            }
+            
+            // Get current ARUB price (example: 1 ARUB = 0.01 USDT, you can adjust)
+            const arubPriceInUsdt = 0.01; // This should be fetched from your contract
+            
+            const tradingInterface = document.getElementById('tradingInterface');
+            tradingInterface.innerHTML = `
+                ${usdtBalance.eq(0) && arubBalance.eq(0) ? `
+                <div style="background: rgba(255,215,0,0.1); padding: 20px; border-radius: 15px; margin-bottom: 30px; border: 2px solid var(--ukraine-yellow);">
+                    <h3 style="color: var(--ukraine-yellow); margin-bottom: 10px;">⚠️ Тестовий режим</h3>
+                    <p style="color: var(--gray); margin: 0;">
+                        Платформа працює з тестовими адресами смарт-контрактів. 
+                        Після розгортання реальних контрактів всі функції будуть доступні.
+                    </p>
+                </div>
+                ` : ''}
+                <div class="staking-grid">
+                    <!-- Buy ARUB Card -->
+                    <div class="staking-card">
+                        <div class="card-header">
+                            <div class="card-icon">💰</div>
+                            <h3 class="card-title">Купити ARUB</h3>
                         </div>
                         
-                        <!-- Sell ARUB Card -->
-                        <div class="staking-card">
-                            <div class="card-header">
-                                <div class="card-icon">💵</div>
-                                <h3 class="card-title">Продати ARUB</h3>
+                        <div class="input-group">
+                            <label class="input-label">Сума USDT для купівлі</label>
+                            <div class="input-wrapper">
+                                <input type="number" 
+                                       class="input-field" 
+                                       id="buyAmount" 
+                                       placeholder="0.00"
+                                       step="0.01"
+                                       min="1"
+                                       oninput="calculateBuyAmount()">
+                                <button class="max-btn" onclick="setMaxBuy()">MAX</button>
                             </div>
-                            
-                            <div class="input-group">
-                                <label class="input-label">Кількість ARUB для продажу</label>
-                                <div class="input-wrapper">
-                                    <input type="number" 
-                                           class="input-field" 
-                                           id="sellAmount" 
-                                           placeholder="0.00"
-                                           step="0.01"
-                                           min="0"
-                                           oninput="calculateSellAmount()">
-                                    <button class="max-btn" onclick="setMaxSell()">MAX</button>
-                                </div>
-                            </div>
-                            
-                            <div class="info-row">
-                                <span class="info-label">Отримаєте USDT:</span>
-                                <span class="info-value" id="sellReceiveAmount">0</span>
-                            </div>
-                            
-                            <div class="info-row">
-                                <span class="info-label">Комісія (1%):</span>
-                                <span class="info-value" id="sellFeeAmount">0 USDT</span>
-                            </div>
-                            
-                            <div class="info-row">
-                                <span class="info-label">Ваш баланс ARUB:</span>
-                                <span class="info-value">${ethers.utils.formatUnits(arubBalance, 6)} ARUB</span>
-                            </div>
-                            
-                            <div style="background: rgba(255,215,0,0.1); padding: 15px; border-radius: 10px; margin-top: 15px; margin-bottom: 15px;">
-                                <p style="color: var(--gray); font-size: 0.9em; line-height: 1.6;">
-                                    💡 Комісія 1% йде на: аудит смарт-контрактів, розвиток проекту та оплату команді
-                                </p>
-                            </div>
-                            
-                            <button class="action-btn" onclick="sellTokens()">
-                                💵 Продати ARUB
-                            </button>
                         </div>
                         
-                        <!-- Info Card -->
-                        <div class="staking-card">
-                            <div class="card-header">
-                                <div class="card-icon">📊</div>
-                                <h3 class="card-title">Інформація про торгівлю</h3>
+                        <div class="info-row">
+                            <span class="info-label">Отримаєте ARUB:</span>
+                            <span class="info-value" id="buyReceiveAmount">0</span>
+                        </div>
+                        
+                        <div class="info-row">
+                            <span class="info-label">Комісія (0.5%):</span>
+                            <span class="info-value" id="buyFeeAmount">0 USDT</span>
+                        </div>
+                        
+                        <div class="info-row">
+                            <span class="info-label">Ваш баланс USDT:</span>
+                            <span class="info-value">${ethers.utils.formatUnits(usdtBalance, 6)} USDT</span>
+                        </div>
+                        
+                        <div style="background: rgba(0,87,183,0.1); padding: 15px; border-radius: 10px; margin-top: 15px; margin-bottom: 15px;">
+                            <p style="color: var(--gray); font-size: 0.9em; line-height: 1.6;">
+                                💡 Комісія 0.5% йде на: аудит смарт-контрактів, розвиток проекту та оплату команді
+                            </p>
+                        </div>
+                        
+                        <button class="action-btn" onclick="buyTokens()">
+                            💰 Купити ARUB
+                        </button>
+                    </div>
+                    
+                    <!-- Sell ARUB Card -->
+                    <div class="staking-card">
+                        <div class="card-header">
+                            <div class="card-icon">💵</div>
+                            <h3 class="card-title">Продати ARUB</h3>
+                        </div>
+                        
+                        <div class="input-group">
+                            <label class="input-label">Кількість ARUB для продажу</label>
+                            <div class="input-wrapper">
+                                <input type="number" 
+                                       class="input-field" 
+                                       id="sellAmount" 
+                                       placeholder="0.00"
+                                       step="0.01"
+                                       min="0"
+                                       oninput="calculateSellAmount()">
+                                <button class="max-btn" onclick="setMaxSell()">MAX</button>
+                            </div>
+                        </div>
+                        
+                        <div class="info-row">
+                            <span class="info-label">Отримаєте USDT:</span>
+                            <span class="info-value" id="sellReceiveAmount">0</span>
+                        </div>
+                        
+                        <div class="info-row">
+                            <span class="info-label">Комісія (1%):</span>
+                            <span class="info-value" id="sellFeeAmount">0 USDT</span>
+                        </div>
+                        
+                        <div class="info-row">
+                            <span class="info-label">Ваш баланс ARUB:</span>
+                            <span class="info-value">${ethers.utils.formatUnits(arubBalance, 6)} ARUB</span>
+                        </div>
+                        
+                        <div style="background: rgba(255,215,0,0.1); padding: 15px; border-radius: 10px; margin-top: 15px; margin-bottom: 15px;">
+                            <p style="color: var(--gray); font-size: 0.9em; line-height: 1.6;">
+                                💡 Комісія 1% йде на: аудит смарт-контрактів, розвиток проекту та оплату команді
+                            </p>
+                        </div>
+                        
+                        <button class="action-btn" onclick="sellTokens()">
+                            💵 Продати ARUB
+                        </button>
+                    </div>
+                    
+                    <!-- Info Card -->
+                    <div class="staking-card">
+                        <div class="card-header">
+                            <div class="card-icon">📊</div>
+                            <h3 class="card-title">Інформація про торгівлю</h3>
+                        </div>
+                        
+                        <div style="padding: 20px 0;">
+                            <div class="info-row">
+                                <span class="info-label">Ціна ARUB:</span>
+                                <span class="info-value">${arubPriceInUsdt.toFixed(4)} USDT</span>
                             </div>
                             
-                            <div style="padding: 20px 0;">
-                                <div class="info-row">
-                                    <span class="info-label">Ціна ARUB:</span>
-                                    <span class="info-value">${arubPriceInUsdt.toFixed(4)} USDT</span>
-                                </div>
-                                
-                                <div class="info-row">
-                                    <span class="info-label">Комісія купівлі:</span>
-                                    <span class="info-value" style="color: #10b981;">0.5%</span>
-                                </div>
-                                
-                                <div class="info-row">
-                                    <span class="info-label">Комісія продажу:</span>
-                                    <span class="info-value" style="color: #f59e0b;">1%</span>
-                                </div>
+                            <div class="info-row">
+                                <span class="info-label">Комісія купівлі:</span>
+                                <span class="info-value" style="color: #10b981;">0.5%</span>
                             </div>
                             
-                            <div style="background: linear-gradient(135deg, rgba(0,87,183,0.1), rgba(255,215,0,0.1)); padding: 20px; border-radius: 12px; margin-top: 20px;">
-                                <h4 style="color: var(--ukraine-yellow); margin-bottom: 15px; font-size: 1.1em;">💰 Куди йдуть комісії?</h4>
-                                <ul style="color: var(--gray); line-height: 2; list-style: none; padding: 0;">
-                                    <li>✅ Аудит смарт-контрактів</li>
-                                    <li>✅ Розвиток платформи</li>
-                                    <li>✅ Оплата команді розробників</li>
-                                    <li>✅ Маркетинг та просування</li>
-                                </ul>
+                            <div class="info-row">
+                                <span class="info-label">Комісія продажу:</span>
+                                <span class="info-value" style="color: #f59e0b;">1%</span>
                             </div>
-                            
-                            <div style="margin-top: 20px; padding: 15px; background: rgba(0,87,183,0.1); border-radius: 10px; border-left: 4px solid var(--ukraine-blue);">
-                                <p style="color: var(--gray); font-size: 0.95em; line-height: 1.6;">
-                                    <strong style="color: white;">Важливо:</strong> Всі транзакції відбуваються через смарт-контракт. Ваші кошти завжди під вашим контролем.
-                                </p>
-                            </div>
+                        </div>
+                        
+                        <div style="background: linear-gradient(135deg, rgba(0,87,183,0.1), rgba(255,215,0,0.1)); padding: 20px; border-radius: 12px; margin-top: 20px;">
+                            <h4 style="color: var(--ukraine-yellow); margin-bottom: 15px; font-size: 1.1em;">💰 Куди йдуть комісії?</h4>
+                            <ul style="color: var(--gray); line-height: 2; list-style: none; padding: 0;">
+                                <li>✅ Аудит смарт-контрактів</li>
+                                <li>✅ Розвиток платформи</li>
+                                <li>✅ Оплата команді розробників</li>
+                                <li>✅ Маркетинг та просування</li>
+                            </ul>
+                        </div>
+                        
+                        <div style="margin-top: 20px; padding: 15px; background: rgba(0,87,183,0.1); border-radius: 10px; border-left: 4px solid var(--ukraine-blue);">
+                            <p style="color: var(--gray); font-size: 0.95em; line-height: 1.6;">
+                                <strong style="color: white;">Важливо:</strong> Всі транзакції відбуваються через смарт-контракт. Ваші кошти завжди під вашим контролем.
+                            </p>
                         </div>
                     </div>
-                `;
-                
-            } catch (error) {
-                console.error('Error updating trading UI:', error);
-            }
+                </div>
+            `;
+        }
+                </div>
+            `;
         }
         
         // ==========================================
