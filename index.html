@@ -1253,7 +1253,7 @@
                 <div class="feature-icon">🛡️</div>
                 <h3 class="feature-title">Захист активів</h3>
                 <p class="feature-description">
-                    Ваші ARUB та USDT захищені смарт-контрактом. Повна прозорість і безпека на блокчейні Ethereum.
+                    Ваші ARUB та USDT захищені смарт-контрактом на блокчейні Ethereum (Sepolia testnet). Повна прозорість і безпека.
                 </p>
             </div>
             <div class="feature-card">
@@ -1281,7 +1281,7 @@
                 <div class="feature-icon">🔓</div>
                 <h3 class="feature-title">Повна прозорість</h3>
                 <p class="feature-description">
-                    Весь код відкритий. Перевірте смарт-контракт самостійно на Etherscan.
+                    Весь код відкритий. Перевірте смарт-контракт самостійно на Sepolia Etherscan.
                 </p>
             </div>
             <div class="feature-card">
@@ -1370,7 +1370,7 @@
                     <span>▼</span>
                 </div>
                 <div class="faq-answer">
-                    Так, платформа побудована на смарт-контрактах Ethereum. Весь код відкритий і може бути перевірений. Ваші кошти завжди під вашим контролем.
+                    Так, платформа побудована на смарт-контрактах Ethereum (тестова мережа Sepolia). Весь код відкритий і може бути перевірений на Sepolia Etherscan. Ваші кошти завжди під вашим контролем.
                 </div>
             </div>
             
@@ -1420,7 +1420,7 @@
                     <span>▼</span>
                 </div>
                 <div class="faq-answer">
-                    За стейкінг платформа не стягує додаткових комісій - тільки gas за транзакції в Ethereum. При купівлі токенів ARUB комісія становить 0.5%, при продажу - 1%. Ці комісії йдуть на аудит смарт-контрактів, розвиток проекту та оплату команді.
+                    За стейкінг платформа не стягує додаткових комісій - тільки gas за транзакції в мережі Sepolia. При купівлі токенів ARUB комісія становить 0.5%, при продажу - 1%. Ці комісії йдуть на аудит смарт-контрактів, розвиток проекту та оплату команді.
                 </div>
             </div>
             
@@ -1568,7 +1568,7 @@
                 <a href="#staking">Стейкінг</a>
                 <a href="#how-it-works">Як це працює</a>
                 <a href="#" onclick="showWalletGuide(); return false;">Додати токен</a>
-                <a href="https://etherscan.io" target="_blank">Etherscan</a>
+                <a href="https://sepolia.etherscan.io" target="_blank">Sepolia Etherscan</a>
             </div>
             
             <div class="footer-section">
@@ -1601,14 +1601,19 @@
         // CONFIGURATION
         // ==========================================
         const CONFIG = {
-            USDT_ADDRESS: '0xdAC17F958D2ee523a2206206994597C13D831ec7',
-            TOKEN_ADDRESS: '0x1234567890123456789012345678901234567890', // Replace with actual ARUB token address
-            STAKING_ADDRESS: '0x0987654321098765432109876543210987654321', // Replace with actual staking contract
+            USDT_ADDRESS: '0x7169D38820dfd117C3FA1f22a697dBA58d90BA06', // USDT on Sepolia
+            TOKEN_ADDRESS: '0x1234567890123456789012345678901234567890', // Replace with actual ARUB token address on Sepolia
+            STAKING_ADDRESS: '0x0987654321098765432109876543210987654321', // Replace with actual staking contract on Sepolia
             NETWORK: {
-                chainId: '0x1',
-                chainName: 'Ethereum Mainnet',
-                rpcUrls: ['https://eth.llamarpc.com'],
-                blockExplorerUrls: ['https://etherscan.io']
+                chainId: '0xaa36a7', // Sepolia testnet chainId (11155111 in decimal)
+                chainName: 'Sepolia Testnet',
+                rpcUrls: ['https://rpc.sepolia.org'],
+                blockExplorerUrls: ['https://sepolia.etherscan.io'],
+                nativeCurrency: {
+                    name: 'Sepolia ETH',
+                    symbol: 'ETH',
+                    decimals: 18
+                }
             }
         };
         
@@ -1682,8 +1687,8 @@
                 provider = new ethers.providers.Web3Provider(selectedProvider);
                 
                 const network = await provider.getNetwork();
-                if (network.chainId !== 1) {
-                    await switchToEthereum(selectedProvider);
+                if (network.chainId !== 11155111) { // Sepolia testnet chainId
+                    await switchToSepolia(selectedProvider);
                 }
                 
                 const accounts = await provider.send('eth_requestAccounts', []);
@@ -1744,7 +1749,7 @@
             });
         }
         
-        async function switchToEthereum(provider) {
+        async function switchToSepolia(provider) {
             try {
                 await provider.request({
                     method: 'wallet_switchEthereumChain',
@@ -2498,9 +2503,20 @@
                 <div class="wallet-modal-content" style="max-width: 700px; max-height: 85vh; overflow-y: auto;">
                     <h2 class="wallet-modal-title">Як додати ARUB токен до гаманця</h2>
                     
+                    <div style="background: rgba(255,215,0,0.15); padding: 20px; border-radius: 12px; margin-bottom: 25px; border: 2px solid var(--ukraine-yellow);">
+                        <h3 style="color: var(--ukraine-yellow); margin-bottom: 10px;">⚠️ ВАЖЛИВО: Sepolia Testnet</h3>
+                        <p style="color: white; margin: 0; line-height: 1.6;">
+                            Платформа працює на тестовій мережі <strong>Sepolia Testnet</strong>. 
+                            Переконайтеся, що ваш гаманець підключений до мережі Sepolia, інакше ви не побачите токени ARUB.
+                        </p>
+                    </div>
+                    
                     <div style="background: rgba(0,87,183,0.1); padding: 20px; border-radius: 12px; margin-bottom: 25px; border: 2px solid var(--ukraine-blue);">
                         <h3 style="color: white; margin-bottom: 15px;">📋 Інформація про токен</h3>
                         <div style="background: rgba(0,0,0,0.3); padding: 15px; border-radius: 8px;">
+                            <div style="margin-bottom: 10px;">
+                                <strong style="color: var(--primary);">Мережа:</strong> Sepolia Testnet
+                            </div>
                             <div style="margin-bottom: 10px;">
                                 <strong style="color: var(--primary);">Адреса контракту:</strong><br>
                                 <span style="color: var(--accent); word-break: break-all;">${CONFIG.TOKEN_ADDRESS}</span>
@@ -2526,6 +2542,7 @@
                                 🦊 MetaMask
                             </summary>
                             <ol style="margin-top: 15px; padding-left: 20px; color: var(--gray);">
+                                <li>⚠️ <strong>Спочатку переключіться на мережу "Sepolia test network"</strong></li>
                                 <li>Відкрийте MetaMask</li>
                                 <li>Перейдіть на вкладку "Assets" (Активи)</li>
                                 <li>Прокрутіть вниз і натисніть "Import tokens"</li>
@@ -2545,6 +2562,7 @@
                                 <li>Виберіть "Manage Crypto"</li>
                                 <li>Натисніть "+" у правому верхньому куті</li>
                                 <li>Виберіть "Ethereum" → "Add Custom Token"</li>
+                                <li>⚠️ Переключіться на мережу "Sepolia Testnet"</li>
                                 <li>Вставте адресу контракту</li>
                                 <li>Заповніть: Name: ARUB, Symbol: ARUB, Decimals: 6</li>
                                 <li>Натисніть "Done"</li>
@@ -2561,7 +2579,7 @@
                                 <li>Натисніть на "+" або "Add Asset"</li>
                                 <li>Виберіть "Token" → "Custom Token"</li>
                                 <li>Вставте адресу контракту</li>
-                                <li>Переконайтеся, що мережа "Ethereum"</li>
+                                <li>⚠️ Переконайтеся, що мережа "Sepolia Testnet"</li>
                                 <li>Натисніть "Add"</li>
                             </ol>
                         </details>
@@ -2603,7 +2621,7 @@
                                 <li>Перейдіть у розділ "Assets"</li>
                                 <li>Натисніть на "+" або "Add token"</li>
                                 <li>Виберіть "Custom token"</li>
-                                <li>Виберіть мережу "Ethereum"</li>
+                                <li>⚠️ Виберіть мережу "Sepolia Testnet"</li>
                                 <li>Вставте адресу контракту</li>
                                 <li>Натисніть "Add"</li>
                             </ol>
@@ -2701,11 +2719,11 @@
                 },
                 fees: {
                     title: '💳 Комісії платформи',
-                    text: 'Купівля ARUB: 0.5% комісія. Продаж ARUB: 1% комісія. Стейкінг: без комісій платформи (тільки gas Ethereum). Всі комісії йдуть на аудит, розвиток та оплату команді.'
+                    text: 'Купівля ARUB: 0.5% комісія. Продаж ARUB: 1% комісія. Стейкінг: без комісій платформи (тільки gas в мережі Sepolia). Всі комісії йдуть на аудит, розвиток та оплату команді.'
                 },
                 security: {
                     title: '🛡️ Безпека платформи',
-                    text: 'Всі операції відбуваються через перевірені смарт-контракти на Ethereum. Код повністю відкритий для аудиту. Ваші кошти завжди під вашим контролем. Ми не маємо доступу до ваших приватних ключів.'
+                    text: 'Всі операції відбуваються через перевірені смарт-контракти на Ethereum (Sepolia testnet). Код повністю відкритий для аудиту на Sepolia Etherscan. Ваші кошти завжди під вашим контролем. Ми не маємо доступу до ваших приватних ключів.'
                 },
                 withdraw: {
                     title: '💸 Виведення коштів',
