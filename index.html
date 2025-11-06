@@ -1019,12 +1019,102 @@
                 priority: 2
             },
             {
+                id: 'okx',
+                name: 'OKX Wallet',
+                icon: '⭕',
+                description: 'Web3 кошелек от OKX',
+                check: (p) => p.isOkxWallet || p.isOKExWallet,
+                installUrl: 'https://www.okx.com/web3',
+                priority: 2
+            },
+            {
+                id: 'binance',
+                name: 'Binance Wallet',
+                icon: '🟡',
+                description: 'Кошелек от Binance',
+                check: (p) => p.isBinance || p.isBinanceWallet || (p.constructor && p.constructor.name && p.constructor.name.includes('Binance')),
+                installUrl: 'https://www.binance.com/en/web3wallet',
+                priority: 2
+            },
+            {
                 id: 'brave',
                 name: 'Brave Wallet',
                 icon: '🦁',
                 description: 'Встроенный кошелек Brave',
                 check: (p) => p.isBraveWallet && !p.isUniswapWallet && !p.isBybitWallet,
                 installUrl: 'https://brave.com/wallet/',
+                priority: 2
+            },
+            {
+                id: 'rainbow',
+                name: 'Rainbow',
+                icon: '🌈',
+                description: 'Ethereum кошелек',
+                check: (p) => p.isRainbow,
+                installUrl: 'https://rainbow.me/',
+                priority: 2
+            },
+            {
+                id: 'phantom',
+                name: 'Phantom',
+                icon: '👻',
+                description: 'Multi-chain кошелек',
+                check: (p) => p.isPhantom && p.ethereum,
+                installUrl: 'https://phantom.app/',
+                priority: 2
+            },
+            {
+                id: 'zerion',
+                name: 'Zerion',
+                icon: '💎',
+                description: 'DeFi портфолио',
+                check: (p) => p.isZerion,
+                installUrl: 'https://zerion.io/',
+                priority: 2
+            },
+            {
+                id: 'frame',
+                name: 'Frame',
+                icon: '🖼️',
+                description: 'Десктоп кошелек',
+                check: (p) => p.isFrame,
+                installUrl: 'https://frame.sh/',
+                priority: 2
+            },
+            {
+                id: 'exodus',
+                name: 'Exodus',
+                icon: '💫',
+                description: 'Multi-asset кошелек',
+                check: (p) => p.isExodus,
+                installUrl: 'https://www.exodus.com/',
+                priority: 2
+            },
+            {
+                id: 'gate',
+                name: 'Gate.io Wallet',
+                icon: '🚪',
+                description: 'Web3 кошелек от Gate.io',
+                check: (p) => p.isGate || p.isGateWallet,
+                installUrl: 'https://www.gate.io/web3',
+                priority: 2
+            },
+            {
+                id: 'bitget',
+                name: 'Bitget Wallet',
+                icon: '🎯',
+                description: 'Multi-chain кошелек',
+                check: (p) => p.isBitKeep || p.isBitgetWallet,
+                installUrl: 'https://web3.bitget.com/',
+                priority: 2
+            },
+            {
+                id: 'tokenpocket',
+                name: 'TokenPocket',
+                icon: '🎒',
+                description: 'Multi-chain кошелек',
+                check: (p) => p.isTokenPocket,
+                installUrl: 'https://www.tokenpocket.pro/',
                 priority: 2
             },
             {
@@ -1099,6 +1189,50 @@
                         walletId = 'uniswap';
                         walletIcon = '🦄';
                         walletDescription = 'Кошелек от Uniswap';
+                    } else if (name.includes('okx')) {
+                        walletId = 'okx';
+                        walletIcon = '⭕';
+                        walletDescription = 'Web3 кошелек от OKX';
+                    } else if (name.includes('binance')) {
+                        walletId = 'binance';
+                        walletIcon = '🟡';
+                        walletDescription = 'Кошелек от Binance';
+                    } else if (name.includes('brave')) {
+                        walletId = 'brave';
+                        walletIcon = '🦁';
+                        walletDescription = 'Встроенный кошелек Brave';
+                    } else if (name.includes('rainbow')) {
+                        walletId = 'rainbow';
+                        walletIcon = '🌈';
+                        walletDescription = 'Ethereum кошелек';
+                    } else if (name.includes('phantom')) {
+                        walletId = 'phantom';
+                        walletIcon = '👻';
+                        walletDescription = 'Multi-chain кошелек';
+                    } else if (name.includes('zerion')) {
+                        walletId = 'zerion';
+                        walletIcon = '💎';
+                        walletDescription = 'DeFi портфолио';
+                    } else if (name.includes('frame')) {
+                        walletId = 'frame';
+                        walletIcon = '🖼️';
+                        walletDescription = 'Десктоп кошелек';
+                    } else if (name.includes('exodus')) {
+                        walletId = 'exodus';
+                        walletIcon = '💫';
+                        walletDescription = 'Multi-asset кошелек';
+                    } else if (name.includes('gate')) {
+                        walletId = 'gate';
+                        walletIcon = '🚪';
+                        walletDescription = 'Web3 кошелек от Gate.io';
+                    } else if (name.includes('bitget') || name.includes('bitkeep')) {
+                        walletId = 'bitget';
+                        walletIcon = '🎯';
+                        walletDescription = 'Multi-chain кошелек';
+                    } else if (name.includes('tokenpocket')) {
+                        walletId = 'tokenpocket';
+                        walletIcon = '🎒';
+                        walletDescription = 'Multi-chain кошелек';
                     }
                     
                     detected.push({
@@ -1213,6 +1347,66 @@
                         walletName = 'Uniswap Extension';
                         walletIcon = '🦄';
                         walletDescription = 'Кошелек от Uniswap';
+                    } else if (p.isOkxWallet || p.isOKExWallet) {
+                        walletId = 'okx';
+                        walletName = 'OKX Wallet';
+                        walletIcon = '⭕';
+                        walletDescription = 'Web3 кошелек от OKX';
+                    } else if (p.isBinance || p.isBinanceWallet) {
+                        walletId = 'binance';
+                        walletName = 'Binance Wallet';
+                        walletIcon = '🟡';
+                        walletDescription = 'Кошелек от Binance';
+                    } else if (p.isBraveWallet) {
+                        walletId = 'brave';
+                        walletName = 'Brave Wallet';
+                        walletIcon = '🦁';
+                        walletDescription = 'Встроенный кошелек Brave';
+                    } else if (p.isRainbow) {
+                        walletId = 'rainbow';
+                        walletName = 'Rainbow';
+                        walletIcon = '🌈';
+                        walletDescription = 'Ethereum кошелек';
+                    } else if (p.isPhantom) {
+                        walletId = 'phantom';
+                        walletName = 'Phantom';
+                        walletIcon = '👻';
+                        walletDescription = 'Multi-chain кошелек';
+                    } else if (p.isZerion) {
+                        walletId = 'zerion';
+                        walletName = 'Zerion';
+                        walletIcon = '💎';
+                        walletDescription = 'DeFi портфолио';
+                    } else if (p.isFrame) {
+                        walletId = 'frame';
+                        walletName = 'Frame';
+                        walletIcon = '🖼️';
+                        walletDescription = 'Десктоп кошелек';
+                    } else if (p.isExodus) {
+                        walletId = 'exodus';
+                        walletName = 'Exodus';
+                        walletIcon = '💫';
+                        walletDescription = 'Multi-asset кошелек';
+                    } else if (p.isGate || p.isGateWallet) {
+                        walletId = 'gate';
+                        walletName = 'Gate.io Wallet';
+                        walletIcon = '🚪';
+                        walletDescription = 'Web3 кошелек от Gate.io';
+                    } else if (p.isBitKeep || p.isBitgetWallet) {
+                        walletId = 'bitget';
+                        walletName = 'Bitget Wallet';
+                        walletIcon = '🎯';
+                        walletDescription = 'Multi-chain кошелек';
+                    } else if (p.isTokenPocket) {
+                        walletId = 'tokenpocket';
+                        walletName = 'TokenPocket';
+                        walletIcon = '🎒';
+                        walletDescription = 'Multi-chain кошелек';
+                    } else if (p.isTrust) {
+                        walletId = 'trust';
+                        walletName = 'Trust Wallet';
+                        walletIcon = '🛡️';
+                        walletDescription = 'Trust Wallet';
                     }
                     
                     if (walletId !== 'unknown') {
@@ -1234,15 +1428,46 @@
             console.log('Detected wallets:', detected.map(w => w.name));
             
             // Add not detected wallets for installation links
-            if (detected.length === 0 || !detected.find(w => w.name.includes('MetaMask'))) {
-                notDetected.push({
-                    id: 'metamask',
-                    name: 'MetaMask',
-                    icon: '🦊',
-                    description: 'Установите расширение',
-                    detected: false,
-                    installUrl: 'https://metamask.io/download/'
-                });
+            if (detected.length === 0) {
+                // No wallets at all - show top recommendations
+                notDetected.push(
+                    {
+                        id: 'metamask',
+                        name: 'MetaMask',
+                        icon: '🦊',
+                        description: 'Установите расширение',
+                        detected: false,
+                        installUrl: 'https://metamask.io/download/'
+                    },
+                    {
+                        id: 'coinbase',
+                        name: 'Coinbase Wallet',
+                        icon: '💼',
+                        description: 'Установите расширение',
+                        detected: false,
+                        installUrl: 'https://www.coinbase.com/wallet'
+                    },
+                    {
+                        id: 'rabby',
+                        name: 'Rabby Wallet',
+                        icon: '🐰',
+                        description: 'Установите расширение',
+                        detected: false,
+                        installUrl: 'https://rabby.io/'
+                    }
+                );
+            } else {
+                // Some wallets detected - suggest MetaMask if not present
+                if (!detected.find(w => w.name.includes('MetaMask'))) {
+                    notDetected.push({
+                        id: 'metamask',
+                        name: 'MetaMask',
+                        icon: '🦊',
+                        description: 'Установите расширение',
+                        detected: false,
+                        installUrl: 'https://metamask.io/download/'
+                    });
+                }
             }
             
             return { detected, notDetected };
@@ -1259,7 +1484,7 @@
                 container.innerHTML = `
                     <div class="no-wallets-msg">
                         <h3>Кошельки не обнаружены</h3>
-                        <p>Установите один из популярных Web3 кошельков:</p>
+                        <p>Установите один из популярных Web3 кошельков для Ethereum и Arbitrum:</p>
                         <div class="install-links">
                             <a href="https://metamask.io/download/" target="_blank" class="install-link">
                                 🦊 Установить MetaMask
@@ -1269,6 +1494,15 @@
                             </a>
                             <a href="https://rabby.io/" target="_blank" class="install-link">
                                 🐰 Установить Rabby Wallet
+                            </a>
+                            <a href="https://www.okx.com/web3" target="_blank" class="install-link">
+                                ⭕ Установить OKX Wallet
+                            </a>
+                            <a href="https://trustwallet.com/" target="_blank" class="install-link">
+                                🛡️ Установить Trust Wallet
+                            </a>
+                            <a href="https://rainbow.me/" target="_blank" class="install-link">
+                                🌈 Установить Rainbow
                             </a>
                         </div>
                     </div>
