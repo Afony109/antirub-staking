@@ -1238,7 +1238,7 @@
                     detected.push({
                         id: walletId + '_' + uuid.substring(0, 8),
                         name: info.name,
-                        icon: info.icon || walletIcon,
+                        icon: walletIcon, // Use emoji instead of info.icon (which may be base64)
                         description: walletDescription,
                         detected: true,
                         provider: provider,
@@ -1524,8 +1524,17 @@
                     }
                 }
                 
+                let iconHTML = '';
+                if (wallet.icon && wallet.icon.startsWith('data:')) {
+                    // It's a data URL - render as image
+                    iconHTML = `<img src="${wallet.icon}" alt="${wallet.name}" style="width: 40px; height: 40px; border-radius: 8px;">`;
+                } else {
+                    // It's an emoji or regular text
+                    iconHTML = wallet.icon || '💎';
+                }
+                
                 option.innerHTML = `
-                    <div class="wallet-icon">${wallet.icon}</div>
+                    <div class="wallet-icon">${iconHTML}</div>
                     <div class="wallet-details">
                         <div class="wallet-name">${wallet.name}</div>
                         <div class="wallet-description">${wallet.description}</div>
@@ -1545,8 +1554,17 @@
                     window.open(wallet.installUrl, '_blank');
                 };
                 
+                let iconHTML = '';
+                if (wallet.icon && wallet.icon.startsWith('data:')) {
+                    // It's a data URL - render as image
+                    iconHTML = `<img src="${wallet.icon}" alt="${wallet.name}" style="width: 40px; height: 40px; border-radius: 8px;">`;
+                } else {
+                    // It's an emoji or regular text
+                    iconHTML = wallet.icon || '💎';
+                }
+                
                 option.innerHTML = `
-                    <div class="wallet-icon">${wallet.icon}</div>
+                    <div class="wallet-icon">${iconHTML}</div>
                     <div class="wallet-details">
                         <div class="wallet-name">${wallet.name}</div>
                         <div class="wallet-description">Не установлен - нажмите для установки</div>
