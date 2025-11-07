@@ -1685,6 +1685,76 @@
         }
         
         // ==========================================
+        // PUBLIC STATS (NO WALLET NEEDED)
+        // ==========================================
+        async function updatePublicStats() {
+            try {
+                console.log('🔍 Оновлення публічної статистики...');
+                
+                // Створюємо read-only provider (без підключення гаманця)
+                const publicProvider = new ethers.providers.JsonRpcProvider('https://rpc.sepolia.org');
+                
+                // ABI для read-only функцій
+                const TOKEN_ABI_MINIMAL = [
+                    'function balanceOf(address) view returns (uint256)',
+                    'function getPrice() view returns (uint256)'
+                ];
+                
+                const STAKING_ABI_MINIMAL = [
+                    'function getTotalStaked() view returns (uint256)'
+                ];
+                
+                // Створюємо контракти без signer
+                const publicTokenContract = new ethers.Contract(
+                    CONFIG.TOKEN_ADDRESS,
+                    TOKEN_ABI_MINIMAL,
+                    publicProvider
+                );
+                
+                const publicStakingContract = new ethers.Contract(
+                    CONFIG.STAKING_ADDRESS,
+                    STAKING_ABI_MINIMAL,
+                    publicProvider
+                );
+                
+                // Отримуємо загальну кількість застейканих токенів
+                const totalStaked = await publicStakingContract.getTotalStaked()
+                    .catch(() => ethers.BigNumber.from(0));
+                
+                const totalStakedArub = await publicTokenContract.balanceOf(CONFIG.STAKING_ADDRESS)
+                    .catch(() => ethers.BigNumber.from(0));
+                
+                // Отримуємо ціну ARUB
+                const arubPrice = await publicTokenContract.getPrice()
+                    .catch(() => ethers.BigNumber.from(0));
+                
+                // Оновлюємо UI
+                document.getElementById('totalStaked').textContent = 
+                    `$${ethers.utils.formatUnits(totalStaked, 6)}`;
+                
+                document.getElementById('totalStakedArub').textContent = 
+                    ethers.utils.formatUnits(totalStakedArub, 6);
+                
+                if (!arubPrice.eq(0)) {
+                    document.getElementById('arubPrice').textContent = 
+                        `$${ethers.utils.formatUnits(arubPrice, 6)}`;
+                } else {
+                    document.getElementById('arubPrice').textContent = '—';
+                }
+                
+                console.log('✅ Публічна статистика оновлена:', {
+                    'Всього застейкано USDT': ethers.utils.formatUnits(totalStaked, 6),
+                    'Всього застейкано ARUB': ethers.utils.formatUnits(totalStakedArub, 6),
+                    'Ціна ARUB': arubPrice.eq(0) ? 'N/A' : ethers.utils.formatUnits(arubPrice, 6)
+                });
+                
+            } catch (error) {
+                console.warn('⚠️ Помилка оновлення публічної статистики:', error);
+                // Не показуємо помилку користувачу, просто залишаємо значення за замовчуванням
+            }
+        }
+        
+        // ==========================================
         // WALLET CONNECTION
         // ==========================================
         async function connectWallet() {
@@ -3249,9 +3319,17 @@
             await new Promise(resolve => setTimeout(resolve, 100));
             console.log('Отримано EIP-6963 провайдерів:', discoveredProviders.size);
             
+            // Оновлюємо курс USDT/RUB
             await fetchUsdtRubRate();
             
+            // Оновлюємо публічну статистику (БЕЗ підключення гаманця)
+            await updatePublicStats();
+            
+            // Періодично оновлюємо курс
             setInterval(fetchUsdtRubRate, 300000);
+            
+            // Періодично оновлюємо публічну статистику
+            setInterval(updatePublicStats, 60000); // Кожну хвилину
             
             // Show welcome tooltip after 3 seconds
             setTimeout(() => {
