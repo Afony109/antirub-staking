@@ -1197,7 +1197,7 @@
     
     <!-- Stats Section -->
     <section class="stats-section">
-        <div class="stats-grid">
+        <div class="stats-grid" style="grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));">
             <div class="stat-card">
                 <div class="stat-value" id="arubPrice">—</div>
                 <div class="stat-label">Ціна 1 ARUB (USDT)</div>
@@ -1205,6 +1205,10 @@
             <div class="stat-card">
                 <div class="stat-value" id="totalStaked">0</div>
                 <div class="stat-label">Всього застейкано (USDT)</div>
+            </div>
+            <div class="stat-card" style="background: linear-gradient(135deg, rgba(255,215,0,0.1), rgba(0,87,183,0.1));">
+                <div class="stat-value" id="totalStakedArub" style="color: var(--ukraine-yellow);">0</div>
+                <div class="stat-label">Всього застейкано (ARUB)</div>
             </div>
             <div class="stat-card">
                 <div class="stat-value" id="rubDevaluation">-65%</div>
@@ -1921,6 +1925,8 @@
                 
                 document.getElementById('totalStaked').textContent = 
                     `$${ethers.utils.formatUnits(totalStaked, 6)}`;
+                document.getElementById('totalStakedArub').textContent = 
+                    ethers.utils.formatUnits(totalStakedArub, 6);
             } catch (error) {
                 console.warn('Не вдалося отримати баланси для стейкінгу, показуємо 0:', error);
                 // Continue with zero balances
