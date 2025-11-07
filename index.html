@@ -1841,21 +1841,42 @@
             try {
                 // Спробуємо використати getUserInfo якщо доступна
                 try {
+                    console.log('🔍 Спроба отримати дані через getUserInfo...');
                     const userInfo = await stakingContract.getUserInfo(userAddress);
                     stakedBalance = userInfo.stakedUsdt || userInfo[0];
                     stakedArubBalance = userInfo.stakedArub || userInfo[1];
                     rewards = userInfo.rewards || userInfo[2];
+                    console.log('✅ getUserInfo успішно:', {
+                        stakedUsdt: ethers.utils.formatUnits(stakedBalance, 6),
+                        stakedArub: ethers.utils.formatUnits(stakedArubBalance, 6),
+                        rewards: ethers.utils.formatUnits(rewards, 6)
+                    });
                 } catch (e) {
+                    console.log('⚠️ getUserInfo не працює, використовуємо окремі виклики:', e.message);
                     // Якщо getUserInfo не працює, використовуємо окремі виклики
                     const balances = await Promise.all([
-                        stakingContract.getStakedBalance(userAddress).catch(() => ethers.BigNumber.from(0)),
-                        stakingContract.getStakedArubBalance(userAddress).catch(() => ethers.BigNumber.from(0)),
-                        stakingContract.getRewards(userAddress).catch(() => ethers.BigNumber.from(0))
+                        stakingContract.getStakedBalance(userAddress).catch(err => {
+                            console.log('❌ getStakedBalance помилка:', err.message);
+                            return ethers.BigNumber.from(0);
+                        }),
+                        stakingContract.getStakedArubBalance(userAddress).catch(err => {
+                            console.log('❌ getStakedArubBalance помилка:', err.message);
+                            return ethers.BigNumber.from(0);
+                        }),
+                        stakingContract.getRewards(userAddress).catch(err => {
+                            console.log('❌ getRewards помилка:', err.message);
+                            return ethers.BigNumber.from(0);
+                        })
                     ]);
                     
                     stakedBalance = balances[0];
                     stakedArubBalance = balances[1];
                     rewards = balances[2];
+                    console.log('✅ Окремі виклики виконані:', {
+                        stakedUsdt: ethers.utils.formatUnits(stakedBalance, 6),
+                        stakedArub: ethers.utils.formatUnits(stakedArubBalance, 6),
+                        rewards: ethers.utils.formatUnits(rewards, 6)
+                    });
                 }
                 
                 // Отримуємо баланси токенів
@@ -1887,10 +1908,17 @@
                     '</p>' +
                 '</div>' : '';
             
-            // Інформаційна картка з застейканими токенами
-            const stakedInfoCard = (!stakedBalance.eq(0) || !stakedArubBalance.eq(0) || !rewards.eq(0)) ?
+            // Інформаційна картка з застейканими токенами - ЗАВЖДИ ПОКАЗУЄТЬСЯ
+            const hasAnyStaked = !stakedBalance.eq(0) || !stakedArubBalance.eq(0) || !rewards.eq(0);
+            const stakedInfoCard = 
                 '<div style="background: linear-gradient(135deg, rgba(0,87,183,0.2), rgba(255,215,0,0.2)); padding: 30px; border-radius: 20px; margin-bottom: 30px; border: 3px solid var(--ukraine-blue);">' +
-                    '<h3 style="color: var(--ukraine-yellow); margin-bottom: 25px; font-size: 1.5em; text-align: center;">💰 Ваші застейкані активи</h3>' +
+                    '<div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 25px;">' +
+                        '<h3 style="color: var(--ukraine-yellow); font-size: 1.5em; margin: 0;">💰 Ваші застейкані активи</h3>' +
+                        '<button onclick="updateUI(); showNotification(\'🔄 Оновлення даних...\', \'info\');" ' +
+                                'style="padding: 8px 16px; background: rgba(0,87,183,0.5); border: 1px solid var(--ukraine-blue); border-radius: 8px; color: white; cursor: pointer; font-size: 0.9em;">' +
+                            '🔄 Оновити' +
+                        '</button>' +
+                    '</div>' +
                     '<div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 20px;">' +
                         '<div style="background: rgba(0,0,0,0.3); padding: 20px; border-radius: 12px; text-align: center;">' +
                             '<div style="color: var(--gray); font-size: 0.9em; margin-bottom: 8px;">💵 USDT Застейкано</div>' +
@@ -1912,7 +1940,13 @@
                         '<p style="color: white; margin: 0; font-size: 0.95em;">📊 Загальна вартість застейканих активів: <strong style="color: var(--ukraine-yellow); font-size: 1.2em;">' + 
                         (parseFloat(ethers.utils.formatUnits(stakedBalance, 6)) + parseFloat(ethers.utils.formatUnits(stakedArubBalance, 6)) * (currentRate || 81.22)).toFixed(2) + ' USDT</strong></p>' +
                     '</div>' +
-                '</div>' : '';
+                    (!hasAnyStaked ? 
+                        '<div style="margin-top: 15px; padding: 12px; background: rgba(255,215,0,0.1); border-radius: 8px; text-align: center;">' +
+                            '<p style="color: var(--gray); margin: 0; font-size: 0.9em;">💡 Застейкайте USDT або ARUB нижче щоб почати заробляти винагороди!</p>' +
+                            '<p style="color: var(--gray); margin: 8px 0 0 0; font-size: 0.85em;">🔍 Якщо ви вже застейкали токени, натисніть "Оновити" вгорі або відкрийте консоль (F12) для діагностики.</p>' +
+                        '</div>' : ''
+                    ) +
+                '</div>';
             
             const stakingInterface = document.getElementById('stakingInterface');
             stakingInterface.innerHTML = testModeWarningStaking + stakedInfoCard + `
