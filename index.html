@@ -1843,8 +1843,35 @@
                 try {
                     console.log('🔍 Спроба отримати дані через getUserInfo...');
                     const userInfo = await stakingContract.getUserInfo(userAddress);
-                    stakedBalance = userInfo.stakedUsdt || userInfo[0];
-                    stakedArubBalance = userInfo.stakedArub || userInfo[1];
+                    
+                    // WORKAROUND: Контракт має баг - він зберігає ARUB в поле stakedUsdt!
+                    // Перевіряємо чи є ARUB токени в контракті
+                    const arubInContract = await tokenContract.balanceOf(CONFIG.STAKING_ADDRESS);
+                    const usdtInContract = await usdtContract.balanceOf(CONFIG.STAKING_ADDRESS);
+                    
+                    const rawStakedUsdt = userInfo.stakedUsdt || userInfo[0];
+                    const rawStakedArub = userInfo.stakedArub || userInfo[1];
+                    
+                    console.log('🔍 Перевірка контракту:', {
+                        'ARUB в контракті': ethers.utils.formatUnits(arubInContract, 6),
+                        'USDT в контракті': ethers.utils.formatUnits(usdtInContract, 6),
+                        'stakedUsdt з getUserInfo': ethers.utils.formatUnits(rawStakedUsdt, 6),
+                        'stakedArub з getUserInfo': ethers.utils.formatUnits(rawStakedArub, 6)
+                    });
+                    
+                    // Якщо є ARUB в контракті але stakedArub = 0, значить баг - міняємо місцями
+                    if (!arubInContract.eq(0) && rawStakedArub.eq(0) && !rawStakedUsdt.eq(0)) {
+                        console.log('⚠️ ВИЯВЛЕНО БАГ КОНТРАКТУ: ARUB зберігається в stakedUsdt!');
+                        console.log('🔄 Автоматично виправляю: міняю місцями...');
+                        stakedBalance = ethers.BigNumber.from(0); // USDT насправді 0
+                        stakedArubBalance = rawStakedUsdt; // Це ARUB!
+                        console.log('✅ Виправлено! ARUB:', ethers.utils.formatUnits(stakedArubBalance, 6));
+                    } else {
+                        // Нормальний випадок
+                        stakedBalance = rawStakedUsdt;
+                        stakedArubBalance = rawStakedArub;
+                    }
+                    
                     rewards = userInfo.rewards || userInfo[2];
                     console.log('✅ getUserInfo успішно:', {
                         stakedUsdt: ethers.utils.formatUnits(stakedBalance, 6),
