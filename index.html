@@ -1921,7 +1921,10 @@
                 
                 // Отримуємо загальну застейкану суму
                 totalStaked = await stakingContract.getTotalStaked().catch(() => ethers.BigNumber.from(0));
-                totalStakedArub = await stakingContract.getTotalStakedArub().catch(() => ethers.BigNumber.from(0));
+                
+                // WORKAROUND: getTotalStakedArub() не працює, тому читаємо баланс ARUB токенів в контракті напряму
+                totalStakedArub = await tokenContract.balanceOf(CONFIG.STAKING_ADDRESS).catch(() => ethers.BigNumber.from(0));
+                console.log('📊 ARUB в стейкінг контракті:', ethers.utils.formatUnits(totalStakedArub, 6));
                 
                 document.getElementById('totalStaked').textContent = 
                     `$${ethers.utils.formatUnits(totalStaked, 6)}`;
