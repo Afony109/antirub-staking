@@ -1691,7 +1691,13 @@
             try {
                 console.log('🔍 Оновлення публічної статистики...');
                 
-                // Створюємо read-only provider (без підключення гаманця)
+                // Ціна ARUB = Курс USDT/RUB (логіка проекту)
+                // Не потребує RPC запитів - швидко і без помилок
+                if (currentRate) {
+                    document.getElementById('arubPrice').textContent = `$${currentRate.toFixed(2)}`;
+                }
+                
+                // Для отримання кількості застейканих токенів використовуємо RPC
                 // Використовуємо Alchemy public endpoint (підтримує CORS)
                 const publicProvider = new ethers.providers.JsonRpcProvider(
                     'https://eth-sepolia.g.alchemy.com/v2/demo'
@@ -1699,8 +1705,7 @@
                 
                 // ABI для read-only функцій
                 const TOKEN_ABI_MINIMAL = [
-                    'function balanceOf(address) view returns (uint256)',
-                    'function getPrice() view returns (uint256)'
+                    'function balanceOf(address) view returns (uint256)'
                 ];
                 
                 const STAKING_ABI_MINIMAL = [
@@ -1727,24 +1732,6 @@
                 const totalStakedArub = await publicTokenContract.balanceOf(CONFIG.STAKING_ADDRESS)
                     .catch(() => ethers.BigNumber.from(0));
                 
-                // Ціна ARUB = Курс USDT/RUB (логіка проекту)
-                // Антируб дорожчає разом з рублем
-                const arubPriceFromRate = currentRate ? currentRate.toFixed(2) : null;
-                
-                // Спробуємо отримати ціну з контракту (якщо працює)
-                let arubPriceFromContract = null;
-                try {
-                    const priceFromContract = await publicTokenContract.getPrice();
-                    if (!priceFromContract.eq(0)) {
-                        arubPriceFromContract = ethers.utils.formatUnits(priceFromContract, 6);
-                    }
-                } catch (e) {
-                    // getPrice() не працює в контракті
-                }
-                
-                // Пріоритет: контракт → курс
-                const finalArubPrice = arubPriceFromContract || arubPriceFromRate;
-                
                 // Оновлюємо UI
                 document.getElementById('totalStaked').textContent = 
                     `$${ethers.utils.formatUnits(totalStaked, 6)}`;
@@ -1752,23 +1739,18 @@
                 document.getElementById('totalStakedArub').textContent = 
                     ethers.utils.formatUnits(totalStakedArub, 6);
                 
-                if (finalArubPrice) {
-                    document.getElementById('arubPrice').textContent = `$${finalArubPrice}`;
-                } else {
-                    document.getElementById('arubPrice').textContent = '—';
-                }
-                
                 console.log('✅ Публічна статистика оновлена:', {
                     'Всього застейкано USDT': ethers.utils.formatUnits(totalStaked, 6),
                     'Всього застейкано ARUB': ethers.utils.formatUnits(totalStakedArub, 6),
-                    'Ціна ARUB (з контракту)': arubPriceFromContract || 'N/A',
-                    'Ціна ARUB (з курсу)': arubPriceFromRate || 'N/A',
-                    'Ціна ARUB (фінальна)': finalArubPrice || 'N/A'
+                    'Ціна ARUB (з курсу)': currentRate ? currentRate.toFixed(2) : 'N/A'
                 });
                 
             } catch (error) {
                 console.warn('⚠️ Помилка оновлення публічної статистики:', error);
-                // Не показуємо помилку користувачу, просто залишаємо значення за замовчуванням
+                // Показуємо хоча б ціну з курсу
+                if (currentRate) {
+                    document.getElementById('arubPrice').textContent = `$${currentRate.toFixed(2)}`;
+                }
             }
         }
         
