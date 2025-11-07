@@ -1692,7 +1692,10 @@
                 console.log('🔍 Оновлення публічної статистики...');
                 
                 // Створюємо read-only provider (без підключення гаманця)
-                const publicProvider = new ethers.providers.JsonRpcProvider('https://rpc.sepolia.org');
+                // Використовуємо Alchemy public endpoint (підтримує CORS)
+                const publicProvider = new ethers.providers.JsonRpcProvider(
+                    'https://eth-sepolia.g.alchemy.com/v2/demo'
+                );
                 
                 // ABI для read-only функцій
                 const TOKEN_ABI_MINIMAL = [
