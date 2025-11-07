@@ -1727,9 +1727,23 @@
                 const totalStakedArub = await publicTokenContract.balanceOf(CONFIG.STAKING_ADDRESS)
                     .catch(() => ethers.BigNumber.from(0));
                 
-                // Отримуємо ціну ARUB
-                const arubPrice = await publicTokenContract.getPrice()
-                    .catch(() => ethers.BigNumber.from(0));
+                // Ціна ARUB = Курс USDT/RUB (логіка проекту)
+                // Антируб дорожчає разом з рублем
+                const arubPriceFromRate = currentRate ? currentRate.toFixed(2) : null;
+                
+                // Спробуємо отримати ціну з контракту (якщо працює)
+                let arubPriceFromContract = null;
+                try {
+                    const priceFromContract = await publicTokenContract.getPrice();
+                    if (!priceFromContract.eq(0)) {
+                        arubPriceFromContract = ethers.utils.formatUnits(priceFromContract, 6);
+                    }
+                } catch (e) {
+                    // getPrice() не працює в контракті
+                }
+                
+                // Пріоритет: контракт → курс
+                const finalArubPrice = arubPriceFromContract || arubPriceFromRate;
                 
                 // Оновлюємо UI
                 document.getElementById('totalStaked').textContent = 
@@ -1738,9 +1752,8 @@
                 document.getElementById('totalStakedArub').textContent = 
                     ethers.utils.formatUnits(totalStakedArub, 6);
                 
-                if (!arubPrice.eq(0)) {
-                    document.getElementById('arubPrice').textContent = 
-                        `$${ethers.utils.formatUnits(arubPrice, 6)}`;
+                if (finalArubPrice) {
+                    document.getElementById('arubPrice').textContent = `$${finalArubPrice}`;
                 } else {
                     document.getElementById('arubPrice').textContent = '—';
                 }
@@ -1748,7 +1761,9 @@
                 console.log('✅ Публічна статистика оновлена:', {
                     'Всього застейкано USDT': ethers.utils.formatUnits(totalStaked, 6),
                     'Всього застейкано ARUB': ethers.utils.formatUnits(totalStakedArub, 6),
-                    'Ціна ARUB': arubPrice.eq(0) ? 'N/A' : ethers.utils.formatUnits(arubPrice, 6)
+                    'Ціна ARUB (з контракту)': arubPriceFromContract || 'N/A',
+                    'Ціна ARUB (з курсу)': arubPriceFromRate || 'N/A',
+                    'Ціна ARUB (фінальна)': finalArubPrice || 'N/A'
                 });
                 
             } catch (error) {
