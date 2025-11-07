@@ -1186,8 +1186,8 @@
             <button class="btn-primary" onclick="document.getElementById('staking').scrollIntoView({behavior: 'smooth'})">
                 🔒 Почати стейкінг
             </button>
-            <button class="btn-secondary" onclick="addTokenToWallet()" style="background: linear-gradient(45deg, rgba(0,87,183,0.3), rgba(255,215,0,0.3)); border: 2px solid var(--ukraine-yellow);">
-                🦊 Додати ARUB до MetaMask
+            <button class="btn-secondary" onclick="addTokenToWalletWithChoice()" style="background: linear-gradient(45deg, rgba(0,87,183,0.3), rgba(255,215,0,0.3)); border: 2px solid var(--ukraine-yellow);">
+                🦊 Додати ARUB до гаманця
             </button>
             <button class="btn-secondary" onclick="document.getElementById('how-it-works').scrollIntoView({behavior: 'smooth'})">
                 Як це працює
@@ -1622,7 +1622,7 @@
         // ==========================================
         const CONFIG = {
             USDT_ADDRESS: '0x7169D38820dfd117C3FA1f22a697dBA58d90BA06', // USDT on Sepolia
-            TOKEN_ADDRESS: '0x1234567890123456789012345678901234567890', // Replace with actual ARUB token address on Sepolia
+            TOKEN_ADDRESS: '0xe4A39E3D2C64C2D3a1d9c7C6B9eB63db55277b71', // ARUB token address on Sepolia
             STAKING_ADDRESS: '0x0987654321098765432109876543210987654321', // Replace with actual staking contract on Sepolia
             NETWORK: {
                 chainId: '0xaa36a7', // Sepolia testnet chainId (11155111 in decimal)
@@ -2309,12 +2309,15 @@
                                 
                                 <div style="margin-top: 15px; padding: 10px; background: rgba(0,87,183,0.2); border-radius: 6px;">
                                     <p style="color: var(--gray); font-size: 0.85em; margin: 0 0 10px 0; line-height: 1.5;">
-                                        💡 <strong style="color: white;">Для додавання в MetaMask:</strong> Скопіюйте адресу ARUB та додайте через "Import tokens"
+                                        💡 <strong style="color: white;">Швидке додавання:</strong> Натисніть кнопку нижче або скопіюйте адресу та додайте вручну через "Import tokens"
                                     </p>
                                     <button onclick="addTokenToWallet()" 
                                             style="width: 100%; padding: 12px; background: linear-gradient(45deg, var(--ukraine-blue), var(--ukraine-yellow)); border: none; border-radius: 8px; color: white; font-weight: 600; cursor: pointer; font-size: 0.95em;">
-                                        🦊 Додати ARUB автоматично
+                                        🦊 Додати ARUB до гаманця
                                     </button>
+                                    <p style="color: var(--gray); font-size: 0.75em; margin: 10px 0 0 0; text-align: center;">
+                                        Якщо відкривається неправильний гаманець - додайте токен вручну (скопіюйте адресу вище)
+                                    </p>
                                 </div>
                             </div>
                         </div>
@@ -2714,14 +2717,36 @@
         // ==========================================
         async function addTokenToWallet() {
             try {
-                // Перевіряємо чи є ethereum provider
-                if (typeof window.ethereum === 'undefined') {
-                    showNotification('❌ MetaMask не знайдено. Встановіть MetaMask спочатку.', 'error');
+                // Спробуємо використати поточний підключений провайдер
+                let providerToUse = null;
+                
+                if (provider && provider.provider) {
+                    // Використовуємо підключений провайдер
+                    providerToUse = provider.provider;
+                } else if (discoveredProviders.size > 0) {
+                    // Шукаємо MetaMask в discovered providers
+                    for (const [uuid, providerDetail] of discoveredProviders) {
+                        if (providerDetail.info.name.toLowerCase().includes('metamask')) {
+                            providerToUse = providerDetail.provider;
+                            break;
+                        }
+                    }
+                    
+                    // Якщо MetaMask не знайдено, використовуємо перший доступний
+                    if (!providerToUse) {
+                        providerToUse = Array.from(discoveredProviders.values())[0].provider;
+                    }
+                } else if (window.ethereum) {
+                    // Fallback на window.ethereum
+                    providerToUse = window.ethereum;
+                } else {
+                    showNotification('❌ Гаманець не знайдено. Підключіть гаманець спочатку.', 'error');
+                    showWalletGuide(); // Показуємо інструкцію
                     return;
                 }
                 
                 // Додаємо токен через wallet_watchAsset
-                const wasAdded = await window.ethereum.request({
+                const wasAdded = await providerToUse.request({
                     method: 'wallet_watchAsset',
                     params: {
                         type: 'ERC20',
@@ -2735,13 +2760,106 @@
                 });
                 
                 if (wasAdded) {
-                    showNotification('✅ Токен ARUB успішно додано до MetaMask!', 'success');
+                    showNotification('✅ Токен ARUB успішно додано до гаманця!', 'success');
                 } else {
                     showNotification('ℹ️ Додавання токена скасовано', 'info');
                 }
             } catch (error) {
                 console.error('Error adding token:', error);
-                showNotification('❌ Помилка додавання токена', 'error');
+                
+                // Якщо помилка - показуємо інструкцію як додати вручну
+                showNotification('⚠️ Не вдалося додати автоматично. Показуємо інструкцію...', 'info');
+                setTimeout(() => {
+                    showWalletGuide();
+                }, 1500);
+            }
+        }
+        
+        // Функція для вибору гаманця і додавання токена
+        async function addTokenToWalletWithChoice() {
+            if (discoveredProviders.size === 0) {
+                showNotification('❌ Гаманці не знайдені. Встановіть MetaMask або інший гаманець.', 'error');
+                return;
+            }
+            
+            // Якщо тільки один гаманець - використовуємо його
+            if (discoveredProviders.size === 1) {
+                await addTokenToWallet();
+                return;
+            }
+            
+            // Показуємо вибір гаманця
+            const modal = document.createElement('div');
+            modal.className = 'wallet-modal';
+            
+            let walletsHTML = '';
+            for (const [uuid, providerDetail] of discoveredProviders) {
+                walletsHTML += `
+                    <div class="wallet-option" onclick="addTokenToSpecificWallet('${uuid}'); this.closest('.wallet-modal').remove();">
+                        <div class="wallet-icon">${providerDetail.info.icon ? `<img src="${providerDetail.info.icon}" style="width: 40px; height: 40px;">` : '💼'}</div>
+                        <div class="wallet-name">${providerDetail.info.name}</div>
+                    </div>
+                `;
+            }
+            
+            modal.innerHTML = `
+                <div class="wallet-modal-content" style="max-width: 500px;">
+                    <h2 class="wallet-modal-title">Виберіть гаманець</h2>
+                    <p style="color: var(--gray); text-align: center; margin-bottom: 30px;">
+                        У вас встановлено кілька гаманців. Виберіть в який додати токен ARUB:
+                    </p>
+                    <div class="wallet-list">
+                        ${walletsHTML}
+                    </div>
+                    <div style="margin-top: 25px; text-align: center;">
+                        <button onclick="this.closest('.wallet-modal').remove(); showWalletGuide();" 
+                                style="padding: 12px 30px; background: var(--ukraine-blue); border: none; border-radius: 12px; color: white; cursor: pointer; font-size: 1em;">
+                            📋 Додати вручну
+                        </button>
+                    </div>
+                </div>
+            `;
+            
+            document.body.appendChild(modal);
+            
+            modal.addEventListener('click', (e) => {
+                if (e.target === modal) {
+                    modal.remove();
+                }
+            });
+        }
+        
+        // Додавання токена до конкретного гаманця
+        async function addTokenToSpecificWallet(uuid) {
+            try {
+                const providerDetail = discoveredProviders.get(uuid);
+                if (!providerDetail) {
+                    showNotification('❌ Гаманець не знайдено', 'error');
+                    return;
+                }
+                
+                const wasAdded = await providerDetail.provider.request({
+                    method: 'wallet_watchAsset',
+                    params: {
+                        type: 'ERC20',
+                        options: {
+                            address: CONFIG.TOKEN_ADDRESS,
+                            symbol: 'ARUB',
+                            decimals: 6,
+                            image: 'https://afony109.github.io/antirub-staking/logo.png'
+                        },
+                    },
+                });
+                
+                if (wasAdded) {
+                    showNotification(`✅ Токен ARUB додано до ${providerDetail.info.name}!`, 'success');
+                } else {
+                    showNotification('ℹ️ Додавання токена скасовано', 'info');
+                }
+            } catch (error) {
+                console.error('Error adding token to specific wallet:', error);
+                showNotification('⚠️ Не вдалося додати. Спробуйте вручну.', 'error');
+                setTimeout(() => showWalletGuide(), 1500);
             }
         }
         
@@ -2862,6 +2980,25 @@
                                 <li>Вставте адресу контракту</li>
                                 <li>Натисніть "Import"</li>
                             </ol>
+                        </details>
+                        
+                        <details style="margin-bottom: 15px; background: var(--card-bg); padding: 15px; border-radius: 10px; border: 1px solid rgba(0,87,183,0.3);">
+                            <summary style="cursor: pointer; font-weight: 600; color: white; padding: 5px;">
+                                🐉 Bybit Wallet
+                            </summary>
+                            <ol style="margin-top: 15px; padding-left: 20px; color: var(--gray);">
+                                <li>⚠️ <strong>Спочатку переключіться на мережу "Sepolia"</strong></li>
+                                <li>Відкрийте Bybit Wallet</li>
+                                <li>Перейдіть на вкладку "Tokens" або "Assets"</li>
+                                <li>Натисніть "+" або "Add Token"</li>
+                                <li>Виберіть "Custom Token"</li>
+                                <li>Вставте адресу контракту: <code style="color: var(--accent);">${CONFIG.TOKEN_ADDRESS}</code></li>
+                                <li>Symbol: ARUB, Decimals: 6</li>
+                                <li>Натисніть "Add" або "Confirm"</li>
+                            </ol>
+                            <p style="margin-top: 10px; padding: 10px; background: rgba(255,215,0,0.1); border-radius: 6px; color: var(--gray); font-size: 0.9em;">
+                                💡 <strong style="color: white;">Важливо:</strong> Bybit Wallet повинен бути підключений до Sepolia testnet, інакше токен не з'явиться!
+                            </p>
                         </details>
                         
                         <details style="margin-bottom: 15px; background: var(--card-bg); padding: 15px; border-radius: 10px; border: 1px solid rgba(0,87,183,0.3);">
