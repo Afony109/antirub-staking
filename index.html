@@ -1758,7 +1758,7 @@
                             <div class="icon">💬</div>
                             <div class="label">Discord</div>
                         </a>
-                        <a href="/cdn-cgi/l/email-protection#52212722223d202612333c263b2027307c3b3d" class="contact-method">
+                        <a href="/cdn-cgi/l/email-protection#fa898f8a8a95888eba9b948e93888f98d49395" class="contact-method">
                             <div class="icon">📧</div>
                             <div class="label">Email</div>
                         </a>
@@ -1901,18 +1901,15 @@
         // ==========================================
         async function connectWallet() {
             try {
-                console.log('🔵 Starting wallet connection...');
                 let selectedProvider = null;
                 
                 if (discoveredProviders.size > 0) {
-                    console.log('🔵 Found', discoveredProviders.size, 'providers via EIP-6963');
                     if (discoveredProviders.size === 1) {
                         selectedProvider = Array.from(discoveredProviders.values())[0].provider;
                     } else {
                         selectedProvider = await showWalletSelector();
                     }
                 } else if (window.ethereum) {
-                    console.log('🔵 Using window.ethereum');
                     selectedProvider = window.ethereum;
                 } else {
                     showNotification('❌ Крипто-гаманець не знайдено. Будь ласка, встановіть MetaMask або інший Web3 гаманець.', 'error');
@@ -1920,35 +1917,63 @@
                 }
                 
                 if (!selectedProvider) {
-                    console.log('❌ No provider selected');
                     return;
                 }
                 
-                console.log('🔵 Creating Web3Provider...');
                 provider = new ethers.providers.Web3Provider(selectedProvider);
                 
-                console.log('🔵 Checking network...');
                 const network = await provider.getNetwork();
-                console.log('🔵 Current network:', network.chainId, 'Expected:', parseInt(CONFIG.NETWORK.chainId, 16));
                 const expectedChainId = parseInt(CONFIG.NETWORK.chainId, 16); // 11155111 for Sepolia
                 if (network.chainId !== expectedChainId) {
-                    console.log('🔵 Switching to Sepolia...');
                     await switchToEthereum(selectedProvider);
                 }
                 
-                console.log('🔵 Requesting accounts...');
                 const accounts = await provider.send('eth_requestAccounts', []);
                 userAddress = accounts[0];
-                console.log('🔵 Connected address:', userAddress);
-                
-                console.log('🔵 Getting signer...');
                 signer = provider.getSigner();
                 
-                console.log('🔵 Initializing contracts...');
-                initializeContracts();
-                console.log('🔵 Contracts initialized');
+                // Initialize contracts
+                const USDT_ABI = [
+                    'function balanceOf(address owner) view returns (uint256)',
+                    'function transfer(address to, uint256 amount) returns (bool)',
+                    'function approve(address spender, uint256 amount) returns (bool)',
+                    'function allowance(address owner, address spender) view returns (uint256)',
+                    'function decimals() view returns (uint8)',
+                    'function totalSupply() view returns (uint256)',
+                    'function claimFromFaucet() external',
+                    'function mint(uint256 amount) external',
+                    'function canClaimFromFaucet(address user) view returns (bool canClaim, uint256 timeUntilNextClaim)'
+                ];
                 
-                console.log('🔵 Updating UI...');
+                const STAKING_ABI = [
+                    'function stake(uint256 amount) external',
+                    'function stakeArub(uint256 amount) external',
+                    'function unstake(uint256 amount) external',
+                    'function getStakedBalance(address user) view returns (uint256)',
+                    'function getTotalStaked() view returns (uint256)',
+                    'function getRewards(address user) view returns (uint256)',
+                    'function claimRewards() external',
+                    'function getAPYTiers() view returns (uint256[] memory thresholds, uint256[] memory apys)',
+                    'function getCurrentAPYTier() view returns (uint256 tier, uint256 threshold, uint256 apy, string memory description)',
+                    'function getNextAPYTier() view returns (uint256 nextThreshold, uint256 nextAPY, uint256 remainingToNextTier)',
+                    'function currentAPY() view returns (uint256)',
+                    'function totalStaked() view returns (uint256)'
+                ];
+                
+                const TOKEN_ABI = [
+                    'function balanceOf(address owner) view returns (uint256)',
+                    'function decimals() view returns (uint8)',
+                    'function buy(uint256 usdtAmount) external',
+                    'function sell(uint256 arubAmount) external',
+                    'function getPrice() view returns (uint256)',
+                    'function approve(address spender, uint256 amount) returns (bool)',
+                    'function allowance(address owner, address spender) view returns (uint256)'
+                ];
+                
+                usdtContract = new ethers.Contract(CONFIG.USDT_ADDRESS, USDT_ABI, signer);
+                stakingContract = new ethers.Contract(CONFIG.STAKING_ADDRESS, STAKING_ABI, signer);
+                tokenContract = new ethers.Contract(CONFIG.TOKEN_ADDRESS, TOKEN_ABI, signer);
+                
                 updateUI();
                 updateTradingUI();
                 updateFaucetUI();
@@ -1958,9 +1983,8 @@
                 document.getElementById('connectBtn').textContent = 
                     `${userAddress.substring(0, 6)}...${userAddress.substring(38)}`;
                 
-                console.log('✅ Wallet connection complete!');
             } catch (error) {
-                console.error('❌ Error connecting wallet:', error);
+                console.error('Error connecting wallet:', error);
                 showNotification('❌ Помилка підключення гаманця', 'error');
             }
         }
@@ -2019,66 +2043,6 @@
                     throw switchError;
                 }
             }
-        }
-        
-        function initializeContracts() {
-            console.log('🔵 initializeContracts: Starting...');
-            console.log('🔵 CONFIG.USDT_ADDRESS:', CONFIG.USDT_ADDRESS);
-            console.log('🔵 CONFIG.STAKING_ADDRESS:', CONFIG.STAKING_ADDRESS);
-            console.log('🔵 CONFIG.TOKEN_ADDRESS:', CONFIG.TOKEN_ADDRESS);
-            console.log('🔵 signer:', signer);
-            
-            const USDT_ABI = [
-                // Standard ERC20
-                'function balanceOf(address owner) view returns (uint256)',
-                'function transfer(address to, uint256 amount) returns (bool)',
-                'function approve(address spender, uint256 amount) returns (bool)',
-                'function allowance(address owner, address spender) view returns (uint256)',
-                'function decimals() view returns (uint8)',
-                'function totalSupply() view returns (uint256)',
-                // MockUSDT specific
-                'function claimFromFaucet() external',
-                'function mint(uint256 amount) external',
-                'function canClaimFromFaucet(address user) view returns (bool canClaim, uint256 timeUntilNextClaim)'
-            ];
-            
-            const STAKING_ABI = [
-                'function stake(uint256 amount) external',
-                'function stakeArub(uint256 amount) external',
-                'function unstake(uint256 amount) external',
-                'function getStakedBalance(address user) view returns (uint256)',
-                'function getTotalStaked() view returns (uint256)',
-                'function getRewards(address user) view returns (uint256)',
-                'function claimRewards() external',
-                // Dynamic APY functions
-                'function getAPYTiers() view returns (uint256[] memory thresholds, uint256[] memory apys)',
-                'function getCurrentAPYTier() view returns (uint256 tier, uint256 threshold, uint256 apy, string memory description)',
-                'function getNextAPYTier() view returns (uint256 nextThreshold, uint256 nextAPY, uint256 remainingToNextTier)',
-                'function currentAPY() view returns (uint256)',
-                'function totalStaked() view returns (uint256)'
-            ];
-            
-            const TOKEN_ABI = [
-                'function balanceOf(address owner) view returns (uint256)',
-                'function decimals() view returns (uint8)',
-                'function buy(uint256 usdtAmount) external',
-                'function sell(uint256 arubAmount) external',
-                'function getPrice() view returns (uint256)',
-                'function approve(address spender, uint256 amount) returns (bool)',
-                'function allowance(address owner, address spender) view returns (uint256)'
-            ];
-            
-            console.log('🔵 Creating USDT contract...');
-            usdtContract = new ethers.Contract(CONFIG.USDT_ADDRESS, USDT_ABI, signer);
-            console.log('🔵 Creating Staking contract...');
-            stakingContract = new ethers.Contract(CONFIG.STAKING_ADDRESS, STAKING_ABI, signer);
-            console.log('🔵 Creating Token contract...');
-            tokenContract = new ethers.Contract(CONFIG.TOKEN_ADDRESS, TOKEN_ABI, signer);
-            
-            console.log('✅ All contracts initialized');
-            console.log('🔵 usdtContract:', usdtContract.address);
-            console.log('🔵 stakingContract:', stakingContract.address);
-            console.log('🔵 tokenContract:', tokenContract.address);
         }
         
         // ==========================================
