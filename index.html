@@ -1147,6 +1147,227 @@
                 width: 100%;
             }
         }
+        
+        /* Dynamic APY Styles */
+        .apy-banner {
+            background: linear-gradient(135deg, rgba(0,87,183,0.2), rgba(255,215,0,0.2));
+            border: 2px solid var(--ukraine-blue);
+            border-radius: 20px;
+            padding: 40px;
+            margin-bottom: 40px;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .apy-banner::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            right: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(255,215,0,0.1) 0%, transparent 70%);
+            animation: rotate 20s linear infinite;
+        }
+        
+        @keyframes rotate {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+        
+        .apy-banner-content {
+            position: relative;
+            z-index: 1;
+        }
+        
+        .apy-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 30px;
+            flex-wrap: wrap;
+            gap: 20px;
+        }
+        
+        .apy-title {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            font-size: 1.8em;
+            font-weight: bold;
+        }
+        
+        .apy-icon {
+            font-size: 1.5em;
+            animation: pulse 2s ease-in-out infinite;
+        }
+        
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+        }
+        
+        .apy-current {
+            display: flex;
+            flex-direction: column;
+            align-items: flex-end;
+        }
+        
+        .apy-value {
+            font-size: 3em;
+            font-weight: bold;
+            background: linear-gradient(45deg, var(--ukraine-blue), var(--ukraine-yellow));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            line-height: 1;
+        }
+        
+        .apy-tier-name {
+            color: var(--ukraine-yellow);
+            font-size: 1.1em;
+            margin-top: 5px;
+        }
+        
+        .apy-tiers-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+            gap: 15px;
+            margin-bottom: 25px;
+        }
+        
+        .apy-tier-card {
+            background: rgba(0,0,0,0.3);
+            border: 2px solid rgba(255,255,255,0.1);
+            border-radius: 12px;
+            padding: 20px;
+            text-align: center;
+            transition: all 0.3s;
+        }
+        
+        .apy-tier-card.active {
+            border-color: var(--ukraine-yellow);
+            background: rgba(255,215,0,0.1);
+            transform: scale(1.05);
+            box-shadow: 0 8px 25px rgba(255,215,0,0.3);
+        }
+        
+        .apy-tier-card:hover {
+            border-color: var(--ukraine-blue);
+        }
+        
+        .tier-number {
+            font-size: 0.9em;
+            color: var(--gray);
+            margin-bottom: 5px;
+        }
+        
+        .tier-apy {
+            font-size: 2em;
+            font-weight: bold;
+            color: var(--ukraine-yellow);
+            margin: 10px 0;
+        }
+        
+        .tier-range {
+            font-size: 0.85em;
+            color: var(--gray);
+            line-height: 1.4;
+        }
+        
+        .apy-progress-section {
+            background: rgba(0,0,0,0.3);
+            border-radius: 15px;
+            padding: 25px;
+        }
+        
+        .apy-progress-header {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 15px;
+            font-size: 0.95em;
+        }
+        
+        .progress-label {
+            color: var(--gray);
+        }
+        
+        .progress-value {
+            color: var(--ukraine-yellow);
+            font-weight: 600;
+        }
+        
+        .apy-progress-bar {
+            height: 20px;
+            background: rgba(255,255,255,0.1);
+            border-radius: 10px;
+            overflow: hidden;
+            position: relative;
+        }
+        
+        .apy-progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, var(--ukraine-blue), var(--ukraine-yellow));
+            border-radius: 10px;
+            transition: width 0.5s ease;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .apy-progress-fill::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
+            animation: shimmer 2s infinite;
+        }
+        
+        @keyframes shimmer {
+            0% { transform: translateX(-100%); }
+            100% { transform: translateX(100%); }
+        }
+        
+        .apy-next-tier {
+            margin-top: 15px;
+            padding: 15px;
+            background: rgba(255,215,0,0.1);
+            border-left: 4px solid var(--ukraine-yellow);
+            border-radius: 8px;
+        }
+        
+        .next-tier-text {
+            color: var(--gray);
+            font-size: 0.9em;
+            margin-bottom: 5px;
+        }
+        
+        .next-tier-value {
+            font-size: 1.2em;
+            color: var(--ukraine-yellow);
+            font-weight: 600;
+        }
+        
+        .apy-info-banner {
+            background: rgba(0,87,183,0.1);
+            border-left: 4px solid var(--ukraine-blue);
+            padding: 20px;
+            border-radius: 10px;
+            margin-top: 20px;
+        }
+        
+        .apy-info-text {
+            color: var(--gray);
+            line-height: 1.6;
+            margin: 0;
+        }
+        
+        .apy-highlight {
+            color: var(--ukraine-yellow);
+            font-weight: 600;
+        }
     </style>
 </head>
 <body>
@@ -1178,16 +1399,17 @@
     
     <!-- Hero Section -->
     <section class="hero">
-        <h1 class="hero-title">Заробляємо на падінні рубля, купуючи токен Антируб. Стейкаємо антируб і usdt. Отримуємо ще більше антируб. Чим слабший рубль, тим дорожчий токен Антируб!</h1>
+        <h1 class="hero-title">Заробляємо на падінні рубля, купуючи токен Антируб</h1>
+        <p class="hero-subtitle">
+            Стейкаємо Антируб і USDT. Отримуємо ще більше Антируб. 
+            Чим слабший рубль, тим дорожчий токен Антируб!
+        </p>
         <div class="hero-buttons">
             <button class="btn-primary" onclick="document.getElementById('trading').scrollIntoView({behavior: 'smooth'})">
                 💰 Купити токени
             </button>
             <button class="btn-primary" onclick="document.getElementById('staking').scrollIntoView({behavior: 'smooth'})">
                 🔒 Почати стейкінг
-            </button>
-            <button class="btn-secondary" onclick="addTokenToWalletWithChoice()" style="background: linear-gradient(45deg, rgba(0,87,183,0.3), rgba(255,215,0,0.3)); border: 2px solid var(--ukraine-yellow);">
-                🦊 Додати ARUB до гаманця
             </button>
             <button class="btn-secondary" onclick="document.getElementById('how-it-works').scrollIntoView({behavior: 'smooth'})">
                 Як це працює
@@ -1197,7 +1419,7 @@
     
     <!-- Stats Section -->
     <section class="stats-section">
-        <div class="stats-grid" style="grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));">
+        <div class="stats-grid">
             <div class="stat-card">
                 <div class="stat-value" id="arubPrice">—</div>
                 <div class="stat-label">Ціна 1 ARUB (USDT)</div>
@@ -1205,10 +1427,6 @@
             <div class="stat-card">
                 <div class="stat-value" id="totalStaked">0</div>
                 <div class="stat-label">Всього застейкано (USDT)</div>
-            </div>
-            <div class="stat-card" style="background: linear-gradient(135deg, rgba(255,215,0,0.1), rgba(0,87,183,0.1));">
-                <div class="stat-value" id="totalStakedArub" style="color: var(--ukraine-yellow);">0</div>
-                <div class="stat-label">Всього застейкано (ARUB)</div>
             </div>
             <div class="stat-card">
                 <div class="stat-value" id="rubDevaluation">-65%</div>
@@ -1227,7 +1445,8 @@
         
         <div style="text-align: center; margin-bottom: 40px;">
             <p style="color: var(--gray); font-size: 1.2em; max-width: 800px; margin: 0 auto; line-height: 1.8;">
-                Заробляємо на падінні рубля, купуючи токен Антируб. Стейкаємо антируб і usdt. Отримуємо ще більше антируб. Чим слабший рубль, тим дорожчий токен Антируб! 
+                <strong style="color: white;">Купуйте токен Антируб</strong> за поточним курсом USDT/RUB. 
+                <strong style="color: white;">Стейкайте Антируб і USDT</strong> — отримуйте ще більше Антируб. 
                 Комісії: 0.5% купівля, 1% продаж.
             </p>
         </div>
@@ -1236,6 +1455,21 @@
             <div style="text-align: center; padding: 60px; color: var(--gray);">
                 <div style="font-size: 3em; margin-bottom: 20px;">🔒</div>
                 <p style="font-size: 1.3em;">Підключіть гаманець для торгівлі токенами</p>
+            </div>
+        </div>
+    </section>
+    
+    <!-- USDT Faucet Section -->
+    <section class="staking-section" id="faucet" style="background: linear-gradient(135deg, rgba(0,87,183,0.05), rgba(255,215,0,0.05));">
+        <h2 class="section-title">💰 Отримати тестові USDT</h2>
+        <p style="text-align: center; color: var(--gray); max-width: 800px; margin: 0 auto 40px;">
+            Безкоштовно отримайте 100,000 USDT кожну годину для тестування платформи на Sepolia Testnet!
+        </p>
+        
+        <div id="faucetInterface">
+            <div style="text-align: center; padding: 60px; color: var(--gray);">
+                <div style="font-size: 3em; margin-bottom: 20px;">🔒</div>
+                <p style="font-size: 1.3em;">Підключіть гаманець для отримання тестових USDT</p>
             </div>
         </div>
     </section>
@@ -1260,7 +1494,7 @@
                 <div class="feature-icon">🛡️</div>
                 <h3 class="feature-title">Захист активів</h3>
                 <p class="feature-description">
-                    Ваші ARUB та USDT захищені смарт-контрактом на блокчейні Ethereum (Sepolia testnet). Повна прозорість і безпека.
+                    Ваші ARUB та USDT захищені смарт-контрактом. Повна прозорість і безпека на блокчейні Ethereum.
                 </p>
             </div>
             <div class="feature-card">
@@ -1274,7 +1508,7 @@
                 <div class="feature-icon">📊</div>
                 <h3 class="feature-title">Заробіток на падінні рубля</h3>
                 <p class="feature-description">
-                    Ціна ARUB = курс USD/RUB. Коли рубль падає і курс USD/RUB зростає з 80 до 100, ваш ARUB дорожчає з $80 до $100. Купуйте ARUB зараз, продавайте дорожче коли рубль падає ще більше. Чим слабший рубль, тим вища ціна вашого токена!
+                    Ціна токена ARUB = курс USDT/RUB. Купуйте дешевше, продавайте дорожче. Чим слабший рубль, тим більша вартість вашого токена у доларах.
                 </p>
             </div>
             <div class="feature-card">
@@ -1288,7 +1522,7 @@
                 <div class="feature-icon">🔓</div>
                 <h3 class="feature-title">Повна прозорість</h3>
                 <p class="feature-description">
-                    Весь код відкритий. Перевірте смарт-контракт самостійно на Sepolia Etherscan.
+                    Весь код відкритий. Перевірте смарт-контракт самостійно на Etherscan.
                 </p>
             </div>
             <div class="feature-card">
@@ -1357,7 +1591,7 @@
                     <span>▼</span>
                 </div>
                 <div class="faq-answer">
-                    Ціна токена ARUB прив'язана до курсу USD/RUB. 1 ARUB = поточний курс USD/RUB в доларах. Наприклад, якщо курс USD/RUB = 100₽, то 1 ARUB = 100 USDT. Чим слабший рубль (вищий курс USD/RUB), тим дорожчий токен ARUB у доларах. Це робить ARUB справжнім "антирублем" - чим гірше для рубля, тим краще для власників ARUB!
+                    Ціна токена ARUB прив'язана до курсу USDT/RUB. 1 ARUB = поточний курс USDT/RUB в доларах. Наприклад, якщо курс USDT/RUB = 81.22₽, то 1 ARUB = 81.22 USDT. Чим слабший рубль (вищий курс), тим дорожчий токен ARUB. Це робить ARUB справжнім "антирублем".
                 </div>
             </div>
             
@@ -1367,7 +1601,7 @@
                     <span>▼</span>
                 </div>
                 <div class="faq-answer">
-                    Заробляємо на падінні рубля, купуючи токен Антируб. Стейкаємо антируб і usdt. Отримуємо ще більше антируб. Чим слабший рубль, тим дорожчий токен Антируб!
+                    Заробляємо на падінні рубля, купуючи токен Антируб. Стейкаємо Антируб і USDT. Отримуємо ще більше Антируб. Чим слабший рубль, тим дорожчий токен Антируб!
                 </div>
             </div>
             
@@ -1377,7 +1611,7 @@
                     <span>▼</span>
                 </div>
                 <div class="faq-answer">
-                    Так, платформа побудована на смарт-контрактах Ethereum (тестова мережа Sepolia). Весь код відкритий і може бути перевірений на Sepolia Etherscan. Ваші кошти завжди під вашим контролем.
+                    Так, платформа побудована на смарт-контрактах Ethereum. Весь код відкритий і може бути перевірений. Ваші кошти завжди під вашим контролем.
                 </div>
             </div>
             
@@ -1427,7 +1661,7 @@
                     <span>▼</span>
                 </div>
                 <div class="faq-answer">
-                    За стейкінг платформа не стягує додаткових комісій - тільки gas за транзакції в мережі Sepolia. При купівлі токенів ARUB комісія становить 0.5%, при продажу - 1%. Ці комісії йдуть на аудит смарт-контрактів, розвиток проекту та оплату команді.
+                    За стейкінг платформа не стягує додаткових комісій - тільки gas за транзакції в Ethereum. При купівлі токенів ARUB комісія становить 0.5%, при продажу - 1%. Ці комісії йдуть на аудит смарт-контрактів, розвиток проекту та оплату команді.
                 </div>
             </div>
             
@@ -1448,20 +1682,6 @@
                 </div>
                 <div class="faq-answer">
                     Всі комісії (0.5% при купівлі та 1% при продажу) направляються на: аудит смарт-контрактів для безпеки, розвиток платформи та нових функцій, оплату команді розробників, маркетинг та просування проекту.
-                </div>
-            </div>
-            
-            <div class="faq-item">
-                <div class="faq-question" onclick="this.nextElementSibling.classList.toggle('active')">
-                    <span>Як отримати тестові USDT на Sepolia?</span>
-                    <span>▼</span>
-                </div>
-                <div class="faq-answer">
-                    Платформа працює на Sepolia testnet. Для роботи з нею вам потрібні тестові токени:<br><br>
-                    <strong>Крок 1:</strong> Отримайте Sepolia ETH на <a href="https://sepoliafaucet.com" target="_blank" style="color: var(--ukraine-blue);">Sepolia Faucet</a> або <a href="https://www.alchemy.com/faucets/ethereum-sepolia" target="_blank" style="color: var(--ukraine-blue);">Alchemy Faucet</a><br><br>
-                    <strong>Крок 2:</strong> Використовуйте тестовий USDT контракт або розгорніть свій власний mock USDT. Адреса поточного тестового USDT на платформі відображається в інтерфейсі торгівлі.<br><br>
-                    <strong>Крок 3:</strong> Додайте токен ARUB у свій гаманець, використовуючи адресу контракту з платформи.<br><br>
-                    Це тестова мережа - всі токени тут не мають реальної вартості і використовуються тільки для тестування функціоналу.
                 </div>
             </div>
         </div>
@@ -1516,9 +1736,6 @@
                         </button>
                         <button class="quick-question-btn" onclick="showQuickAnswer('withdraw')">
                             Як вивести кошти?
-                        </button>
-                        <button class="quick-question-btn" onclick="showQuickAnswer('testnet')" style="background: rgba(255,215,0,0.15); border-color: var(--ukraine-yellow);">
-                            ⚠️ Як отримати тестові токени?
                         </button>
                     </div>
                     
@@ -1592,7 +1809,7 @@
                 <a href="#staking">Стейкінг</a>
                 <a href="#how-it-works">Як це працює</a>
                 <a href="#" onclick="showWalletGuide(); return false;">Додати токен</a>
-                <a href="https://sepolia.etherscan.io" target="_blank">Sepolia Etherscan</a>
+                <a href="https://etherscan.io" target="_blank">Etherscan</a>
             </div>
             
             <div class="footer-section">
@@ -1625,19 +1842,14 @@
         // CONFIGURATION
         // ==========================================
         const CONFIG = {
-            USDT_ADDRESS: '0x7169D38820dfd117C3FA1f22a697dBA58d90BA06', // USDT on Sepolia
-            TOKEN_ADDRESS: '0xe4A39E3D2C64C2D3a1d9c7C6B9eB63db55277b71', // ARUB token address on Sepolia
-            STAKING_ADDRESS: '0x47B302F223ae94e9efcABc27DE19C0a2eC268Df3', // REAL Staking contract on Sepolia ✅
+            USDT_ADDRESS: '0x4e6175f449b04e20437b2A2AD8221884Bda38f39', // ✅ MockUSDT (Sepolia)
+            TOKEN_ADDRESS: '0xe4A39E3D2C64C2D3a1d9c7C6B9eB63db55277b71', // ✅ ARUB Token (Sepolia)
+            STAKING_ADDRESS: '0x2e2f5c01Ce66ad0780519b12a6012a1977077665', // ✅ NEW Staking with Dynamic APY!
             NETWORK: {
-                chainId: '0xaa36a7', // Sepolia testnet chainId (11155111 in decimal)
+                chainId: '0xaa36a7', // Sepolia testnet
                 chainName: 'Sepolia Testnet',
                 rpcUrls: ['https://rpc.sepolia.org'],
-                blockExplorerUrls: ['https://sepolia.etherscan.io'],
-                nativeCurrency: {
-                    name: 'Sepolia ETH',
-                    symbol: 'ETH',
-                    decimals: 18
-                }
+                blockExplorerUrls: ['https://sepolia.etherscan.io']
             }
         };
         
@@ -1673,84 +1885,13 @@
                 currentRate = usdToRub;
                 
                 document.getElementById('currentRate').textContent = `${usdToRub.toFixed(2)} ₽`;
-                // 1 ARUB = курс USD/RUB в доларах
                 document.getElementById('arubPrice').textContent = `$${usdToRub.toFixed(2)}`;
-                console.log('USD/RUB rate updated:', usdToRub);
-                console.log('ARUB price:', usdToRub, 'USDT per 1 ARUB');
+                console.log('USDT/RUB rate updated:', usdToRub);
+                console.log('ARUB price:', usdToRub, 'USDT');
             } catch (error) {
-                console.error('Error fetching USD/RUB rate:', error);
+                console.error('Error fetching USDT/RUB rate:', error);
                 document.getElementById('currentRate').textContent = '—';
                 document.getElementById('arubPrice').textContent = '—';
-            }
-        }
-        
-        // ==========================================
-        // PUBLIC STATS (NO WALLET NEEDED)
-        // ==========================================
-        async function updatePublicStats() {
-            try {
-                console.log('🔍 Оновлення публічної статистики...');
-                
-                // Ціна ARUB = Курс USDT/RUB (логіка проекту)
-                // Не потребує RPC запитів - швидко і без помилок
-                if (currentRate) {
-                    document.getElementById('arubPrice').textContent = `$${currentRate.toFixed(2)}`;
-                }
-                
-                // Для отримання кількості застейканих токенів використовуємо RPC
-                // Використовуємо Alchemy public endpoint (підтримує CORS)
-                const publicProvider = new ethers.providers.JsonRpcProvider(
-                    'https://eth-sepolia.g.alchemy.com/v2/demo'
-                );
-                
-                // ABI для read-only функцій
-                const TOKEN_ABI_MINIMAL = [
-                    'function balanceOf(address) view returns (uint256)'
-                ];
-                
-                const STAKING_ABI_MINIMAL = [
-                    'function getTotalStaked() view returns (uint256)'
-                ];
-                
-                // Створюємо контракти без signer
-                const publicTokenContract = new ethers.Contract(
-                    CONFIG.TOKEN_ADDRESS,
-                    TOKEN_ABI_MINIMAL,
-                    publicProvider
-                );
-                
-                const publicStakingContract = new ethers.Contract(
-                    CONFIG.STAKING_ADDRESS,
-                    STAKING_ABI_MINIMAL,
-                    publicProvider
-                );
-                
-                // Отримуємо загальну кількість застейканих токенів
-                const totalStaked = await publicStakingContract.getTotalStaked()
-                    .catch(() => ethers.BigNumber.from(0));
-                
-                const totalStakedArub = await publicTokenContract.balanceOf(CONFIG.STAKING_ADDRESS)
-                    .catch(() => ethers.BigNumber.from(0));
-                
-                // Оновлюємо UI
-                document.getElementById('totalStaked').textContent = 
-                    `$${ethers.utils.formatUnits(totalStaked, 6)}`;
-                
-                document.getElementById('totalStakedArub').textContent = 
-                    ethers.utils.formatUnits(totalStakedArub, 6);
-                
-                console.log('✅ Публічна статистика оновлена:', {
-                    'Всього застейкано USDT': ethers.utils.formatUnits(totalStaked, 6),
-                    'Всього застейкано ARUB': ethers.utils.formatUnits(totalStakedArub, 6),
-                    'Ціна ARUB (з курсу)': currentRate ? currentRate.toFixed(2) : 'N/A'
-                });
-                
-            } catch (error) {
-                console.warn('⚠️ Помилка оновлення публічної статистики:', error);
-                // Показуємо хоча б ціну з курсу
-                if (currentRate) {
-                    document.getElementById('arubPrice').textContent = `$${currentRate.toFixed(2)}`;
-                }
             }
         }
         
@@ -1781,8 +1922,9 @@
                 provider = new ethers.providers.Web3Provider(selectedProvider);
                 
                 const network = await provider.getNetwork();
-                if (network.chainId !== 11155111) { // Sepolia testnet chainId
-                    await switchToSepolia(selectedProvider);
+                const expectedChainId = parseInt(CONFIG.NETWORK.chainId, 16); // 11155111 for Sepolia
+                if (network.chainId !== expectedChainId) {
+                    await switchToEthereum(selectedProvider);
                 }
                 
                 const accounts = await provider.send('eth_requestAccounts', []);
@@ -1793,6 +1935,7 @@
                 
                 updateUI();
                 updateTradingUI();
+                updateFaucetUI();
                 
                 showNotification('✅ Гаманець успішно підключено!', 'success');
                 
@@ -1843,7 +1986,7 @@
             });
         }
         
-        async function switchToSepolia(provider) {
+        async function switchToEthereum(provider) {
             try {
                 await provider.request({
                     method: 'wallet_switchEthereumChain',
@@ -1866,21 +2009,27 @@
                 'function balanceOf(address owner) view returns (uint256)',
                 'function approve(address spender, uint256 amount) returns (bool)',
                 'function allowance(address owner, address spender) view returns (uint256)',
-                'function decimals() view returns (uint8)'
+                'function decimals() view returns (uint8)',
+                // MockUSDT faucet functions
+                'function claimFromFaucet() external',
+                'function mint(uint256 amount) external',
+                'function canClaimFromFaucet(address user) view returns (bool canClaim, uint256 timeUntilNextClaim)'
             ];
             
             const STAKING_ABI = [
                 'function stake(uint256 amount) external',
                 'function stakeArub(uint256 amount) external',
                 'function unstake(uint256 amount) external',
-                'function unstakeArub(uint256 amount) external',
                 'function getStakedBalance(address user) view returns (uint256)',
-                'function getStakedArubBalance(address user) view returns (uint256)',
                 'function getTotalStaked() view returns (uint256)',
-                'function getTotalStakedArub() view returns (uint256)',
                 'function getRewards(address user) view returns (uint256)',
                 'function claimRewards() external',
-                'function getUserInfo(address user) view returns (uint256 stakedUsdt, uint256 stakedArub, uint256 rewards)'
+                // Dynamic APY functions
+                'function getAPYTiers() view returns (uint256[] memory thresholds, uint256[] memory apys)',
+                'function getCurrentAPYTier() view returns (uint256 tier, uint256 threshold, uint256 apy, string memory description)',
+                'function getNextAPYTier() view returns (uint256 nextThreshold, uint256 nextAPY, uint256 remainingToNextTier)',
+                'function currentAPY() view returns (uint256)',
+                'function totalStaked() view returns (uint256)'
             ];
             
             const TOKEN_ABI = [
@@ -1906,100 +2055,27 @@
             
             let usdtBalance = ethers.BigNumber.from(0);
             let stakedBalance = ethers.BigNumber.from(0);
-            let stakedArubBalance = ethers.BigNumber.from(0);
             let arubBalance = ethers.BigNumber.from(0);
             let rewards = ethers.BigNumber.from(0);
             let totalStaked = ethers.BigNumber.from(0);
-            let totalStakedArub = ethers.BigNumber.from(0);
             
             try {
-                // Спробуємо використати getUserInfo якщо доступна
-                try {
-                    console.log('🔍 Спроба отримати дані через getUserInfo...');
-                    const userInfo = await stakingContract.getUserInfo(userAddress);
-                    
-                    // WORKAROUND: Контракт має баг - він зберігає ARUB в поле stakedUsdt!
-                    // Перевіряємо чи є ARUB токени в контракті
-                    const arubInContract = await tokenContract.balanceOf(CONFIG.STAKING_ADDRESS);
-                    const usdtInContract = await usdtContract.balanceOf(CONFIG.STAKING_ADDRESS);
-                    
-                    const rawStakedUsdt = userInfo.stakedUsdt || userInfo[0];
-                    const rawStakedArub = userInfo.stakedArub || userInfo[1];
-                    
-                    console.log('🔍 Перевірка контракту:', {
-                        'ARUB в контракті': ethers.utils.formatUnits(arubInContract, 6),
-                        'USDT в контракті': ethers.utils.formatUnits(usdtInContract, 6),
-                        'stakedUsdt з getUserInfo': ethers.utils.formatUnits(rawStakedUsdt, 6),
-                        'stakedArub з getUserInfo': ethers.utils.formatUnits(rawStakedArub, 6)
-                    });
-                    
-                    // Якщо є ARUB в контракті але stakedArub = 0, значить баг - міняємо місцями
-                    if (!arubInContract.eq(0) && rawStakedArub.eq(0) && !rawStakedUsdt.eq(0)) {
-                        console.log('⚠️ ВИЯВЛЕНО БАГ КОНТРАКТУ: ARUB зберігається в stakedUsdt!');
-                        console.log('🔄 Автоматично виправляю: міняю місцями...');
-                        stakedBalance = ethers.BigNumber.from(0); // USDT насправді 0
-                        stakedArubBalance = rawStakedUsdt; // Це ARUB!
-                        console.log('✅ Виправлено! ARUB:', ethers.utils.formatUnits(stakedArubBalance, 6));
-                    } else {
-                        // Нормальний випадок
-                        stakedBalance = rawStakedUsdt;
-                        stakedArubBalance = rawStakedArub;
-                    }
-                    
-                    rewards = userInfo.rewards || userInfo[2];
-                    console.log('✅ getUserInfo успішно:', {
-                        stakedUsdt: ethers.utils.formatUnits(stakedBalance, 6),
-                        stakedArub: ethers.utils.formatUnits(stakedArubBalance, 6),
-                        rewards: ethers.utils.formatUnits(rewards, 6)
-                    });
-                } catch (e) {
-                    console.log('⚠️ getUserInfo не працює, використовуємо окремі виклики:', e.message);
-                    // Якщо getUserInfo не працює, використовуємо окремі виклики
-                    const balances = await Promise.all([
-                        stakingContract.getStakedBalance(userAddress).catch(err => {
-                            console.log('❌ getStakedBalance помилка:', err.message);
-                            return ethers.BigNumber.from(0);
-                        }),
-                        stakingContract.getStakedArubBalance(userAddress).catch(err => {
-                            console.log('❌ getStakedArubBalance помилка:', err.message);
-                            return ethers.BigNumber.from(0);
-                        }),
-                        stakingContract.getRewards(userAddress).catch(err => {
-                            console.log('❌ getRewards помилка:', err.message);
-                            return ethers.BigNumber.from(0);
-                        })
-                    ]);
-                    
-                    stakedBalance = balances[0];
-                    stakedArubBalance = balances[1];
-                    rewards = balances[2];
-                    console.log('✅ Окремі виклики виконані:', {
-                        stakedUsdt: ethers.utils.formatUnits(stakedBalance, 6),
-                        stakedArub: ethers.utils.formatUnits(stakedArubBalance, 6),
-                        rewards: ethers.utils.formatUnits(rewards, 6)
-                    });
-                }
-                
-                // Отримуємо баланси токенів
-                const tokenBalances = await Promise.all([
+                const balances = await Promise.all([
                     usdtContract.balanceOf(userAddress).catch(() => ethers.BigNumber.from(0)),
-                    tokenContract.balanceOf(userAddress).catch(() => ethers.BigNumber.from(0))
+                    stakingContract.getStakedBalance(userAddress).catch(() => ethers.BigNumber.from(0)),
+                    tokenContract.balanceOf(userAddress).catch(() => ethers.BigNumber.from(0)),
+                    stakingContract.getRewards(userAddress).catch(() => ethers.BigNumber.from(0))
                 ]);
                 
-                usdtBalance = tokenBalances[0];
-                arubBalance = tokenBalances[1];
+                usdtBalance = balances[0];
+                stakedBalance = balances[1];
+                arubBalance = balances[2];
+                rewards = balances[3];
                 
-                // Отримуємо загальну застейкану суму
                 totalStaked = await stakingContract.getTotalStaked().catch(() => ethers.BigNumber.from(0));
-                
-                // WORKAROUND: getTotalStakedArub() не працює, тому читаємо баланс ARUB токенів в контракті напряму
-                totalStakedArub = await tokenContract.balanceOf(CONFIG.STAKING_ADDRESS).catch(() => ethers.BigNumber.from(0));
-                console.log('📊 ARUB в стейкінг контракті:', ethers.utils.formatUnits(totalStakedArub, 6));
                 
                 document.getElementById('totalStaked').textContent = 
                     `$${ethers.utils.formatUnits(totalStaked, 6)}`;
-                document.getElementById('totalStakedArub').textContent = 
-                    ethers.utils.formatUnits(totalStakedArub, 6);
             } catch (error) {
                 console.warn('Не вдалося отримати баланси для стейкінгу, показуємо 0:', error);
                 // Continue with zero balances
@@ -2014,48 +2090,50 @@
                     '</p>' +
                 '</div>' : '';
             
-            // Інформаційна картка з застейканими токенами - ЗАВЖДИ ПОКАЗУЄТЬСЯ
-            const hasAnyStaked = !stakedBalance.eq(0) || !stakedArubBalance.eq(0) || !rewards.eq(0);
-            const stakedInfoCard = 
-                '<div style="background: linear-gradient(135deg, rgba(0,87,183,0.2), rgba(255,215,0,0.2)); padding: 30px; border-radius: 20px; margin-bottom: 30px; border: 3px solid var(--ukraine-blue);">' +
-                    '<div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 25px;">' +
-                        '<h3 style="color: var(--ukraine-yellow); font-size: 1.5em; margin: 0;">💰 Ваші застейкані активи</h3>' +
-                        '<button onclick="updateUI(); showNotification(\'🔄 Оновлення даних...\', \'info\');" ' +
-                                'style="padding: 8px 16px; background: rgba(0,87,183,0.5); border: 1px solid var(--ukraine-blue); border-radius: 8px; color: white; cursor: pointer; font-size: 0.9em;">' +
-                            '🔄 Оновити' +
-                        '</button>' +
-                    '</div>' +
-                    '<div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 20px;">' +
-                        '<div style="background: rgba(0,0,0,0.3); padding: 20px; border-radius: 12px; text-align: center;">' +
-                            '<div style="color: var(--gray); font-size: 0.9em; margin-bottom: 8px;">💵 USDT Застейкано</div>' +
-                            '<div style="color: white; font-size: 1.8em; font-weight: bold;">' + ethers.utils.formatUnits(stakedBalance, 6) + '</div>' +
-                            '<div style="color: var(--accent); font-size: 0.85em; margin-top: 5px;">USDT</div>' +
-                        '</div>' +
-                        '<div style="background: rgba(0,0,0,0.3); padding: 20px; border-radius: 12px; text-align: center;">' +
-                            '<div style="color: var(--gray); font-size: 0.9em; margin-bottom: 8px;">🎯 ARUB Застейкано</div>' +
-                            '<div style="color: white; font-size: 1.8em; font-weight: bold;">' + ethers.utils.formatUnits(stakedArubBalance, 6) + '</div>' +
-                            '<div style="color: var(--accent); font-size: 0.85em; margin-top: 5px;">ARUB</div>' +
-                        '</div>' +
-                        '<div style="background: rgba(0,0,0,0.3); padding: 20px; border-radius: 12px; text-align: center;">' +
-                            '<div style="color: var(--gray); font-size: 0.9em; margin-bottom: 8px;">🎁 Винагороди</div>' +
-                            '<div style="color: white; font-size: 1.8em; font-weight: bold;">' + ethers.utils.formatUnits(rewards, 6) + '</div>' +
-                            '<div style="color: var(--accent); font-size: 0.85em; margin-top: 5px;">ARUB</div>' +
-                        '</div>' +
-                    '</div>' +
-                    '<div style="margin-top: 20px; padding: 15px; background: rgba(0,87,183,0.2); border-radius: 10px; text-align: center;">' +
-                        '<p style="color: white; margin: 0; font-size: 0.95em;">📊 Загальна вартість застейканих активів: <strong style="color: var(--ukraine-yellow); font-size: 1.2em;">' + 
-                        (parseFloat(ethers.utils.formatUnits(stakedBalance, 6)) + parseFloat(ethers.utils.formatUnits(stakedArubBalance, 6)) * (currentRate || 81.22)).toFixed(2) + ' USDT</strong></p>' +
-                    '</div>' +
-                    (!hasAnyStaked ? 
-                        '<div style="margin-top: 15px; padding: 12px; background: rgba(255,215,0,0.1); border-radius: 8px; text-align: center;">' +
-                            '<p style="color: var(--gray); margin: 0; font-size: 0.9em;">💡 Застейкайте USDT або ARUB нижче щоб почати заробляти винагороди!</p>' +
-                            '<p style="color: var(--gray); margin: 8px 0 0 0; font-size: 0.85em;">🔍 Якщо ви вже застейкали токени, натисніть "Оновити" вгорі або відкрийте консоль (F12) для діагностики.</p>' +
-                        '</div>' : ''
-                    ) +
-                '</div>';
-            
             const stakingInterface = document.getElementById('stakingInterface');
-            stakingInterface.innerHTML = testModeWarningStaking + stakedInfoCard + `
+            stakingInterface.innerHTML = testModeWarningStaking + `
+                    <!-- Dynamic APY Banner -->
+                    <div class="apy-banner">
+                        <div class="apy-banner-content">
+                            <div class="apy-header">
+                                <div class="apy-title">
+                                    <span class="apy-icon">📊</span>
+                                    <span>Динамічний APY</span>
+                                </div>
+                                <div class="apy-current">
+                                    <div class="apy-value" id="currentAPYValue">24%</div>
+                                    <div class="apy-tier-name" id="currentTierName">Tier 1: 0-100k ARUB</div>
+                                </div>
+                            </div>
+                            
+                            <div class="apy-tiers-grid" id="apyTiersGrid">
+                                <!-- Tiers будуть додані динамічно -->
+                            </div>
+                            
+                            <div class="apy-progress-section">
+                                <div class="apy-progress-header">
+                                    <span class="progress-label">Прогрес до наступного рівня</span>
+                                    <span class="progress-value" id="progressPercentText">0%</span>
+                                </div>
+                                <div class="apy-progress-bar">
+                                    <div class="apy-progress-fill" id="apyProgressFill" style="width: 0%"></div>
+                                </div>
+                                <div class="apy-next-tier" id="nextTierInfo">
+                                    <div class="next-tier-text">До наступного рівня:</div>
+                                    <div class="next-tier-value" id="nextTierValue">100,000 ARUB до 20% APY</div>
+                                </div>
+                            </div>
+                            
+                            <div class="apy-info-banner">
+                                <p class="apy-info-text">
+                                    💡 <span class="apy-highlight">Чим раніше застейкаєте</span> - тим вищий APY отримаєте! 
+                                    APY автоматично зменшується в залежності від загальної кількості застейканих токенів.
+                                    <span class="apy-highlight">Ранні стейкери отримують до 24% річних!</span>
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                    
                     <div class="staking-grid">
                         <!-- Stake Card -->
                         <div class="staking-card">
@@ -2168,41 +2246,6 @@
                             </button>
                         </div>
                         
-                        <!-- Unstake ARUB Card -->
-                        <div class="staking-card">
-                            <div class="card-header">
-                                <div class="card-icon">💎</div>
-                                <h3 class="card-title">Зняти ARUB</h3>
-                            </div>
-                            
-                            <div class="input-group">
-                                <label class="input-label">Кількість ARUB</label>
-                                <div class="input-wrapper">
-                                    <input type="number" 
-                                           class="input-field" 
-                                           id="unstakeArubAmount" 
-                                           placeholder="0.00"
-                                           step="0.01"
-                                           min="0">
-                                    <button class="max-btn" onclick="setMaxUnstakeArub()">MAX</button>
-                                </div>
-                            </div>
-                            
-                            <div class="info-row">
-                                <span class="info-label">ARUB Застейкано:</span>
-                                <span class="info-value">${ethers.utils.formatUnits(stakedArubBalance, 6)} ARUB</span>
-                            </div>
-                            
-                            <div class="info-row">
-                                <span class="info-label">Вартість у USDT:</span>
-                                <span class="info-value">${(parseFloat(ethers.utils.formatUnits(stakedArubBalance, 6)) * (currentRate || 81.22)).toFixed(2)} USDT</span>
-                            </div>
-                            
-                            <button class="action-btn" onclick="unstakeArubTokens()">
-                                💎 Зняти ARUB
-                            </button>
-                        </div>
-                        
                         <!-- Rewards Card -->
                         <div class="staking-card">
                             <div class="card-header">
@@ -2234,6 +2277,185 @@
                         </div>
                     </div>
                 `;
+            
+            // Update Dynamic APY information
+            await updateDynamicAPY();
+        }
+        
+        // ==========================================
+        // DYNAMIC APY UPDATE
+        // ==========================================
+        async function updateDynamicAPY() {
+            if (!stakingContract) return;
+            
+            try {
+                // Отримати всі APY tiers
+                const [thresholds, apys] = await stakingContract.getAPYTiers();
+                
+                // Отримати поточний tier
+                const [currentTier, currentThreshold, currentAPY, tierDescription] = 
+                    await stakingContract.getCurrentAPYTier();
+                
+                // Отримати наступний tier
+                const [nextThreshold, nextAPY, remainingToNextTier] = 
+                    await stakingContract.getNextAPYTier();
+                
+                // Отримати total staked
+                const totalStakedAmount = await stakingContract.totalStaked();
+                
+                // Оновити поточний APY
+                document.getElementById('currentAPYValue').textContent = 
+                    `${(currentAPY / 100).toFixed(0)}%`;
+                document.getElementById('currentTierName').textContent = 
+                    tierDescription;
+                
+                // Створити карточки для всіх tiers
+                const tiersHTML = thresholds.map((threshold, index) => {
+                    const apy = apys[index];
+                    const isActive = index === currentTier.toNumber();
+                    const isMaxTier = threshold.eq(ethers.constants.MaxUint256);
+                    
+                    let rangeText;
+                    if (index === 0) {
+                        rangeText = `0 - ${ethers.utils.formatUnits(threshold, 6)} ARUB`;
+                    } else if (isMaxTier) {
+                        rangeText = `${ethers.utils.formatUnits(thresholds[index - 1], 6)}+ ARUB`;
+                    } else {
+                        rangeText = `${ethers.utils.formatUnits(thresholds[index - 1], 6)} - ${ethers.utils.formatUnits(threshold, 6)} ARUB`;
+                    }
+                    
+                    return `
+                        <div class="apy-tier-card ${isActive ? 'active' : ''}">
+                            <div class="tier-number">Tier ${index + 1}${isActive ? ' 🔥' : ''}</div>
+                            <div class="tier-apy">${(apy / 100).toFixed(0)}%</div>
+                            <div class="tier-range">${rangeText}</div>
+                        </div>
+                    `;
+                }).join('');
+                
+                document.getElementById('apyTiersGrid').innerHTML = tiersHTML;
+                
+                // Оновити прогрес до наступного tier
+                if (nextThreshold.gt(0)) {
+                    const currentTierThreshold = currentThreshold;
+                    const prevTierThreshold = currentTier.toNumber() > 0 ? 
+                        thresholds[currentTier.toNumber() - 1] : 
+                        ethers.BigNumber.from(0);
+                    
+                    const tierRange = currentTierThreshold.sub(prevTierThreshold);
+                    const progress = totalStakedAmount.sub(prevTierThreshold);
+                    const progressPercent = tierRange.gt(0) ? 
+                        progress.mul(100).div(tierRange).toNumber() : 0;
+                    
+                    document.getElementById('apyProgressFill').style.width = 
+                        `${Math.min(progressPercent, 100)}%`;
+                    document.getElementById('progressPercentText').textContent = 
+                        `${Math.min(progressPercent, 100).toFixed(1)}%`;
+                    
+                    document.getElementById('nextTierValue').textContent = 
+                        `${ethers.utils.formatUnits(remainingToNextTier, 6)} ARUB до ${(nextAPY / 100).toFixed(0)}% APY`;
+                    
+                    document.getElementById('nextTierInfo').style.display = 'block';
+                } else {
+                    // Вже на останньому tier
+                    document.getElementById('apyProgressFill').style.width = '100%';
+                    document.getElementById('progressPercentText').textContent = '100%';
+                    document.getElementById('nextTierInfo').innerHTML = `
+                        <div class="next-tier-text">🏆 Досягнуто максимальний рівень!</div>
+                        <div class="next-tier-value">APY: ${(currentAPY / 100).toFixed(0)}%</div>
+                    `;
+                }
+                
+            } catch (error) {
+                console.error('Помилка оновлення динамічного APY:', error);
+                // Показати дефолтні значення
+                document.getElementById('currentAPYValue').textContent = '24%';
+                document.getElementById('currentTierName').textContent = 'Tier 1: 0-100k ARUB';
+                document.getElementById('apyTiersGrid').innerHTML = `
+                    <div class="apy-tier-card active">
+                        <div class="tier-number">Tier 1 🔥</div>
+                        <div class="tier-apy">24%</div>
+                        <div class="tier-range">0 - 100k ARUB</div>
+                    </div>
+                    <div class="apy-tier-card">
+                        <div class="tier-number">Tier 2</div>
+                        <div class="tier-apy">20%</div>
+                        <div class="tier-range">100k - 200k ARUB</div>
+                    </div>
+                    <div class="apy-tier-card">
+                        <div class="tier-number">Tier 3</div>
+                        <div class="tier-apy">16%</div>
+                        <div class="tier-range">200k - 400k ARUB</div>
+                    </div>
+                    <div class="apy-tier-card">
+                        <div class="tier-number">Tier 4</div>
+                        <div class="tier-apy">12%</div>
+                        <div class="tier-range">400k - 800k ARUB</div>
+                    </div>
+                    <div class="apy-tier-card">
+                        <div class="tier-number">Tier 5</div>
+                        <div class="tier-apy">8%</div>
+                        <div class="tier-range">800k+ ARUB</div>
+                    </div>
+                `;
+            }
+        }
+        
+        // ==========================================
+        // FAUCET UI UPDATE
+        // ==========================================
+        async function updateFaucetUI() {
+            if (!userAddress) return;
+            
+            try {
+                const [canClaim, timeLeft] = await usdtContract.canClaimFromFaucet(userAddress);
+                const usdtBalance = await usdtContract.balanceOf(userAddress);
+                
+                const faucetInterface = document.getElementById('faucetInterface');
+                faucetInterface.innerHTML = `
+                    <div style="max-width: 600px; margin: 0 auto;">
+                        <div class="staking-card" style="text-align: center;">
+                            <div class="card-header" style="justify-content: center;">
+                                <div class="card-icon">💰</div>
+                                <h3 class="card-title">MockUSDT Faucet</h3>
+                            </div>
+                            
+                            <div style="background: rgba(255,215,0,0.1); padding: 20px; border-radius: 15px; margin: 20px 0;">
+                                <div style="font-size: 2.5em; font-weight: bold; color: var(--ukraine-yellow); margin-bottom: 10px;">
+                                    100,000 USDT
+                                </div>
+                                <div style="color: var(--gray);">
+                                    Кожну годину безкоштовно!
+                                </div>
+                            </div>
+                            
+                            <div class="info-row">
+                                <span class="info-label">Ваш баланс USDT:</span>
+                                <span class="info-value">${ethers.utils.formatUnits(usdtBalance, 6)} USDT</span>
+                            </div>
+                            
+                            <div class="info-row">
+                                <span class="info-label">Статус:</span>
+                                <span class="info-value" style="color: ${canClaim ? 'var(--ukraine-yellow)' : 'var(--gray)'};">
+                                    ${canClaim ? '✅ Можна отримати зараз!' : `⏱️ ${Math.ceil(timeLeft / 60)} хв до наступного клейму`}
+                                </span>
+                            </div>
+                            
+                            <button class="action-btn" onclick="claimFromFaucet()" ${!canClaim ? 'disabled' : ''}>
+                                💰 Отримати 100,000 USDT
+                            </button>
+                            
+                            <div style="margin-top: 20px; padding: 15px; background: rgba(0,87,183,0.1); border-radius: 10px;">
+                                <p style="color: var(--gray); font-size: 0.9em; margin: 0;">
+                                    💡 Це тестові токени для Sepolia Testnet. Використовуйте їх для тестування купівлі ARUB та стейкінгу!
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            } catch (error) {
+                console.error('Error updating faucet UI:', error);
+            }
         }
         
         // ==========================================
@@ -2257,26 +2479,19 @@
                 // Continue with zero balances
             }
             
-            // ВАЖЛИВО: Ціна ARUB прив'язана до курсу USD/RUB
-            // 1 ARUB = поточний курс USD/RUB в доларах
-            // Наприклад: якщо USD/RUB = 100₽, то 1 ARUB = 100 USDT
-            const arubPriceInUsdt = currentRate || 81.22; // Використовуємо поточний курс USD/RUB
+            // ВАЖЛИВО: Ціна ARUB = поточний курс USDT/RUB
+            // 1 ARUB = курс USDT/RUB в доларах
+            // Наприклад: якщо USDT/RUB = 81.22, то 1 ARUB = 81.22 USDT
+            const arubPriceInUsdt = currentRate || 81.22; // Використовуємо поточний курс USDT/RUB
             
-            // Завжди показуємо попередження про Sepolia testnet
-            const testModeWarning = 
+            const testModeWarning = (usdtBalance.eq(0) && arubBalance.eq(0)) ? 
                 '<div style="background: rgba(255,215,0,0.1); padding: 20px; border-radius: 15px; margin-bottom: 30px; border: 2px solid var(--ukraine-yellow);">' +
-                    '<h3 style="color: var(--ukraine-yellow); margin-bottom: 15px;">⚠️ Sepolia Testnet - Тестова мережа</h3>' +
-                    '<div style="color: var(--gray); line-height: 1.8;">' +
-                        '<p style="margin-bottom: 10px;"><strong style="color: white;">Це тестова мережа!</strong> Вам потрібні тестові токени USDT для роботи з платформою.</p>' +
-                        '<p style="margin-bottom: 15px;"><strong style="color: white;">Як отримати тестові USDT:</strong></p>' +
-                        '<ol style="margin: 0 0 15px 20px;">' +
-                            '<li style="margin-bottom: 8px;">Отримайте Sepolia ETH на <a href="https://sepoliafaucet.com" target="_blank" style="color: var(--ukraine-blue);">Sepolia Faucet</a> або <a href="https://www.alchemy.com/faucets/ethereum-sepolia" target="_blank" style="color: var(--ukraine-blue);">Alchemy Faucet</a></li>' +
-                            '<li style="margin-bottom: 8px;">Використовуйте тестовий USDT: <code style="color: var(--accent); background: rgba(0,0,0,0.3); padding: 2px 6px; border-radius: 3px; font-size: 0.85em;">' + CONFIG.USDT_ADDRESS + '</code></li>' +
-                            '<li>Або розгорніть свій власний mock USDT контракт</li>' +
-                        '</ol>' +
-                        '<p style="margin: 0; font-size: 0.9em;"><strong style="color: white;">Баланс 0 USDT?</strong> Переконайтеся, що використовуєте правильний тестовий USDT контракт на Sepolia.</p>' +
-                    '</div>' +
-                '</div>';
+                    '<h3 style="color: var(--ukraine-yellow); margin-bottom: 10px;">⚠️ Тестовий режим</h3>' +
+                    '<p style="color: var(--gray); margin: 0;">' +
+                        'Платформа працює з тестовими адресами смарт-контрактів. ' +
+                        'Після розгортання реальних контрактів всі функції будуть доступні.' +
+                    '</p>' +
+                '</div>' : '';
             
             const tradingInterface = document.getElementById('tradingInterface');
             tradingInterface.innerHTML = testModeWarning + `
@@ -2384,19 +2599,19 @@
                         
                         <div style="padding: 20px 0;">
                             <div class="info-row">
-                                <span class="info-label">Ціна 1 ARUB:</span>
+                                <span class="info-label">Ціна ARUB:</span>
                                 <span class="info-value">${arubPriceInUsdt.toFixed(2)} USDT</span>
                             </div>
                             
                             <div class="info-row">
-                                <span class="info-label">Курс USD/RUB:</span>
+                                <span class="info-label">Курс USDT/RUB:</span>
                                 <span class="info-value">${arubPriceInUsdt.toFixed(2)} ₽</span>
                             </div>
                             
                             <div style="background: rgba(0,87,183,0.1); padding: 12px; border-radius: 8px; margin: 15px 0;">
                                 <p style="color: var(--gray); font-size: 0.85em; line-height: 1.5; margin: 0;">
-                                    💡 <strong style="color: white;">Логіка ціни:</strong> 1 ARUB = ${arubPriceInUsdt.toFixed(2)} USDT (= курс USD/RUB). 
-                                    Чим слабший рубль і вищий курс, тим дорожчий токен ARUB!
+                                    💡 <strong style="color: white;">Логіка ціни:</strong> 1 ARUB = поточний курс USDT/RUB. 
+                                    Чим слабший рубль, тим дорожчий токен!
                                 </p>
                             </div>
                             
@@ -2408,57 +2623,6 @@
                             <div class="info-row">
                                 <span class="info-label">Комісія продажу:</span>
                                 <span class="info-value" style="color: #f59e0b;">1%</span>
-                            </div>
-                            
-                            <!-- Contract Addresses Block -->
-                            <div style="background: rgba(255,215,0,0.1); padding: 20px; border-radius: 12px; margin: 20px 0; border: 2px solid var(--ukraine-yellow);">
-                                <h4 style="color: var(--ukraine-yellow); margin-bottom: 15px; font-size: 1.1em;">📋 Адреси контрактів</h4>
-                                
-                                <div style="margin-bottom: 15px;">
-                                    <div style="color: white; font-weight: 600; margin-bottom: 8px; font-size: 0.95em;">🎯 ARUB Token:</div>
-                                    <div style="display: flex; align-items: center; gap: 10px; background: rgba(0,0,0,0.3); padding: 12px; border-radius: 8px;">
-                                        <code style="color: var(--accent); font-size: 0.85em; word-break: break-all; flex: 1;">${CONFIG.TOKEN_ADDRESS}</code>
-                                        <button onclick="copyToClipboard('${CONFIG.TOKEN_ADDRESS}', 'ARUB')" 
-                                                style="padding: 8px 15px; background: var(--ukraine-blue); border: none; border-radius: 6px; color: white; cursor: pointer; white-space: nowrap; font-size: 0.9em;">
-                                            📋 Copy
-                                        </button>
-                                    </div>
-                                </div>
-                                
-                                <div style="margin-bottom: 15px;">
-                                    <div style="color: white; font-weight: 600; margin-bottom: 8px; font-size: 0.95em;">💵 USDT Token:</div>
-                                    <div style="display: flex; align-items: center; gap: 10px; background: rgba(0,0,0,0.3); padding: 12px; border-radius: 8px;">
-                                        <code style="color: var(--accent); font-size: 0.85em; word-break: break-all; flex: 1;">${CONFIG.USDT_ADDRESS}</code>
-                                        <button onclick="copyToClipboard('${CONFIG.USDT_ADDRESS}', 'USDT')" 
-                                                style="padding: 8px 15px; background: var(--ukraine-blue); border: none; border-radius: 6px; color: white; cursor: pointer; white-space: nowrap; font-size: 0.9em;">
-                                            📋 Copy
-                                        </button>
-                                    </div>
-                                </div>
-                                
-                                <div>
-                                    <div style="color: white; font-weight: 600; margin-bottom: 8px; font-size: 0.95em;">🔒 Staking Contract:</div>
-                                    <div style="display: flex; align-items: center; gap: 10px; background: rgba(0,0,0,0.3); padding: 12px; border-radius: 8px;">
-                                        <code style="color: var(--accent); font-size: 0.85em; word-break: break-all; flex: 1;">${CONFIG.STAKING_ADDRESS}</code>
-                                        <button onclick="copyToClipboard('${CONFIG.STAKING_ADDRESS}', 'Staking')" 
-                                                style="padding: 8px 15px; background: var(--ukraine-blue); border: none; border-radius: 6px; color: white; cursor: pointer; white-space: nowrap; font-size: 0.9em;">
-                                            📋 Copy
-                                        </button>
-                                    </div>
-                                </div>
-                                
-                                <div style="margin-top: 15px; padding: 10px; background: rgba(0,87,183,0.2); border-radius: 6px;">
-                                    <p style="color: var(--gray); font-size: 0.85em; margin: 0 0 10px 0; line-height: 1.5;">
-                                        💡 <strong style="color: white;">Швидке додавання:</strong> Натисніть кнопку нижче або скопіюйте адресу та додайте вручну через "Import tokens"
-                                    </p>
-                                    <button onclick="addTokenToWallet()" 
-                                            style="width: 100%; padding: 12px; background: linear-gradient(45deg, var(--ukraine-blue), var(--ukraine-yellow)); border: none; border-radius: 8px; color: white; font-weight: 600; cursor: pointer; font-size: 0.95em;">
-                                        🦊 Додати ARUB до гаманця
-                                    </button>
-                                    <p style="color: var(--gray); font-size: 0.75em; margin: 10px 0 0 0; text-align: center;">
-                                        Якщо відкривається неправильний гаманець - додайте токен вручну (скопіюйте адресу вище)
-                                    </p>
-                                </div>
                             </div>
                         </div>
                         
@@ -2490,8 +2654,8 @@
             if (buyAmount > 0) {
                 const fee = buyAmount * 0.005; // 0.5%
                 const amountAfterFee = buyAmount - fee;
-                const arubPrice = currentRate || 81.22; // 1 ARUB = курс USDT/RUB в доларах
-                const arubReceived = amountAfterFee / arubPrice; // За 1 USDT купуємо 1/курс ARUB
+                const arubPrice = currentRate || 81.22; // 1 ARUB = курс USDT/RUB
+                const arubReceived = amountAfterFee / arubPrice;
                 
                 document.getElementById('buyReceiveAmount').textContent = `${arubReceived.toFixed(4)} ARUB`;
                 document.getElementById('buyFeeAmount').textContent = `${fee.toFixed(4)} USDT`;
@@ -2504,8 +2668,8 @@
         function calculateSellAmount() {
             const sellAmount = parseFloat(document.getElementById('sellAmount')?.value || 0);
             if (sellAmount > 0) {
-                const arubPrice = currentRate || 81.22; // 1 ARUB = курс USDT/RUB в доларах
-                const usdtValue = sellAmount * arubPrice; // 1 ARUB продаємо за курс USDT
+                const arubPrice = currentRate || 81.22; // 1 ARUB = курс USDT/RUB
+                const usdtValue = sellAmount * arubPrice;
                 const fee = usdtValue * 0.01; // 1%
                 const usdtReceived = usdtValue - fee;
                 
@@ -2640,7 +2804,7 @@
                 document.getElementById('arubValueInUsdt').textContent = '0 USDT';
                 return;
             }
-            const valueInUsdt = parseFloat(arubAmount) * (currentRate || 81.22); // 1 ARUB = курс USDT
+            const valueInUsdt = parseFloat(arubAmount) * (currentRate || 81.22);
             document.getElementById('arubValueInUsdt').textContent = `${valueInUsdt.toFixed(2)} USDT`;
         }
         
@@ -2653,28 +2817,55 @@
             });
         });
         
+        // ==========================================
+        // FAUCET FUNCTIONS
+        // ==========================================
+        async function claimFromFaucet() {
+            if (!usdtContract || !userAddress) {
+                showNotification('❌ Спочатку підключіть гаманець', 'error');
+                return;
+            }
+            
+            try {
+                // Перевірити чи можна клеймати
+                const [canClaim, timeLeft] = await usdtContract.canClaimFromFaucet(userAddress);
+                
+                if (!canClaim) {
+                    const minutes = Math.ceil(timeLeft / 60);
+                    showNotification(`⏱️ Зачекайте ще ${minutes} хвилин`, 'error');
+                    return;
+                }
+                
+                showNotification('🔄 Отримання тестових USDT...', 'info');
+                
+                const tx = await usdtContract.claimFromFaucet();
+                await tx.wait();
+                
+                showNotification('✅ Отримано 100,000 USDT!', 'success');
+                
+                // Оновити UI
+                await updateFaucetUI();
+                await updateTradingUI();
+                await updateUI();
+                
+            } catch (error) {
+                console.error('Faucet claim error:', error);
+                if (error.message.includes('Faucet cooldown')) {
+                    showNotification('⏱️ Зачекайте до наступного клейму', 'error');
+                } else {
+                    showNotification('❌ Помилка отримання USDT', 'error');
+                }
+            }
+        }
+        
+        // ==========================================
+        // HELPER FUNCTIONS
+        // ==========================================
         function setMaxUnstake() {
             if (!stakingContract || !userAddress) return;
             
             stakingContract.getStakedBalance(userAddress).then(balance => {
                 document.getElementById('unstakeAmount').value = ethers.utils.formatUnits(balance, 6);
-            }).catch(err => {
-                console.error('Error getting staked balance:', err);
-            });
-        }
-        
-        function setMaxUnstakeArub() {
-            if (!stakingContract || !userAddress) return;
-            
-            stakingContract.getStakedArubBalance(userAddress).then(balance => {
-                document.getElementById('unstakeArubAmount').value = ethers.utils.formatUnits(balance, 6);
-            }).catch(err => {
-                console.error('Error getting staked ARUB balance:', err);
-                // Fallback: спробувати через getUserInfo
-                stakingContract.getUserInfo(userAddress).then(info => {
-                    const arubStaked = info.stakedArub || info[1];
-                    document.getElementById('unstakeArubAmount').value = ethers.utils.formatUnits(arubStaked, 6);
-                }).catch(e => console.error('Fallback also failed:', e));
             });
         }
         
@@ -2783,32 +2974,6 @@
             }
         }
         
-        async function unstakeArubTokens() {
-            const amount = document.getElementById('unstakeArubAmount').value;
-            
-            if (!amount || parseFloat(amount) <= 0) {
-                showNotification('❌ Введіть коректну кількість', 'error');
-                return;
-            }
-            
-            try {
-                const amountWei = ethers.utils.parseUnits(amount, 6);
-                
-                showNotification('🔄 Зняття ARUB...', 'info');
-                const unstakeTx = await stakingContract.unstakeArub(amountWei);
-                await unstakeTx.wait();
-                
-                showNotification('✅ ARUB успішно знято!', 'success');
-                
-                document.getElementById('unstakeArubAmount').value = '';
-                await updateUI();
-                
-            } catch (error) {
-                console.error('Error unstaking ARUB:', error);
-                showNotification('❌ Помилка зняття ARUB', 'error');
-            }
-        }
-        
         async function claimRewards() {
             try {
                 showNotification('🔄 Отримання винагород...', 'info');
@@ -2841,169 +3006,6 @@
         }
         
         // ==========================================
-        // COPY TO CLIPBOARD
-        // ==========================================
-        function copyToClipboard(text, label) {
-            navigator.clipboard.writeText(text).then(() => {
-                showNotification(`✅ Адресу ${label} скопійовано!`, 'success');
-            }).catch(err => {
-                console.error('Failed to copy:', err);
-                showNotification('❌ Помилка копіювання', 'error');
-            });
-        }
-        
-        // ==========================================
-        // ADD TOKEN TO WALLET
-        // ==========================================
-        async function addTokenToWallet() {
-            try {
-                // Спробуємо використати поточний підключений провайдер
-                let providerToUse = null;
-                
-                if (provider && provider.provider) {
-                    // Використовуємо підключений провайдер
-                    providerToUse = provider.provider;
-                } else if (discoveredProviders.size > 0) {
-                    // Шукаємо MetaMask в discovered providers
-                    for (const [uuid, providerDetail] of discoveredProviders) {
-                        if (providerDetail.info.name.toLowerCase().includes('metamask')) {
-                            providerToUse = providerDetail.provider;
-                            break;
-                        }
-                    }
-                    
-                    // Якщо MetaMask не знайдено, використовуємо перший доступний
-                    if (!providerToUse) {
-                        providerToUse = Array.from(discoveredProviders.values())[0].provider;
-                    }
-                } else if (window.ethereum) {
-                    // Fallback на window.ethereum
-                    providerToUse = window.ethereum;
-                } else {
-                    showNotification('❌ Гаманець не знайдено. Підключіть гаманець спочатку.', 'error');
-                    showWalletGuide(); // Показуємо інструкцію
-                    return;
-                }
-                
-                // Додаємо токен через wallet_watchAsset
-                const wasAdded = await providerToUse.request({
-                    method: 'wallet_watchAsset',
-                    params: {
-                        type: 'ERC20',
-                        options: {
-                            address: CONFIG.TOKEN_ADDRESS,
-                            symbol: 'ARUB',
-                            decimals: 6,
-                            image: 'https://afony109.github.io/antirub-staking/logo.png' // optional
-                        },
-                    },
-                });
-                
-                if (wasAdded) {
-                    showNotification('✅ Токен ARUB успішно додано до гаманця!', 'success');
-                } else {
-                    showNotification('ℹ️ Додавання токена скасовано', 'info');
-                }
-            } catch (error) {
-                console.error('Error adding token:', error);
-                
-                // Якщо помилка - показуємо інструкцію як додати вручну
-                showNotification('⚠️ Не вдалося додати автоматично. Показуємо інструкцію...', 'info');
-                setTimeout(() => {
-                    showWalletGuide();
-                }, 1500);
-            }
-        }
-        
-        // Функція для вибору гаманця і додавання токена
-        async function addTokenToWalletWithChoice() {
-            if (discoveredProviders.size === 0) {
-                showNotification('❌ Гаманці не знайдені. Встановіть MetaMask або інший гаманець.', 'error');
-                return;
-            }
-            
-            // Якщо тільки один гаманець - використовуємо його
-            if (discoveredProviders.size === 1) {
-                await addTokenToWallet();
-                return;
-            }
-            
-            // Показуємо вибір гаманця
-            const modal = document.createElement('div');
-            modal.className = 'wallet-modal';
-            
-            let walletsHTML = '';
-            for (const [uuid, providerDetail] of discoveredProviders) {
-                walletsHTML += `
-                    <div class="wallet-option" onclick="addTokenToSpecificWallet('${uuid}'); this.closest('.wallet-modal').remove();">
-                        <div class="wallet-icon">${providerDetail.info.icon ? `<img src="${providerDetail.info.icon}" style="width: 40px; height: 40px;">` : '💼'}</div>
-                        <div class="wallet-name">${providerDetail.info.name}</div>
-                    </div>
-                `;
-            }
-            
-            modal.innerHTML = `
-                <div class="wallet-modal-content" style="max-width: 500px;">
-                    <h2 class="wallet-modal-title">Виберіть гаманець</h2>
-                    <p style="color: var(--gray); text-align: center; margin-bottom: 30px;">
-                        У вас встановлено кілька гаманців. Виберіть в який додати токен ARUB:
-                    </p>
-                    <div class="wallet-list">
-                        ${walletsHTML}
-                    </div>
-                    <div style="margin-top: 25px; text-align: center;">
-                        <button onclick="this.closest('.wallet-modal').remove(); showWalletGuide();" 
-                                style="padding: 12px 30px; background: var(--ukraine-blue); border: none; border-radius: 12px; color: white; cursor: pointer; font-size: 1em;">
-                            📋 Додати вручну
-                        </button>
-                    </div>
-                </div>
-            `;
-            
-            document.body.appendChild(modal);
-            
-            modal.addEventListener('click', (e) => {
-                if (e.target === modal) {
-                    modal.remove();
-                }
-            });
-        }
-        
-        // Додавання токена до конкретного гаманця
-        async function addTokenToSpecificWallet(uuid) {
-            try {
-                const providerDetail = discoveredProviders.get(uuid);
-                if (!providerDetail) {
-                    showNotification('❌ Гаманець не знайдено', 'error');
-                    return;
-                }
-                
-                const wasAdded = await providerDetail.provider.request({
-                    method: 'wallet_watchAsset',
-                    params: {
-                        type: 'ERC20',
-                        options: {
-                            address: CONFIG.TOKEN_ADDRESS,
-                            symbol: 'ARUB',
-                            decimals: 6,
-                            image: 'https://afony109.github.io/antirub-staking/logo.png'
-                        },
-                    },
-                });
-                
-                if (wasAdded) {
-                    showNotification(`✅ Токен ARUB додано до ${providerDetail.info.name}!`, 'success');
-                } else {
-                    showNotification('ℹ️ Додавання токена скасовано', 'info');
-                }
-            } catch (error) {
-                console.error('Error adding token to specific wallet:', error);
-                showNotification('⚠️ Не вдалося додати. Спробуйте вручну.', 'error');
-                setTimeout(() => showWalletGuide(), 1500);
-            }
-        }
-        
-        // ==========================================
         // WALLET GUIDE
         // ==========================================
         function showWalletGuide() {
@@ -3013,20 +3015,9 @@
                 <div class="wallet-modal-content" style="max-width: 700px; max-height: 85vh; overflow-y: auto;">
                     <h2 class="wallet-modal-title">Як додати ARUB токен до гаманця</h2>
                     
-                    <div style="background: rgba(255,215,0,0.15); padding: 20px; border-radius: 12px; margin-bottom: 25px; border: 2px solid var(--ukraine-yellow);">
-                        <h3 style="color: var(--ukraine-yellow); margin-bottom: 10px;">⚠️ ВАЖЛИВО: Sepolia Testnet</h3>
-                        <p style="color: white; margin: 0; line-height: 1.6;">
-                            Платформа працює на тестовій мережі <strong>Sepolia Testnet</strong>. 
-                            Переконайтеся, що ваш гаманець підключений до мережі Sepolia, інакше ви не побачите токени ARUB.
-                        </p>
-                    </div>
-                    
                     <div style="background: rgba(0,87,183,0.1); padding: 20px; border-radius: 12px; margin-bottom: 25px; border: 2px solid var(--ukraine-blue);">
                         <h3 style="color: white; margin-bottom: 15px;">📋 Інформація про токен</h3>
                         <div style="background: rgba(0,0,0,0.3); padding: 15px; border-radius: 8px;">
-                            <div style="margin-bottom: 10px;">
-                                <strong style="color: var(--primary);">Мережа:</strong> Sepolia Testnet
-                            </div>
                             <div style="margin-bottom: 10px;">
                                 <strong style="color: var(--primary);">Адреса контракту:</strong><br>
                                 <span style="color: var(--accent); word-break: break-all;">${CONFIG.TOKEN_ADDRESS}</span>
@@ -3052,7 +3043,6 @@
                                 🦊 MetaMask
                             </summary>
                             <ol style="margin-top: 15px; padding-left: 20px; color: var(--gray);">
-                                <li>⚠️ <strong>Спочатку переключіться на мережу "Sepolia test network"</strong></li>
                                 <li>Відкрийте MetaMask</li>
                                 <li>Перейдіть на вкладку "Assets" (Активи)</li>
                                 <li>Прокрутіть вниз і натисніть "Import tokens"</li>
@@ -3072,7 +3062,6 @@
                                 <li>Виберіть "Manage Crypto"</li>
                                 <li>Натисніть "+" у правому верхньому куті</li>
                                 <li>Виберіть "Ethereum" → "Add Custom Token"</li>
-                                <li>⚠️ Переключіться на мережу "Sepolia Testnet"</li>
                                 <li>Вставте адресу контракту</li>
                                 <li>Заповніть: Name: ARUB, Symbol: ARUB, Decimals: 6</li>
                                 <li>Натисніть "Done"</li>
@@ -3089,7 +3078,7 @@
                                 <li>Натисніть на "+" або "Add Asset"</li>
                                 <li>Виберіть "Token" → "Custom Token"</li>
                                 <li>Вставте адресу контракту</li>
-                                <li>⚠️ Переконайтеся, що мережа "Sepolia Testnet"</li>
+                                <li>Переконайтеся, що мережа "Ethereum"</li>
                                 <li>Натисніть "Add"</li>
                             </ol>
                         </details>
@@ -3124,25 +3113,6 @@
                         
                         <details style="margin-bottom: 15px; background: var(--card-bg); padding: 15px; border-radius: 10px; border: 1px solid rgba(0,87,183,0.3);">
                             <summary style="cursor: pointer; font-weight: 600; color: white; padding: 5px;">
-                                🐉 Bybit Wallet
-                            </summary>
-                            <ol style="margin-top: 15px; padding-left: 20px; color: var(--gray);">
-                                <li>⚠️ <strong>Спочатку переключіться на мережу "Sepolia"</strong></li>
-                                <li>Відкрийте Bybit Wallet</li>
-                                <li>Перейдіть на вкладку "Tokens" або "Assets"</li>
-                                <li>Натисніть "+" або "Add Token"</li>
-                                <li>Виберіть "Custom Token"</li>
-                                <li>Вставте адресу контракту: <code style="color: var(--accent);">${CONFIG.TOKEN_ADDRESS}</code></li>
-                                <li>Symbol: ARUB, Decimals: 6</li>
-                                <li>Натисніть "Add" або "Confirm"</li>
-                            </ol>
-                            <p style="margin-top: 10px; padding: 10px; background: rgba(255,215,0,0.1); border-radius: 6px; color: var(--gray); font-size: 0.9em;">
-                                💡 <strong style="color: white;">Важливо:</strong> Bybit Wallet повинен бути підключений до Sepolia testnet, інакше токен не з'явиться!
-                            </p>
-                        </details>
-                        
-                        <details style="margin-bottom: 15px; background: var(--card-bg); padding: 15px; border-radius: 10px; border: 1px solid rgba(0,87,183,0.3);">
-                            <summary style="cursor: pointer; font-weight: 600; color: white; padding: 5px;">
                                 ⭕ OKX Wallet
                             </summary>
                             <ol style="margin-top: 15px; padding-left: 20px; color: var(--gray);">
@@ -3150,7 +3120,7 @@
                                 <li>Перейдіть у розділ "Assets"</li>
                                 <li>Натисніть на "+" або "Add token"</li>
                                 <li>Виберіть "Custom token"</li>
-                                <li>⚠️ Виберіть мережу "Sepolia Testnet"</li>
+                                <li>Виберіть мережу "Ethereum"</li>
                                 <li>Вставте адресу контракту</li>
                                 <li>Натисніть "Add"</li>
                             </ol>
@@ -3240,27 +3210,23 @@
                 },
                 buy: {
                     title: '💰 Купівля токенів Антируб',
-                    text: 'Заробляємо на падінні рубля, купуючи токен Антируб. Стейкаємо антируб і usdt. Отримуємо ще більше антируб. Чим слабший рубль, тим дорожчий токен Антируб! Ціна 1 Антируб = поточний курс USDT/RUB (зараз ~81 USDT). Перейдіть у розділ торгівлі, введіть суму USDT, комісія 0.5%.'
+                    text: 'Заробляємо на падінні рубля, купуючи токен Антируб! Ціна 1 Антируб = поточний курс USDT/RUB (зараз ~81 USDT). Перейдіть у розділ торгівлі, введіть суму USDT, комісія 0.5%. Потім стейкайте Антируб і USDT — отримуйте ще більше Антируб!'
                 },
                 stake: {
                     title: '🔒 Як працює стейкінг',
-                    text: 'Стейкаємо ARUB і USDT — отримуємо ще більше ARUB! Мінімум: 10 USDT або 0.1 ARUB. Винагороди нараховуються автоматично в токенах ARUB. Можете зняти в будь-який час без штрафів. Чим слабший рубль і чим вищий курс USD/RUB, тим дорожчий кожен ваш ARUB токен!'
+                    text: 'Стейкаємо ARUB і USDT — отримуємо ще більше ARUB! Мінімум: 10 USDT або 0.1 ARUB. Винагороди нараховуються автоматично в токенах ARUB. Можете зняти в будь-який час без штрафів. Чим слабший рубль, тим дорожчий кожен ваш токен!'
                 },
                 fees: {
                     title: '💳 Комісії платформи',
-                    text: 'Купівля ARUB: 0.5% комісія. Продаж ARUB: 1% комісія. Стейкінг: без комісій платформи (тільки gas в мережі Sepolia). Всі комісії йдуть на аудит, розвиток та оплату команді.'
+                    text: 'Купівля ARUB: 0.5% комісія. Продаж ARUB: 1% комісія. Стейкінг: без комісій платформи (тільки gas Ethereum). Всі комісії йдуть на аудит, розвиток та оплату команді.'
                 },
                 security: {
                     title: '🛡️ Безпека платформи',
-                    text: 'Всі операції відбуваються через перевірені смарт-контракти на Ethereum (Sepolia testnet). Код повністю відкритий для аудиту на Sepolia Etherscan. Ваші кошти завжди під вашим контролем. Ми не маємо доступу до ваших приватних ключів.'
+                    text: 'Всі операції відбуваються через перевірені смарт-контракти на Ethereum. Код повністю відкритий для аудиту. Ваші кошти завжди під вашим контролем. Ми не маємо доступу до ваших приватних ключів.'
                 },
                 withdraw: {
                     title: '💸 Виведення коштів',
                     text: 'Перейдіть у розділ стейкінгу або торгівлі. Виберіть суму для зняття. Натисніть "Зняти" або "Продати". Підтвердіть транзакцію у гаманці. Кошти надійдуть миттєво після підтвердження в блокчейні.'
-                },
-                testnet: {
-                    title: '⚠️ Тестові токени на Sepolia',
-                    text: 'Платформа працює на Sepolia testnet!\n\n1️⃣ Отримайте Sepolia ETH:\n• https://sepoliafaucet.com\n• https://www.alchemy.com/faucets/ethereum-sepolia\n\n2️⃣ Використовуйте тестовий USDT або розгорніть свій mock контракт\n\n3️⃣ Додайте ARUB токен у гаманець за адресою з платформи\n\n⚠️ Всі токени на Sepolia тестові і не мають реальної вартості!'
                 }
             };
             
@@ -3319,17 +3285,9 @@
             await new Promise(resolve => setTimeout(resolve, 100));
             console.log('Отримано EIP-6963 провайдерів:', discoveredProviders.size);
             
-            // Оновлюємо курс USDT/RUB
             await fetchUsdtRubRate();
             
-            // Оновлюємо публічну статистику (БЕЗ підключення гаманця)
-            await updatePublicStats();
-            
-            // Періодично оновлюємо курс
             setInterval(fetchUsdtRubRate, 300000);
-            
-            // Періодично оновлюємо публічну статистику
-            setInterval(updatePublicStats, 60000); // Кожну хвилину
             
             // Show welcome tooltip after 3 seconds
             setTimeout(() => {
