@@ -2004,17 +2004,19 @@
             }
         }
         
-        function initializeContracts() {
-            const USDT_ABI = [
-                'function balanceOf(address owner) view returns (uint256)',
-                'function approve(address spender, uint256 amount) returns (bool)',
-                'function allowance(address owner, address spender) view returns (uint256)',
-                'function decimals() view returns (uint8)',
-                // MockUSDT faucet functions
-                'function claimFromFaucet() external',
-                'function mint(uint256 amount) external',
-                'function canClaimFromFaucet(address user) view returns (bool canClaim, uint256 timeUntilNextClaim)'
-            ];
+        const USDT_ABI = [
+    // Standard ERC20
+    'function balanceOf(address owner) view returns (uint256)',
+    'function transfer(address to, uint256 amount) returns (bool)',
+    'function approve(address spender, uint256 amount) returns (bool)',
+    'function allowance(address owner, address spender) view returns (uint256)',
+    'function decimals() view returns (uint8)',
+    'function totalSupply() view returns (uint256)',
+    // MockUSDT specific
+    'function claimFromFaucet() external',
+    'function mint(uint256 amount) external',
+    'function canClaimFromFaucet(address user) view returns (bool canClaim, uint256 timeUntilNextClaim)'
+];
             
             const STAKING_ABI = [
                 'function stake(uint256 amount) external',
