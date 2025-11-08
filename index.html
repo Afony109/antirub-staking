@@ -4,7 +4,6 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>ANTI RUB - Стейкінг ARUB та USDT, заробляємо на падінні рубля 🇺🇦</title>
-    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='50' fill='%230057B7'/><rect y='50' width='100' height='50' fill='%23FFD700'/><text x='50' y='60' font-size='50' text-anchor='middle' fill='white' font-weight='bold'>₴</text></svg>">
     
     <!-- Ethers.js -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/ethers/5.7.2/ethers.umd.min.js"></script>
@@ -1758,7 +1757,7 @@
                             <div class="icon">💬</div>
                             <div class="label">Discord</div>
                         </a>
-                        <a href="/cdn-cgi/l/email-protection#fa898f8a8a95888eba9b948e93888f98d49395" class="contact-method">
+                        <a href="mailto:support@antirub.io" class="contact-method">
                             <div class="icon">📧</div>
                             <div class="label">Email</div>
                         </a>
@@ -1932,47 +1931,7 @@
                 userAddress = accounts[0];
                 signer = provider.getSigner();
                 
-                // Initialize contracts
-                const USDT_ABI = [
-                    'function balanceOf(address owner) view returns (uint256)',
-                    'function transfer(address to, uint256 amount) returns (bool)',
-                    'function approve(address spender, uint256 amount) returns (bool)',
-                    'function allowance(address owner, address spender) view returns (uint256)',
-                    'function decimals() view returns (uint8)',
-                    'function totalSupply() view returns (uint256)',
-                    'function claimFromFaucet() external',
-                    'function mint(uint256 amount) external',
-                    'function canClaimFromFaucet(address user) view returns (bool canClaim, uint256 timeUntilNextClaim)'
-                ];
-                
-                const STAKING_ABI = [
-                    'function stake(uint256 amount) external',
-                    'function stakeArub(uint256 amount) external',
-                    'function unstake(uint256 amount) external',
-                    'function getStakedBalance(address user) view returns (uint256)',
-                    'function getTotalStaked() view returns (uint256)',
-                    'function getRewards(address user) view returns (uint256)',
-                    'function claimRewards() external',
-                    'function getAPYTiers() view returns (uint256[] memory thresholds, uint256[] memory apys)',
-                    'function getCurrentAPYTier() view returns (uint256 tier, uint256 threshold, uint256 apy, string memory description)',
-                    'function getNextAPYTier() view returns (uint256 nextThreshold, uint256 nextAPY, uint256 remainingToNextTier)',
-                    'function currentAPY() view returns (uint256)',
-                    'function totalStaked() view returns (uint256)'
-                ];
-                
-                const TOKEN_ABI = [
-                    'function balanceOf(address owner) view returns (uint256)',
-                    'function decimals() view returns (uint8)',
-                    'function buy(uint256 usdtAmount) external',
-                    'function sell(uint256 arubAmount) external',
-                    'function getPrice() view returns (uint256)',
-                    'function approve(address spender, uint256 amount) returns (bool)',
-                    'function allowance(address owner, address spender) view returns (uint256)'
-                ];
-                
-                usdtContract = new ethers.Contract(CONFIG.USDT_ADDRESS, USDT_ABI, signer);
-                stakingContract = new ethers.Contract(CONFIG.STAKING_ADDRESS, STAKING_ABI, signer);
-                tokenContract = new ethers.Contract(CONFIG.TOKEN_ADDRESS, TOKEN_ABI, signer);
+                initializeContracts();
                 
                 updateUI();
                 updateTradingUI();
@@ -2043,6 +2002,51 @@
                     throw switchError;
                 }
             }
+        }
+        
+        const USDT_ABI = [
+    // Standard ERC20
+    'function balanceOf(address owner) view returns (uint256)',
+    'function transfer(address to, uint256 amount) returns (bool)',
+    'function approve(address spender, uint256 amount) returns (bool)',
+    'function allowance(address owner, address spender) view returns (uint256)',
+    'function decimals() view returns (uint8)',
+    'function totalSupply() view returns (uint256)',
+    // MockUSDT specific
+    'function claimFromFaucet() external',
+    'function mint(uint256 amount) external',
+    'function canClaimFromFaucet(address user) view returns (bool canClaim, uint256 timeUntilNextClaim)'
+];
+            
+            const STAKING_ABI = [
+                'function stake(uint256 amount) external',
+                'function stakeArub(uint256 amount) external',
+                'function unstake(uint256 amount) external',
+                'function getStakedBalance(address user) view returns (uint256)',
+                'function getTotalStaked() view returns (uint256)',
+                'function getRewards(address user) view returns (uint256)',
+                'function claimRewards() external',
+                // Dynamic APY functions
+                'function getAPYTiers() view returns (uint256[] memory thresholds, uint256[] memory apys)',
+                'function getCurrentAPYTier() view returns (uint256 tier, uint256 threshold, uint256 apy, string memory description)',
+                'function getNextAPYTier() view returns (uint256 nextThreshold, uint256 nextAPY, uint256 remainingToNextTier)',
+                'function currentAPY() view returns (uint256)',
+                'function totalStaked() view returns (uint256)'
+            ];
+            
+            const TOKEN_ABI = [
+                'function balanceOf(address owner) view returns (uint256)',
+                'function decimals() view returns (uint8)',
+                'function buy(uint256 usdtAmount) external',
+                'function sell(uint256 arubAmount) external',
+                'function getPrice() view returns (uint256)',
+                'function approve(address spender, uint256 amount) returns (bool)',
+                'function allowance(address owner, address spender) view returns (uint256)'
+            ];
+            
+            usdtContract = new ethers.Contract(CONFIG.USDT_ADDRESS, USDT_ABI, signer);
+            stakingContract = new ethers.Contract(CONFIG.STAKING_ADDRESS, STAKING_ABI, signer);
+            tokenContract = new ethers.Contract(CONFIG.TOKEN_ADDRESS, TOKEN_ABI, signer);
         }
         
         // ==========================================
@@ -3335,4 +3339,11 @@
                     tooltip.style.animation = 'slideUp 0.3s ease-out reverse';
                     setTimeout(() => tooltip.remove(), 300);
                 }
-            }, 800
+            }, 8000);
+            
+            // Mark as seen
+            localStorage.setItem('supportTooltipSeen', 'true');
+        }
+    </script>
+</body>
+</html>
