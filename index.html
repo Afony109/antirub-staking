@@ -1901,15 +1901,18 @@
         // ==========================================
         async function connectWallet() {
             try {
+                console.log('🔵 Starting wallet connection...');
                 let selectedProvider = null;
                 
                 if (discoveredProviders.size > 0) {
+                    console.log('🔵 Found', discoveredProviders.size, 'providers via EIP-6963');
                     if (discoveredProviders.size === 1) {
                         selectedProvider = Array.from(discoveredProviders.values())[0].provider;
                     } else {
                         selectedProvider = await showWalletSelector();
                     }
                 } else if (window.ethereum) {
+                    console.log('🔵 Using window.ethereum');
                     selectedProvider = window.ethereum;
                 } else {
                     showNotification('❌ Крипто-гаманець не знайдено. Будь ласка, встановіть MetaMask або інший Web3 гаманець.', 'error');
@@ -1917,23 +1920,35 @@
                 }
                 
                 if (!selectedProvider) {
+                    console.log('❌ No provider selected');
                     return;
                 }
                 
+                console.log('🔵 Creating Web3Provider...');
                 provider = new ethers.providers.Web3Provider(selectedProvider);
                 
+                console.log('🔵 Checking network...');
                 const network = await provider.getNetwork();
+                console.log('🔵 Current network:', network.chainId, 'Expected:', parseInt(CONFIG.NETWORK.chainId, 16));
                 const expectedChainId = parseInt(CONFIG.NETWORK.chainId, 16); // 11155111 for Sepolia
                 if (network.chainId !== expectedChainId) {
+                    console.log('🔵 Switching to Sepolia...');
                     await switchToEthereum(selectedProvider);
                 }
                 
+                console.log('🔵 Requesting accounts...');
                 const accounts = await provider.send('eth_requestAccounts', []);
                 userAddress = accounts[0];
+                console.log('🔵 Connected address:', userAddress);
+                
+                console.log('🔵 Getting signer...');
                 signer = provider.getSigner();
                 
+                console.log('🔵 Initializing contracts...');
                 initializeContracts();
+                console.log('🔵 Contracts initialized');
                 
+                console.log('🔵 Updating UI...');
                 updateUI();
                 updateTradingUI();
                 updateFaucetUI();
@@ -1943,8 +1958,9 @@
                 document.getElementById('connectBtn').textContent = 
                     `${userAddress.substring(0, 6)}...${userAddress.substring(38)}`;
                 
+                console.log('✅ Wallet connection complete!');
             } catch (error) {
-                console.error('Error connecting wallet:', error);
+                console.error('❌ Error connecting wallet:', error);
                 showNotification('❌ Помилка підключення гаманця', 'error');
             }
         }
@@ -2006,6 +2022,12 @@
         }
         
         function initializeContracts() {
+            console.log('🔵 initializeContracts: Starting...');
+            console.log('🔵 CONFIG.USDT_ADDRESS:', CONFIG.USDT_ADDRESS);
+            console.log('🔵 CONFIG.STAKING_ADDRESS:', CONFIG.STAKING_ADDRESS);
+            console.log('🔵 CONFIG.TOKEN_ADDRESS:', CONFIG.TOKEN_ADDRESS);
+            console.log('🔵 signer:', signer);
+            
             const USDT_ABI = [
                 // Standard ERC20
                 'function balanceOf(address owner) view returns (uint256)',
@@ -2046,9 +2068,17 @@
                 'function allowance(address owner, address spender) view returns (uint256)'
             ];
             
+            console.log('🔵 Creating USDT contract...');
             usdtContract = new ethers.Contract(CONFIG.USDT_ADDRESS, USDT_ABI, signer);
+            console.log('🔵 Creating Staking contract...');
             stakingContract = new ethers.Contract(CONFIG.STAKING_ADDRESS, STAKING_ABI, signer);
+            console.log('🔵 Creating Token contract...');
             tokenContract = new ethers.Contract(CONFIG.TOKEN_ADDRESS, TOKEN_ABI, signer);
+            
+            console.log('✅ All contracts initialized');
+            console.log('🔵 usdtContract:', usdtContract.address);
+            console.log('🔵 stakingContract:', stakingContract.address);
+            console.log('🔵 tokenContract:', tokenContract.address);
         }
         
         // ==========================================
