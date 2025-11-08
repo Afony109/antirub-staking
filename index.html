@@ -1757,7 +1757,7 @@
                             <div class="icon">💬</div>
                             <div class="label">Discord</div>
                         </a>
-                        <a href="mailto:support@antirub.io" class="contact-method">
+                        <a href="/cdn-cgi/l/email-protection#52212722223d202612333c263b2027307c3b3d" class="contact-method">
                             <div class="icon">📧</div>
                             <div class="label">Email</div>
                         </a>
@@ -1837,7 +1837,7 @@
         </div>
     </footer>
     
-    <script>
+    <script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script>
         // ==========================================
         // CONFIGURATION
         // ==========================================
@@ -2004,19 +2004,20 @@
             }
         }
         
-        const USDT_ABI = [
-    // Standard ERC20
-    'function balanceOf(address owner) view returns (uint256)',
-    'function transfer(address to, uint256 amount) returns (bool)',
-    'function approve(address spender, uint256 amount) returns (bool)',
-    'function allowance(address owner, address spender) view returns (uint256)',
-    'function decimals() view returns (uint8)',
-    'function totalSupply() view returns (uint256)',
-    // MockUSDT specific
-    'function claimFromFaucet() external',
-    'function mint(uint256 amount) external',
-    'function canClaimFromFaucet(address user) view returns (bool canClaim, uint256 timeUntilNextClaim)'
-];
+        function initializeContracts() {
+            const USDT_ABI = [
+                // Standard ERC20
+                'function balanceOf(address owner) view returns (uint256)',
+                'function transfer(address to, uint256 amount) returns (bool)',
+                'function approve(address spender, uint256 amount) returns (bool)',
+                'function allowance(address owner, address spender) view returns (uint256)',
+                'function decimals() view returns (uint8)',
+                'function totalSupply() view returns (uint256)',
+                // MockUSDT specific
+                'function claimFromFaucet() external',
+                'function mint(uint256 amount) external',
+                'function canClaimFromFaucet(address user) view returns (bool canClaim, uint256 timeUntilNextClaim)'
+            ];
             
             const STAKING_ABI = [
                 'function stake(uint256 amount) external',
@@ -3339,11 +3340,4 @@
                     tooltip.style.animation = 'slideUp 0.3s ease-out reverse';
                     setTimeout(() => tooltip.remove(), 300);
                 }
-            }, 8000);
-            
-            // Mark as seen
-            localStorage.setItem('supportTooltipSeen', 'true');
-        }
-    </script>
-</body>
-</html>
+            }, 800
