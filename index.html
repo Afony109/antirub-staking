@@ -1839,6 +1839,9 @@
     </footer>
     
     <script>
+        console.log('🚀 ANTI RUB Platform Starting...');
+        console.log('🔵 Ethers.js available:', typeof ethers !== 'undefined');
+        
         // ==========================================
         // CONFIGURATION
         // ==========================================
@@ -1870,8 +1873,19 @@
         window.addEventListener('eip6963:announceProvider', (event) => {
             const providerDetail = event.detail;
             discoveredProviders.set(providerDetail.info.uuid, providerDetail);
-            console.log('Discovered provider:', providerDetail.info.name);
+            console.log('✅ Discovered provider:', providerDetail.info.name);
         });
+        
+        // Request providers immediately
+        console.log('🔵 Requesting EIP-6963 providers...');
+        window.dispatchEvent(new Event('eip6963:requestProvider'));
+        
+        // Also check window.ethereum
+        setTimeout(() => {
+            console.log('🔵 Providers check after 500ms:');
+            console.log('  - EIP-6963 providers:', discoveredProviders.size);
+            console.log('  - window.ethereum:', !!window.ethereum);
+        }, 500);
         
         // ==========================================
         // USDT/RUB RATE FETCHING
@@ -1901,39 +1915,60 @@
         // ==========================================
         async function connectWallet() {
             try {
+                console.log('🚀 === CONNECTING WALLET ===');
                 let selectedProvider = null;
                 
+                console.log('🔵 Discovered providers:', discoveredProviders.size);
+                console.log('🔵 window.ethereum:', !!window.ethereum);
+                
                 if (discoveredProviders.size > 0) {
+                    console.log('🔵 Using EIP-6963 providers');
                     if (discoveredProviders.size === 1) {
                         selectedProvider = Array.from(discoveredProviders.values())[0].provider;
+                        console.log('🔵 Single provider selected:', Array.from(discoveredProviders.values())[0].info.name);
                     } else {
+                        console.log('🔵 Multiple providers, showing selector...');
                         selectedProvider = await showWalletSelector();
                     }
                 } else if (window.ethereum) {
+                    console.log('🔵 Using window.ethereum');
                     selectedProvider = window.ethereum;
                 } else {
+                    console.log('❌ No wallet found!');
                     showNotification('❌ Крипто-гаманець не знайдено. Будь ласка, встановіть MetaMask або інший Web3 гаманець.', 'error');
                     return;
                 }
                 
                 if (!selectedProvider) {
+                    console.log('❌ No provider selected (user cancelled?)');
                     return;
                 }
                 
+                console.log('🔵 Creating Web3Provider...');
                 provider = new ethers.providers.Web3Provider(selectedProvider);
                 
+                console.log('🔵 Checking network...');
                 const network = await provider.getNetwork();
                 const expectedChainId = parseInt(CONFIG.NETWORK.chainId, 16); // 11155111 for Sepolia
+                console.log('🔵 Current network:', network.chainId, 'Expected:', expectedChainId);
+                
                 if (network.chainId !== expectedChainId) {
+                    console.log('🔵 Switching to Sepolia...');
                     await switchToEthereum(selectedProvider);
                 }
                 
+                console.log('🔵 Requesting accounts...');
                 const accounts = await provider.send('eth_requestAccounts', []);
                 userAddress = accounts[0];
+                console.log('✅ Connected address:', userAddress);
+                
+                console.log('🔵 Getting signer...');
                 signer = provider.getSigner();
                 
+                console.log('🔵 Initializing contracts...');
                 initializeContracts();
                 
+                console.log('🔵 Updating UI...');
                 updateUI();
                 updateTradingUI();
                 updateFaucetUI();
@@ -1943,8 +1978,11 @@
                 document.getElementById('connectBtn').textContent = 
                     `${userAddress.substring(0, 6)}...${userAddress.substring(38)}`;
                 
+                console.log('✅ === CONNECTION SUCCESSFUL ===');
+                
             } catch (error) {
-                console.error('Error connecting wallet:', error);
+                console.error('❌ === CONNECTION ERROR ===');
+                console.error('Error details:', error);
                 showNotification('❌ Помилка підключення гаманця', 'error');
             }
         }
@@ -2833,13 +2871,6 @@
         }
         
         // Додаємо обробник input для оновлення вартості ARUB
-        document.addEventListener('DOMContentLoaded', () => {
-            document.addEventListener('input', (e) => {
-                if (e.target && e.target.id === 'stakeArubAmount') {
-                    updateArubValueInUsdt(e.target.value);
-                }
-            });
-        });
         
         // ==========================================
         // FAUCET FUNCTIONS
@@ -3187,11 +3218,6 @@
         }
         
         // ==========================================
-        // EVENT LISTENERS
-        // ==========================================
-        document.getElementById('connectBtn').addEventListener('click', connectWallet);
-        
-        // ==========================================
         // SUPPORT WIDGET FUNCTIONS
         // ==========================================
         function toggleSupportChat() {
@@ -3300,23 +3326,51 @@
         }
         
         // ==========================================
-        // INITIALIZATION
+        // INITIALIZATION - ALL IN ONE PLACE
         // ==========================================
+        console.log('🔵 Script loaded, waiting for DOM...');
+        
         window.addEventListener('DOMContentLoaded', async () => {
-            console.log('Запит EIP-6963 провайдерів...');
+            console.log('✅ DOM Content Loaded!');
+            
+            // 1. Setup Connect Button
+            const connectBtn = document.getElementById('connectBtn');
+            if (connectBtn) {
+                console.log('✅ Connect button found, attaching listener');
+                connectBtn.addEventListener('click', () => {
+                    console.log('🔵 Connect button clicked!');
+                    connectWallet();
+                });
+            } else {
+                console.error('❌ Connect button NOT found!');
+            }
+            
+            // 2. Setup input listener for stakeArubAmount
+            document.addEventListener('input', (e) => {
+                if (e.target && e.target.id === 'stakeArubAmount') {
+                    updateArubValueInUsdt(e.target.value);
+                }
+            });
+            
+            // 3. Request EIP-6963 providers
+            console.log('🔵 Requesting EIP-6963 providers in DOM...');
             window.dispatchEvent(new Event('eip6963:requestProvider'));
             
             await new Promise(resolve => setTimeout(resolve, 100));
-            console.log('Отримано EIP-6963 провайдерів:', discoveredProviders.size);
+            console.log('✅ EIP-6963 providers discovered:', discoveredProviders.size);
             
+            // 4. Fetch USDT/RUB rate
             await fetchUsdtRubRate();
             
+            // 5. Setup rate update interval (every 5 minutes)
             setInterval(fetchUsdtRubRate, 300000);
             
-            // Show welcome tooltip after 3 seconds
+            // 6. Show welcome tooltip after 3 seconds
             setTimeout(() => {
                 showWelcomeTooltip();
             }, 3000);
+            
+            console.log('✅ All initialization complete!');
         });
         
         // Show welcome tooltip for support widget
