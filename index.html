@@ -574,6 +574,281 @@
                 font-size: 2em;
             }
         }
+        
+        /* AI Support Widget Styles */
+        .ai-support-widget {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            z-index: 3000;
+        }
+        
+        .ai-support-button {
+            width: 70px;
+            height: 70px;
+            background: linear-gradient(135deg, var(--ukraine-blue), var(--ukraine-yellow));
+            border-radius: 50%;
+            border: none;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 8px 30px rgba(0,87,183,0.5);
+            transition: all 0.3s;
+            position: relative;
+        }
+        
+        .ai-support-button:hover {
+            transform: scale(1.1);
+            box-shadow: 0 12px 40px rgba(0,87,183,0.7);
+        }
+        
+        .ai-pulse {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--ukraine-blue), var(--ukraine-yellow));
+            opacity: 0.6;
+            animation: pulse-ai 2s infinite;
+        }
+        
+        @keyframes pulse-ai {
+            0%, 100% {
+                transform: scale(1);
+                opacity: 0.6;
+            }
+            50% {
+                transform: scale(1.3);
+                opacity: 0;
+            }
+        }
+        
+        .ai-support-chat {
+            position: fixed;
+            bottom: 120px;
+            right: 30px;
+            width: 420px;
+            max-height: 650px;
+            background: var(--dark);
+            border: 2px solid var(--ukraine-blue);
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.7);
+            display: none;
+            flex-direction: column;
+            animation: slideUp 0.3s ease-out;
+        }
+        
+        .ai-support-chat.active {
+            display: flex;
+        }
+        
+        @keyframes slideUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        .ai-support-header {
+            background: linear-gradient(135deg, var(--ukraine-blue), var(--ukraine-yellow));
+            padding: 20px;
+            border-radius: 18px 18px 0 0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .ai-avatar {
+            width: 50px;
+            height: 50px;
+            background: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.8em;
+        }
+        
+        .ai-support-close {
+            background: rgba(255,255,255,0.2);
+            border: none;
+            color: white;
+            width: 35px;
+            height: 35px;
+            border-radius: 50%;
+            cursor: pointer;
+            font-size: 1.3em;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s;
+        }
+        
+        .ai-support-close:hover {
+            background: rgba(255,255,255,0.3);
+        }
+        
+        .ai-support-body {
+            flex: 1;
+            overflow-y: auto;
+            padding: 20px;
+            max-height: 450px;
+        }
+        
+        .ai-message {
+            display: flex;
+            gap: 12px;
+            margin-bottom: 20px;
+            animation: fadeIn 0.3s ease-out;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        .ai-message-bot .ai-message-avatar {
+            width: 40px;
+            height: 40px;
+            background: linear-gradient(135deg, var(--ukraine-blue), var(--ukraine-yellow));
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5em;
+            flex-shrink: 0;
+        }
+        
+        .ai-message-user .ai-message-avatar {
+            width: 40px;
+            height: 40px;
+            background: var(--ukraine-blue);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5em;
+            flex-shrink: 0;
+        }
+        
+        .ai-message-content {
+            flex: 1;
+            background: var(--card-bg);
+            padding: 15px;
+            border-radius: 12px;
+            color: var(--gray);
+            line-height: 1.6;
+        }
+        
+        .ai-message-bot .ai-message-content {
+            border: 1px solid rgba(0,87,183,0.3);
+        }
+        
+        .ai-message-user {
+            flex-direction: row-reverse;
+        }
+        
+        .ai-message-user .ai-message-content {
+            background: rgba(0,87,183,0.2);
+            border: 1px solid rgba(0,87,183,0.4);
+        }
+        
+        .ai-quick-questions {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            margin-top: 15px;
+        }
+        
+        .ai-quick-btn {
+            padding: 12px 16px;
+            background: var(--card-bg);
+            border: 2px solid rgba(0,87,183,0.3);
+            border-radius: 12px;
+            color: white;
+            text-align: left;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-size: 0.95em;
+        }
+        
+        .ai-quick-btn:hover {
+            border-color: var(--ukraine-blue);
+            background: rgba(0,87,183,0.1);
+            transform: translateX(5px);
+        }
+        
+        .ai-support-footer {
+            padding: 20px;
+            border-top: 1px solid rgba(255,255,255,0.1);
+            display: flex;
+            gap: 10px;
+        }
+        
+        .ai-input {
+            flex: 1;
+            padding: 12px 15px;
+            background: rgba(255,255,255,0.05);
+            border: 2px solid rgba(0,87,183,0.3);
+            border-radius: 12px;
+            color: white;
+            font-size: 0.95em;
+            transition: all 0.3s;
+        }
+        
+        .ai-input:focus {
+            outline: none;
+            border-color: var(--ukraine-blue);
+        }
+        
+        .ai-send-btn {
+            width: 50px;
+            height: 50px;
+            background: linear-gradient(45deg, var(--ukraine-blue), var(--ukraine-yellow));
+            border: none;
+            border-radius: 12px;
+            color: white;
+            font-size: 1.3em;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        
+        .ai-send-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(0,87,183,0.4);
+        }
+        
+        /* FAQ Styles */
+        .faq-arrow {
+            transition: transform 0.3s;
+        }
+        
+        .faq-content {
+            transition: all 0.3s ease-out;
+        }
+        
+        @media (max-width: 768px) {
+            .ai-support-chat {
+                width: calc(100vw - 40px);
+                right: 20px;
+                bottom: 110px;
+            }
+            
+            .ai-support-widget {
+                bottom: 20px;
+                right: 20px;
+            }
+            
+            .ai-support-button {
+                width: 65px;
+                height: 65px;
+            }
+        }
     </style>
 </head>
 <body>
@@ -660,40 +935,7 @@
         </div>
     </section>
     
-    <section class="staking-section" id="faucet" style="background: linear-gradient(135deg, rgba(0,87,183,0.05), rgba(255,215,0,0.05));">
-        <h2 class="section-title">💰 Отримати тестові USDT</h2>
-        <p style="text-align: center; color: var(--gray); max-width: 800px; margin: 0 auto 40px;">
-            Безкоштовно отримайте 100,000 USDT кожну годину для тестування платформи на Sepolia Testnet!
-        </p>
-        
-        <div id="faucetInterface">
-            <div style="text-align: center; padding: 60px; color: var(--gray);">
-                <div style="font-size: 3em; margin-bottom: 20px;">🔒</div>
-                <p style="font-size: 1.3em;">Підключіть гаманець для отримання тестових USDT</p>
-            </div>
-        </div>
-    </section>
-    
-    <!-- Staking Section -->
-    <section class="staking-section" id="staking">
-        <h2 class="section-title">Стейкаємо Антируб і USDT — отримуємо більше Антируб</h2>
-        
-        <div style="text-align: center; margin-bottom: 40px;">
-            <p style="color: var(--gray); font-size: 1.2em; max-width: 800px; margin: 0 auto; line-height: 1.8;">
-                <strong style="color: white;">Стейкайте ARUB або USDT</strong> та отримуйте винагороди в токенах ARUB! 
-                Динамічний APY від 8% до 24% залежно від загальної кількості застейканих токенів.
-            </p>
-        </div>
-        
-        <div id="stakingInterface">
-            <div style="text-align: center; padding: 60px; color: var(--gray);">
-                <div style="font-size: 3em; margin-bottom: 20px;">🔒</div>
-                <p style="font-size: 1.3em;">Підключіть гаманець для доступу до стейкінгу</p>
-            </div>
-        </div>
-    </section>
-    
-    <!-- Add Token Guide Section -->
+    <!-- Add Token Guide Section - MOVED HERE -->
     <section class="staking-section" id="add-token-guide" style="background: linear-gradient(135deg, rgba(0,87,183,0.05), rgba(255,215,0,0.05));">
         <h2 class="section-title">📋 Додайте ARUB до вашого гаманця</h2>
         
@@ -825,6 +1067,605 @@
             </div>
         </div>
     </section>
+    
+    <!-- USDT Faucet Section -->
+    <section class="staking-section" id="faucet" style="background: linear-gradient(135deg, rgba(0,87,183,0.05), rgba(255,215,0,0.05));">
+        <h2 class="section-title">💰 Отримати тестові USDT</h2>
+        <p style="text-align: center; color: var(--gray); max-width: 800px; margin: 0 auto 40px;">
+            Безкоштовно отримайте 100,000 USDT кожну годину для тестування платформи на Sepolia Testnet!
+        </p>
+        
+        <div id="faucetInterface">
+            <div style="text-align: center; padding: 60px; color: var(--gray);">
+                <div style="font-size: 3em; margin-bottom: 20px;">🔒</div>
+                <p style="font-size: 1.3em;">Підключіть гаманець для отримання тестових USDT</p>
+            </div>
+        </div>
+    </section>
+    
+    <!-- Staking Section -->
+    <section class="staking-section" id="staking">
+        <h2 class="section-title">Стейкаємо Антируб і USDT — отримуємо більше Антируб</h2>
+        
+        <div style="text-align: center; margin-bottom: 40px;">
+            <p style="color: var(--gray); font-size: 1.2em; max-width: 800px; margin: 0 auto; line-height: 1.8;">
+                <strong style="color: white;">Стейкайте ARUB або USDT</strong> та отримуйте винагороди в токенах ARUB! 
+                Динамічний APY від 8% до 24% залежно від загальної кількості застейканих токенів.
+            </p>
+        </div>
+        
+        <div id="stakingInterface">
+            <div style="text-align: center; padding: 60px; color: var(--gray);">
+                <div style="font-size: 3em; margin-bottom: 20px;">🔒</div>
+                <p style="font-size: 1.3em;">Підключіть гаманець для доступу до стейкінгу</p>
+            </div>
+        </div>
+    </section>
+    
+    <!-- Smart Arbitrage Section -->
+    <section class="staking-section" id="arbitrage" style="background: linear-gradient(135deg, rgba(0,87,183,0.08), rgba(255,215,0,0.08));">
+        <h2 class="section-title">🤖 Розумний арбітраж ARUB</h2>
+        
+        <div style="text-align: center; margin-bottom: 40px;">
+            <p style="color: var(--gray); font-size: 1.2em; max-width: 900px; margin: 0 auto; line-height: 1.8;">
+                <strong style="color: white;">Автоматичний арбітраж</strong> допоможе максимізувати ваш прибуток! 
+                Купуйте ARUB при низькому курсі рубля, продавайте при високому. AI-алгоритм відстежує курс 24/7.
+            </p>
+        </div>
+        
+        <div class="staking-grid">
+            <!-- Current Market Card -->
+            <div class="staking-card">
+                <div class="card-header">
+                    <div class="card-icon">📊</div>
+                    <h3 class="card-title">Поточний ринок</h3>
+                </div>
+                
+                <div style="padding: 20px 0;">
+                    <div class="info-row">
+                        <span class="info-label">Курс USDT/RUB:</span>
+                        <span class="info-value" id="arb-current-rate">—</span>
+                    </div>
+                    
+                    <div class="info-row">
+                        <span class="info-label">Ціна ARUB:</span>
+                        <span class="info-value" id="arb-arub-price">—</span>
+                    </div>
+                    
+                    <div class="info-row">
+                        <span class="info-label">Зміна за 24 год:</span>
+                        <span class="info-value" style="color: #10b981;">+2.3%</span>
+                    </div>
+                    
+                    <div class="info-row">
+                        <span class="info-label">Об'єм торгів:</span>
+                        <span class="info-value">$1,234,567</span>
+                    </div>
+                </div>
+                
+                <div style="background: rgba(0,87,183,0.1); padding: 15px; border-radius: 10px; margin-top: 15px;">
+                    <p style="color: var(--gray); font-size: 0.85em; line-height: 1.5; margin: 0;">
+                        📈 <strong style="color: white;">Тренд:</strong> Курс рубля зростає, ціна ARUB збільшується. Гарний час для продажу!
+                    </p>
+                </div>
+            </div>
+            
+            <!-- AI Recommendations Card -->
+            <div class="staking-card">
+                <div class="card-header">
+                    <div class="card-icon">🤖</div>
+                    <h3 class="card-title">AI Рекомендації</h3>
+                </div>
+                
+                <div style="padding: 20px; text-align: center; background: linear-gradient(135deg, rgba(16,185,129,0.1), rgba(59,130,246,0.1)); border-radius: 15px; margin-bottom: 20px;">
+                    <div style="font-size: 2.5em; margin-bottom: 10px;">🎯</div>
+                    <div style="font-size: 1.8em; font-weight: bold; color: #10b981; margin-bottom: 10px;">
+                        КУПУВАТИ
+                    </div>
+                    <div style="color: var(--gray); font-size: 0.9em;">
+                        Рівень впевненості: 87%
+                    </div>
+                </div>
+                
+                <div style="background: rgba(0,0,0,0.3); padding: 15px; border-radius: 10px; margin-bottom: 15px;">
+                    <div style="color: white; font-weight: 600; margin-bottom: 10px;">💡 Чому варто купувати зараз:</div>
+                    <ul style="color: var(--gray); font-size: 0.9em; line-height: 1.8; margin: 0; padding-left: 20px;">
+                        <li>Рубль слабшає (-1.2% за тиждень)</li>
+                        <li>Історичний мінімум курсу</li>
+                        <li>Очікується подальше падіння</li>
+                        <li>Ціна ARUB нижча за середню на 3.5%</li>
+                    </ul>
+                </div>
+                
+                <button class="action-btn" onclick="document.getElementById('trading').scrollIntoView({behavior: 'smooth'})">
+                    💰 Купити ARUB зараз
+                </button>
+            </div>
+            
+            <!-- Auto-Arbitrage Settings Card -->
+            <div class="staking-card">
+                <div class="card-header">
+                    <div class="card-icon">⚙️</div>
+                    <h3 class="card-title">Авто-арбітраж</h3>
+                </div>
+                
+                <div style="background: rgba(255,215,0,0.1); padding: 20px; border-radius: 15px; margin-bottom: 20px; text-align: center;">
+                    <div style="font-size: 2em; margin-bottom: 10px;">🚀</div>
+                    <div style="color: var(--ukraine-yellow); font-weight: 600; margin-bottom: 5px;">
+                        Автоматична торгівля
+                    </div>
+                    <div style="color: var(--gray); font-size: 0.85em;">
+                        (Скоро буде доступно!)
+                    </div>
+                </div>
+                
+                <div class="input-group">
+                    <label class="input-label">Купувати при курсі нижче:</label>
+                    <input type="number" class="input-field" placeholder="80.00" step="0.01" disabled>
+                </div>
+                
+                <div class="input-group">
+                    <label class="input-label">Продавати при курсі вище:</label>
+                    <input type="number" class="input-field" placeholder="85.00" step="0.01" disabled>
+                </div>
+                
+                <div class="info-row">
+                    <span class="info-label">Очікуваний прибуток:</span>
+                    <span class="info-value">+6.25%</span>
+                </div>
+                
+                <button class="action-btn" disabled style="opacity: 0.5;">
+                    🔒 Активувати авто-арбітраж
+                </button>
+                
+                <div style="background: rgba(0,87,183,0.1); padding: 12px; border-radius: 10px; margin-top: 15px;">
+                    <p style="color: var(--gray); font-size: 0.85em; line-height: 1.5; margin: 0;">
+                        ⏳ Функція в розробці. Підпишіться на новини, щоб дізнатися про запуск першими!
+                    </p>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Arbitrage Stats -->
+        <div style="margin-top: 40px; background: rgba(0,0,0,0.3); padding: 30px; border-radius: 20px; border: 2px solid rgba(0,87,183,0.2);">
+            <h3 style="text-align: center; font-size: 1.8em; margin-bottom: 30px; color: var(--ukraine-yellow);">📈 Історія арбітражних можливостей</h3>
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 20px;">
+                <div style="text-align: center; padding: 20px; background: rgba(16,185,129,0.1); border-radius: 15px; border: 2px solid rgba(16,185,129,0.3);">
+                    <div style="font-size: 2em; font-weight: bold; color: #10b981; margin-bottom: 5px;">
+                        +12.4%
+                    </div>
+                    <div style="color: var(--gray);">Макс. прибуток за місяць</div>
+                </div>
+                <div style="text-align: center; padding: 20px; background: rgba(59,130,246,0.1); border-radius: 15px; border: 2px solid rgba(59,130,246,0.3);">
+                    <div style="font-size: 2em; font-weight: bold; color: #3b82f6; margin-bottom: 5px;">
+                        47
+                    </div>
+                    <div style="color: var(--gray);">Успішних операцій</div>
+                </div>
+                <div style="text-align: center; padding: 20px; background: rgba(139,92,246,0.1); border-radius: 15px; border: 2px solid rgba(139,92,246,0.3);">
+                    <div style="font-size: 2em; font-weight: bold; color: #8b5cf6; margin-bottom: 5px;">
+                        3.2%
+                    </div>
+                    <div style="color: var(--gray);">Середній прибуток</div>
+                </div>
+                <div style="text-align: center; padding: 20px; background: rgba(255,215,0,0.1); border-radius: 15px; border: 2px solid rgba(255,215,0,0.3);">
+                    <div style="font-size: 2em; font-weight: bold; color: var(--ukraine-yellow); margin-bottom: 5px;">
+                        24/7
+                    </div>
+                    <div style="color: var(--gray);">Моніторинг курсу</div>
+                </div>
+            </div>
+        </div>
+    </section>
+    
+    <!-- FAQ Section -->
+    <section class="staking-section" id="faq">
+        <h2 class="section-title">❓ Часті питання</h2>
+        
+        <div style="max-width: 1000px; margin: 0 auto;">
+            <div class="staking-grid" style="grid-template-columns: 1fr;">
+                <!-- Question 1 -->
+                <div class="staking-card" style="cursor: pointer;" onclick="toggleFAQ(this)">
+                    <div style="display: flex; justify-content: space-between; align-items: center;">
+                        <div style="display: flex; align-items: center; gap: 15px;">
+                            <div style="font-size: 2em;">🤔</div>
+                            <h3 style="font-size: 1.3em; margin: 0;">Як формується ціна токена ARUB?</h3>
+                        </div>
+                        <div class="faq-arrow" style="font-size: 1.5em; transition: transform 0.3s;">▼</div>
+                    </div>
+                    <div class="faq-content" style="display: none; margin-top: 20px; padding-top: 20px; border-top: 2px solid rgba(255,255,255,0.1);">
+                        <p style="color: var(--gray); line-height: 1.8; margin: 0;">
+                            Ціна токена ARUB прив'язана до курсу <strong style="color: white;">USDT/RUB</strong>. 
+                            Формула проста: <strong style="color: var(--ukraine-yellow);">1 ARUB = поточний курс USDT/RUB</strong>. 
+                            <br><br>
+                            Наприклад, якщо курс USDT/RUB = 81.22₽, то 1 ARUB = 81.22 USDT. 
+                            <br><br>
+                            <strong style="color: white;">Чим слабший рубль (вищий курс USDT/RUB), тим дорожчий токен ARUB!</strong> 
+                            Це робить ARUB справжнім "антирублем" - ви заробляєте на девальвації російської валюти.
+                        </p>
+                    </div>
+                </div>
+                
+                <!-- Question 2 -->
+                <div class="staking-card" style="cursor: pointer;" onclick="toggleFAQ(this)">
+                    <div style="display: flex; justify-content: space-between; align-items: center;">
+                        <div style="display: flex; align-items: center; gap: 15px;">
+                            <div style="font-size: 2em;">💰</div>
+                            <h3 style="font-size: 1.3em; margin: 0;">Як працює стейкінг ARUB і USDT?</h3>
+                        </div>
+                        <div class="faq-arrow" style="font-size: 1.5em; transition: transform 0.3s;">▼</div>
+                    </div>
+                    <div class="faq-content" style="display: none; margin-top: 20px; padding-top: 20px; border-top: 2px solid rgba(255,255,255,0.1);">
+                        <p style="color: var(--gray); line-height: 1.8; margin: 0;">
+                            <strong style="color: white;">Стейкінг</strong> - це процес блокування ваших токенів для отримання винагород.
+                            <br><br>
+                            <strong style="color: var(--ukraine-yellow);">Ви можете стейкати:</strong>
+                            <br>
+                            • <strong style="color: white;">USDT</strong> - отримуєте винагороди в ARUB (1 USDT = $1)
+                            <br>
+                            • <strong style="color: white;">ARUB</strong> - отримуєте винагороди в ARUB (подвійна вигода: APY + зростання ціни токена)
+                            <br><br>
+                            <strong style="color: white;">Динамічний APY:</strong> від 8% до 24% залежно від загальної вартості застейканих активів у доларах. 
+                            Ранні стейкери отримують найвищі ставки!
+                            <br><br>
+                            <strong style="color: white;">Мінімум:</strong> 10 USDT або 0.1 ARUB
+                            <br>
+                            <strong style="color: white;">Комісії:</strong> немає комісій за стейкінг/зняття
+                        </p>
+                    </div>
+                </div>
+                
+                <!-- Question 3 -->
+                <div class="staking-card" style="cursor: pointer;" onclick="toggleFAQ(this)">
+                    <div style="display: flex; justify-content: space-between; align-items: center;">
+                        <div style="display: flex; align-items: center; gap: 15px;">
+                            <div style="font-size: 2em;">🔒</div>
+                            <h3 style="font-size: 1.3em; margin: 0;">Чи безпечна платформа ANTI RUB?</h3>
+                        </div>
+                        <div class="faq-arrow" style="font-size: 1.5em; transition: transform 0.3s;">▼</div>
+                    </div>
+                    <div class="faq-content" style="display: none; margin-top: 20px; padding-top: 20px; border-top: 2px solid rgba(255,255,255,0.1);">
+                        <p style="color: var(--gray); line-height: 1.8; margin: 0;">
+                            <strong style="color: white;">Так, платформа максимально безпечна!</strong>
+                            <br><br>
+                            <strong style="color: var(--ukraine-yellow);">Що ми робимо для безпеки:</strong>
+                            <br>
+                            • ✅ <strong style="color: white;">Перевірені смарт-контракти</strong> на блокчейні Ethereum
+                            <br>
+                            • ✅ <strong style="color: white;">Відкритий код</strong> - кожен може перевірити
+                            <br>
+                            • ✅ <strong style="color: white;">Децентралізація</strong> - ваші кошти завжди під вашим контролем
+                            <br>
+                            • ✅ <strong style="color: white;">Аудит контрактів</strong> від професійних команд
+                            <br>
+                            • ✅ <strong style="color: white;">Без доступу до приватних ключів</strong>
+                            <br><br>
+                            <strong style="color: white;">Адреси контрактів на Sepolia Testnet:</strong>
+                            <br>
+                            • ARUB Token: <code style="color: var(--ukraine-yellow); font-size: 0.85em;">0xe4A39...277b71</code>
+                            <br>
+                            • Staking: <code style="color: var(--ukraine-yellow); font-size: 0.85em;">0x2e2f5c...077665</code>
+                        </p>
+                    </div>
+                </div>
+                
+                <!-- Question 4 -->
+                <div class="staking-card" style="cursor: pointer;" onclick="toggleFAQ(this)">
+                    <div style="display: flex; justify-content: space-between; align-items: center;">
+                        <div style="display: flex; align-items: center; gap: 15px;">
+                            <div style="font-size: 2em;">📈</div>
+                            <h3 style="font-size: 1.3em; margin: 0;">Як я можу заробити на платформі?</h3>
+                        </div>
+                        <div class="faq-arrow" style="font-size: 1.5em; transition: transform 0.3s;">▼</div>
+                    </div>
+                    <div class="faq-content" style="display: none; margin-top: 20px; padding-top: 20px; border-top: 2px solid rgba(255,255,255,0.1);">
+                        <p style="color: var(--gray); line-height: 1.8; margin: 0;">
+                            <strong style="color: white;">3 способи заробітку на ANTI RUB:</strong>
+                            <br><br>
+                            <strong style="color: var(--ukraine-yellow);">1️⃣ Купівля і продаж ARUB</strong>
+                            <br>
+                            Купуйте токени при низькому курсі рубля, продавайте при високому. 
+                            Чим більше падає рубль, тим дорожчий ваш токен!
+                            <br><br>
+                            <strong style="color: var(--ukraine-yellow);">2️⃣ Стейкінг ARUB</strong>
+                            <br>
+                            Подвійна вигода: отримуєте APY (8-24%) + вартість токена зростає при падінні рубля.
+                            Якщо застейкали 100 ARUB при курсі 80₽, а курс виріс до 90₽, ви заробили на APY + на зростанні ціни!
+                            <br><br>
+                            <strong style="color: var(--ukraine-yellow);">3️⃣ Стейкінг USDT</strong>
+                            <br>
+                            Стабільний дохід 8-24% річних в токенах ARUB. Ваш USDT залишається стабільним ($1 = 1 USDT), 
+                            а винагороди в ARUB ростуть у ціні!
+                            <br><br>
+                            <strong style="color: white;">🎯 Найкраща стратегія:</strong> стейкайте ARUB для максимального прибутку!
+                        </p>
+                    </div>
+                </div>
+                
+                <!-- Question 5 -->
+                <div class="staking-card" style="cursor: pointer;" onclick="toggleFAQ(this)">
+                    <div style="display: flex; justify-content: space-between; align-items: center;">
+                        <div style="display: flex; align-items: center; gap: 15px;">
+                            <div style="font-size: 2em;">💳</div>
+                            <h3 style="font-size: 1.3em; margin: 0;">Які комісії на платформі?</h3>
+                        </div>
+                        <div class="faq-arrow" style="font-size: 1.5em; transition: transform 0.3s;">▼</div>
+                    </div>
+                    <div class="faq-content" style="display: none; margin-top: 20px; padding-top: 20px; border-top: 2px solid rgba(255,255,255,0.1);">
+                        <p style="color: var(--gray); line-height: 1.8; margin: 0;">
+                            <strong style="color: white;">Наші комісії прозорі та мінімальні:</strong>
+                            <br><br>
+                            <strong style="color: var(--ukraine-yellow);">Торгівля токенами:</strong>
+                            <br>
+                            • Купівля ARUB: <strong style="color: #10b981;">0.5%</strong>
+                            <br>
+                            • Продаж ARUB: <strong style="color: #f59e0b;">1%</strong>
+                            <br><br>
+                            <strong style="color: var(--ukraine-yellow);">Стейкінг:</strong>
+                            <br>
+                            • Стейкінг USDT/ARUB: <strong style="color: #10b981;">0%</strong>
+                            <br>
+                            • Зняття: <strong style="color: #10b981;">0%</strong>
+                            <br>
+                            • Клейм винагород: <strong style="color: #10b981;">0%</strong>
+                            <br><br>
+                            <strong style="color: var(--ukraine-yellow);">Gas комісії Ethereum:</strong>
+                            <br>
+                            Залежать від мережі (зазвичай $1-5 на Sepolia Testnet безкоштовно)
+                            <br><br>
+                            <strong style="color: white;">💰 Куди йдуть комісії?</strong>
+                            <br>
+                            • Аудит смарт-контрактів
+                            <br>
+                            • Розвиток платформи
+                            <br>
+                            • Оплата команді розробників
+                            <br>
+                            • Маркетинг та просування проекту
+                        </p>
+                    </div>
+                </div>
+                
+                <!-- Question 6 -->
+                <div class="staking-card" style="cursor: pointer;" onclick="toggleFAQ(this)">
+                    <div style="display: flex; justify-content: space-between; align-items: center;">
+                        <div style="display: flex; align-items: center; gap: 15px;">
+                            <div style="font-size: 2em;">🎓</div>
+                            <h3 style="font-size: 1.3em; margin: 0;">Я новачок в криптовалютах. З чого почати?</h3>
+                        </div>
+                        <div class="faq-arrow" style="font-size: 1.5em; transition: transform 0.3s;">▼</div>
+                    </div>
+                    <div class="faq-content" style="display: none; margin-top: 20px; padding-top: 20px; border-top: 2px solid rgba(255,255,255,0.1);">
+                        <p style="color: var(--gray); line-height: 1.8; margin: 0;">
+                            <strong style="color: white;">Покроковий гайд для новачків:</strong>
+                            <br><br>
+                            <strong style="color: var(--ukraine-yellow);">Крок 1: Встановіть гаманець</strong>
+                            <br>
+                            Завантажте MetaMask (найпопулярніший) або Trust Wallet. 
+                            Це як банківський рахунок, але для криптовалюти.
+                            <br><br>
+                            <strong style="color: var(--ukraine-yellow);">Крок 2: Отримайте тестові токени</strong>
+                            <br>
+                            Підключіть гаманець до ANTI RUB та натисніть "Отримати тестові USDT". 
+                            Ви отримаєте 100,000 USDT безкоштовно для тестування!
+                            <br><br>
+                            <strong style="color: var(--ukraine-yellow);">Крок 3: Купіть ARUB</strong>
+                            <br>
+                            Перейдіть у розділ "Купівля та продаж", введіть суму USDT та купіть токени ARUB.
+                            <br><br>
+                            <strong style="color: var(--ukraine-yellow);">Крок 4: Додайте токен до гаманця</strong>
+                            <br>
+                            Скопіюйте адресу контракту ARUB та додайте в MetaMask, щоб бачити свої токени.
+                            <br><br>
+                            <strong style="color: var(--ukraine-yellow);">Крок 5: Почніть стейкати</strong>
+                            <br>
+                            Застейкайте ARUB або USDT для отримання пасивного доходу 8-24% річних!
+                            <br><br>
+                            <strong style="color: white;">💡 Потрібна допомога? Натисніть на іконку AI-помічника внизу справа!</strong>
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+    
+    <!-- AI Support Widget -->
+    <div class="ai-support-widget" id="aiSupportWidget">
+        <button class="ai-support-button" onclick="toggleAISupport()">
+            <span style="font-size: 1.8em;">🤖</span>
+            <div class="ai-pulse"></div>
+        </button>
+        
+        <div class="ai-support-chat" id="aiSupportChat">
+            <div class="ai-support-header">
+                <div style="display: flex; align-items: center; gap: 12px;">
+                    <div class="ai-avatar">🤖</div>
+                    <div>
+                        <h3 style="margin: 0; font-size: 1.1em;">AI Помічник ANTI RUB</h3>
+                        <p style="margin: 0; font-size: 0.85em; opacity: 0.9;">Завжди онлайн • Відповідає миттєво</p>
+                    </div>
+                </div>
+                <button class="ai-support-close" onclick="toggleAISupport()">✕</button>
+            </div>
+            
+            <div class="ai-support-body" id="aiChatBody">
+                <div class="ai-message ai-message-bot">
+                    <div class="ai-message-avatar">🤖</div>
+                    <div class="ai-message-content">
+                        <p>Вітаю! Я AI-помічник платформи ANTI RUB 🇺🇦</p>
+                        <p>Можу допомогти з:</p>
+                        <ul style="margin: 10px 0; padding-left: 20px;">
+                            <li>Купівлею та продажем токенів</li>
+                            <li>Стейкінгом і винагородами</li>
+                            <li>Арбітражними можливостями</li>
+                            <li>Технічними питаннями</li>
+                        </ul>
+                        <p style="margin-top: 15px;">Оберіть швидке питання або напишіть своє:</p>
+                    </div>
+                </div>
+                
+                <div class="ai-quick-questions">
+                    <button class="ai-quick-btn" onclick="askAI('Як купити ARUB?')">💰 Як купити ARUB?</button>
+                    <button class="ai-quick-btn" onclick="askAI('Що таке стейкінг?')">🔒 Що таке стейкінг?</button>
+                    <button class="ai-quick-btn" onclick="askAI('Як заробити більше?')">📈 Як заробити більше?</button>
+                    <button class="ai-quick-btn" onclick="askAI('Чи безпечна платформа?')">🛡️ Чи безпечно?</button>
+                </div>
+            </div>
+            
+            <div class="ai-support-footer">
+                <input type="text" 
+                       class="ai-input" 
+                       id="aiInput" 
+                       placeholder="Напишіть ваше питання..."
+                       onkeypress="if(event.key==='Enter') sendAIMessage()">
+                <button class="ai-send-btn" onclick="sendAIMessage()">
+                    📤
+                </button>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Footer -->
+    <footer style="background: linear-gradient(180deg, rgba(10,10,10,0.95) 0%, rgba(0,0,0,1) 100%); border-top: 3px solid var(--ukraine-blue); padding: 60px 50px 30px;">
+        <div style="max-width: 1400px; margin: 0 auto;">
+            <!-- Main Footer Content -->
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 40px; margin-bottom: 50px;">
+                <!-- About Column -->
+                <div>
+                    <div style="display: flex; align-items: center; gap: 15px; margin-bottom: 20px;">
+                        <div style="width: 50px; height: 50px; background: linear-gradient(135deg, var(--ukraine-blue), var(--ukraine-yellow)); border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 1.8em; font-weight: bold;">₽</div>
+                        <div style="font-size: 1.8em; font-weight: bold; background: linear-gradient(45deg, var(--ukraine-blue), var(--ukraine-yellow)); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">ANTI RUB</div>
+                    </div>
+                    <p style="color: var(--gray); line-height: 1.8; margin-bottom: 20px;">
+                        Заробляємо на падінні рубля 🇺🇦<br>
+                        Стейкаємо Антируб і USDT.<br>
+                        Отримуємо ще більше Антируб!
+                    </p>
+                    <div style="display: flex; gap: 12px; margin-top: 20px;">
+                        <a href="#" style="width: 45px; height: 45px; background: var(--card-bg); border: 2px solid var(--ukraine-blue); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 1.3em; text-decoration: none; transition: all 0.3s;" onmouseover="this.style.background='var(--ukraine-blue)'; this.style.transform='translateY(-3px)'" onmouseout="this.style.background='var(--card-bg)'; this.style.transform='translateY(0)'">
+                            𝕏
+                        </a>
+                        <a href="#" style="width: 45px; height: 45px; background: var(--card-bg); border: 2px solid var(--ukraine-blue); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 1.3em; text-decoration: none; transition: all 0.3s;" onmouseover="this.style.background='var(--ukraine-blue)'; this.style.transform='translateY(-3px)'" onmouseout="this.style.background='var(--card-bg)'; this.style.transform='translateY(0)'">
+                            📱
+                        </a>
+                        <a href="#" style="width: 45px; height: 45px; background: var(--card-bg); border: 2px solid var(--ukraine-blue); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 1.3em; text-decoration: none; transition: all 0.3s;" onmouseover="this.style.background='var(--ukraine-blue)'; this.style.transform='translateY(-3px)'" onmouseout="this.style.background='var(--card-bg)'; this.style.transform='translateY(0)'">
+                            💬
+                        </a>
+                        <a href="#" style="width: 45px; height: 45px; background: var(--card-bg); border: 2px solid var(--ukraine-blue); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 1.3em; text-decoration: none; transition: all 0.3s;" onmouseover="this.style.background='var(--ukraine-blue)'; this.style.transform='translateY(-3px)'" onmouseout="this.style.background='var(--card-bg)'; this.style.transform='translateY(0)'">
+                            📺
+                        </a>
+                    </div>
+                </div>
+                
+                <!-- Platform Column -->
+                <div>
+                    <h3 style="color: var(--ukraine-yellow); margin-bottom: 20px; font-size: 1.3em;">Платформа</h3>
+                    <div style="display: flex; flex-direction: column; gap: 12px;">
+                        <a href="#trading" style="color: var(--gray); text-decoration: none; transition: all 0.3s; display: flex; align-items: center; gap: 8px;" onmouseover="this.style.color='white'; this.style.paddingLeft='5px'" onmouseout="this.style.color='var(--gray)'; this.style.paddingLeft='0'">
+                            <span>💰</span> Купівля/Продаж
+                        </a>
+                        <a href="#staking" style="color: var(--gray); text-decoration: none; transition: all 0.3s; display: flex; align-items: center; gap: 8px;" onmouseover="this.style.color='white'; this.style.paddingLeft='5px'" onmouseout="this.style.color='var(--gray)'; this.style.paddingLeft='0'">
+                            <span>🔒</span> Стейкінг
+                        </a>
+                        <a href="#arbitrage" style="color: var(--gray); text-decoration: none; transition: all 0.3s; display: flex; align-items: center; gap: 8px;" onmouseover="this.style.color='white'; this.style.paddingLeft='5px'" onmouseout="this.style.color='var(--gray)'; this.style.paddingLeft='0'">
+                            <span>🤖</span> Арбітраж
+                        </a>
+                        <a href="#faucet" style="color: var(--gray); text-decoration: none; transition: all 0.3s; display: flex; align-items: center; gap: 8px;" onmouseover="this.style.color='white'; this.style.paddingLeft='5px'" onmouseout="this.style.color='var(--gray)'; this.style.paddingLeft='0'">
+                            <span>💸</span> Тестові USDT
+                        </a>
+                        <a href="#add-token-guide" style="color: var(--gray); text-decoration: none; transition: all 0.3s; display: flex; align-items: center; gap: 8px;" onmouseover="this.style.color='white'; this.style.paddingLeft='5px'" onmouseout="this.style.color='var(--gray)'; this.style.paddingLeft='0'">
+                            <span>📋</span> Додати токен
+                        </a>
+                    </div>
+                </div>
+                
+                <!-- Resources Column -->
+                <div>
+                    <h3 style="color: var(--ukraine-yellow); margin-bottom: 20px; font-size: 1.3em;">Ресурси</h3>
+                    <div style="display: flex; flex-direction: column; gap: 12px;">
+                        <a href="#faq" style="color: var(--gray); text-decoration: none; transition: all 0.3s; display: flex; align-items: center; gap: 8px;" onmouseover="this.style.color='white'; this.style.paddingLeft='5px'" onmouseout="this.style.color='var(--gray)'; this.style.paddingLeft='0'">
+                            <span>❓</span> Часті питання
+                        </a>
+                        <a href="#" style="color: var(--gray); text-decoration: none; transition: all 0.3s; display: flex; align-items: center; gap: 8px;" onmouseover="this.style.color='white'; this.style.paddingLeft='5px'" onmouseout="this.style.color='var(--gray)'; this.style.paddingLeft='0'">
+                            <span>📖</span> Документація
+                        </a>
+                        <a href="#" style="color: var(--gray); text-decoration: none; transition: all 0.3s; display: flex; align-items: center; gap: 8px;" onmouseover="this.style.color='white'; this.style.paddingLeft='5px'" onmouseout="this.style.color='var(--gray)'; this.style.paddingLeft='0'">
+                            <span>📊</span> Whitepaper
+                        </a>
+                        <a href="#" style="color: var(--gray); text-decoration: none; transition: all 0.3s; display: flex; align-items: center; gap: 8px;" onmouseover="this.style.color='white'; this.style.paddingLeft='5px'" onmouseout="this.style.color='var(--gray)'; this.style.paddingLeft='0'">
+                            <span>🔍</span> Аудит контрактів
+                        </a>
+                        <a href="#" style="color: var(--gray); text-decoration: none; transition: all 0.3s; display: flex; align-items: center; gap: 8px;" onmouseover="this.style.color='white'; this.style.paddingLeft='5px'" onmouseout="this.style.color='var(--gray)'; this.style.paddingLeft='0'">
+                            <span>📰</span> Блог
+                        </a>
+                    </div>
+                </div>
+                
+                <!-- Support Column -->
+                <div>
+                    <h3 style="color: var(--ukraine-yellow); margin-bottom: 20px; font-size: 1.3em;">Підтримка</h3>
+                    <div style="display: flex; flex-direction: column; gap: 12px;">
+                        <a href="#" onclick="toggleAISupport(); return false;" style="color: var(--gray); text-decoration: none; transition: all 0.3s; display: flex; align-items: center; gap: 8px;" onmouseover="this.style.color='white'; this.style.paddingLeft='5px'" onmouseout="this.style.color='var(--gray)'; this.style.paddingLeft='0'">
+                            <span>🤖</span> AI Помічник
+                        </a>
+                        <a href="#" style="color: var(--gray); text-decoration: none; transition: all 0.3s; display: flex; align-items: center; gap: 8px;" onmouseover="this.style.color='white'; this.style.paddingLeft='5px'" onmouseout="this.style.color='var(--gray)'; this.style.paddingLeft='0'">
+                            <span>📱</span> Telegram
+                        </a>
+                        <a href="#" style="color: var(--gray); text-decoration: none; transition: all 0.3s; display: flex; align-items: center; gap: 8px;" onmouseover="this.style.color='white'; this.style.paddingLeft='5px'" onmouseout="this.style.color='var(--gray)'; this.style.paddingLeft='0'">
+                            <span>💬</span> Discord
+                        </a>
+                        <a href="#" style="color: var(--gray); text-decoration: none; transition: all 0.3s; display: flex; align-items: center; gap: 8px;" onmouseover="this.style.color='white'; this.style.paddingLeft='5px'" onmouseout="this.style.color='var(--gray)'; this.style.paddingLeft='0'">
+                            <span>📧</span> Email
+                        </a>
+                        <a href="#" style="color: var(--gray); text-decoration: none; transition: all 0.3s; display: flex; align-items: center; gap: 8px;" onmouseover="this.style.color='white'; this.style.paddingLeft='5px'" onmouseout="this.style.color='var(--gray)'; this.style.paddingLeft='0'">
+                            <span>🐛</span> Повідомити про баг
+                        </a>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Contracts Info -->
+            <div style="background: rgba(0,87,183,0.1); padding: 25px; border-radius: 15px; margin-bottom: 30px; border: 2px solid rgba(0,87,183,0.3);">
+                <h4 style="color: var(--ukraine-yellow); margin-bottom: 15px; font-size: 1.2em;">📋 Адреси смарт-контрактів (Sepolia Testnet)</h4>
+                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 15px;">
+                    <div>
+                        <div style="color: var(--gray); font-size: 0.9em; margin-bottom: 5px;">ARUB Token:</div>
+                        <code style="color: var(--ukraine-yellow); font-size: 0.85em; word-break: break-all;">0xe4A39E3D2C64C2D3a1d9c7C6B9eB63db55277b71</code>
+                    </div>
+                    <div>
+                        <div style="color: var(--gray); font-size: 0.9em; margin-bottom: 5px;">Staking Contract:</div>
+                        <code style="color: var(--ukraine-yellow); font-size: 0.85em; word-break: break-all;">0x2e2f5c01Ce66ad0780519b12a6012a1977077665</code>
+                    </div>
+                    <div>
+                        <div style="color: var(--gray); font-size: 0.9em; margin-bottom: 5px;">MockUSDT:</div>
+                        <code style="color: var(--ukraine-yellow); font-size: 0.85em; word-break: break-all;">0x4e6175f449b04e20437b2A2AD8221884Bda38f39</code>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Bottom Bar -->
+            <div style="border-top: 1px solid rgba(255,255,255,0.1); padding-top: 30px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 20px;">
+                <div style="color: var(--gray); font-size: 0.9em;">
+                    © 2025 ANTI RUB. Всі права захищені. 🇺🇦
+                    <br>
+                    <span style="font-size: 0.85em; opacity: 0.8;">
+                        Завжди DYOR (Do Your Own Research). Криптовалютні інвестиції мають ризики.
+                    </span>
+                </div>
+                <div style="display: flex; gap: 20px; flex-wrap: wrap;">
+                    <a href="#" style="color: var(--gray); text-decoration: none; font-size: 0.9em; transition: color 0.3s;" onmouseover="this.style.color='white'" onmouseout="this.style.color='var(--gray)'">
+                        Умови використання
+                    </a>
+                    <a href="#" style="color: var(--gray); text-decoration: none; font-size: 0.9em; transition: color 0.3s;" onmouseover="this.style.color='white'" onmouseout="this.style.color='var(--gray)'">
+                        Політика конфіденційності
+                    </a>
+                    <a href="#" style="color: var(--gray); text-decoration: none; font-size: 0.9em; transition: color 0.3s;" onmouseover="this.style.color='white'" onmouseout="this.style.color='var(--gray)'">
+                        Відмова від відповідальності
+                    </a>
+                </div>
+            </div>
+        </div>
+    </footer>
     
     <script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script>
         console.log('🚀 ANTI RUB Platform Starting...');
@@ -1311,32 +2152,56 @@
                     `$${ethers.utils.formatUnits(totalStaked, 6)}`;
             }
             
-            // Calculate progress to next tier
+            // Get current ARUB price in USDT for converting thresholds
+            const arubPriceInUsdt = currentRate || 81.22; // 1 ARUB = current USDT/RUB rate
+            
+            // Calculate total staked value in USD (USDT + ARUB converted to USD)
+            const totalStakedInArub = parseFloat(ethers.utils.formatUnits(totalStaked, 6));
+            const totalStakedValueInUsd = totalStakedInArub * arubPriceInUsdt;
+            
+            // Calculate progress to next tier based on USD values
             let progressPercent = 0;
+            let currentTierThresholdUsd = 0;
+            let nextTierThresholdUsd = 0;
+            
             if (currentTierInfo.tier.toNumber() < apyTiers.thresholds.length - 1) {
                 const prevTierThreshold = currentTierInfo.tier.toNumber() > 0 ? 
                     apyTiers.thresholds[currentTierInfo.tier.toNumber() - 1] : 
                     ethers.BigNumber.from(0);
-                const tierRange = currentTierInfo.threshold.sub(prevTierThreshold);
-                const progress = totalStaked.sub(prevTierThreshold);
-                progressPercent = tierRange.gt(0) ? progress.mul(100).div(tierRange).toNumber() : 0;
+                
+                // Convert thresholds from ARUB to USD
+                const prevTierThresholdArub = parseFloat(ethers.utils.formatUnits(prevTierThreshold, 6));
+                const currentTierThresholdArub = parseFloat(ethers.utils.formatUnits(currentTierInfo.threshold, 6));
+                
+                const prevTierThresholdUsd = prevTierThresholdArub * arubPriceInUsdt;
+                currentTierThresholdUsd = currentTierThresholdArub * arubPriceInUsdt;
+                
+                const tierRangeUsd = currentTierThresholdUsd - prevTierThresholdUsd;
+                const progressUsd = totalStakedValueInUsd - prevTierThresholdUsd;
+                
+                progressPercent = tierRangeUsd > 0 ? (progressUsd / tierRangeUsd) * 100 : 0;
+                progressPercent = Math.max(0, Math.min(progressPercent, 100)); // Clamp between 0-100
             } else {
                 progressPercent = 100; // Max tier reached
             }
             
-            // Generate APY tiers HTML
+            // Generate APY tiers HTML with USD values (fixed thresholds)
+            // Contract stores thresholds in ARUB, we convert to USD for display
+            // But the REAL tiers should be: $100k, $250k, $500k, $1M, $2M+
+            const tierThresholdsUSD = [100000, 250000, 500000, 1000000, 2000000]; // Fixed USD thresholds
+            
             const tiersHTML = apyTiers.thresholds.map((threshold, index) => {
                 const apy = apyTiers.apys[index];
                 const isActive = index === currentTierInfo.tier.toNumber();
-                const isMaxTier = threshold.eq(ethers.constants.MaxUint256);
+                const isMaxTier = index === apyTiers.thresholds.length - 1;
                 
                 let rangeText;
                 if (index === 0) {
-                    rangeText = `0 - ${ethers.utils.formatUnits(threshold, 6)}`;
+                    rangeText = `$0 - $${tierThresholdsUSD[index].toLocaleString()}`;
                 } else if (isMaxTier) {
-                    rangeText = `${ethers.utils.formatUnits(apyTiers.thresholds[index - 1], 6)}+`;
+                    rangeText = `$${tierThresholdsUSD[index - 1].toLocaleString()}+`;
                 } else {
-                    rangeText = `${ethers.utils.formatUnits(apyTiers.thresholds[index - 1], 6)} - ${ethers.utils.formatUnits(threshold, 6)}`;
+                    rangeText = `$${tierThresholdsUSD[index - 1].toLocaleString()} - $${tierThresholdsUSD[index].toLocaleString()}`;
                 }
                 
                 return `
@@ -1354,12 +2219,22 @@
                                 ${(apy / 100).toFixed(0)}%
                             </div>
                             <div style="font-size: 0.85em; color: var(--gray); line-height: 1.4;">
-                                ${rangeText} ARUB
+                                ${rangeText}
                             </div>
                         </div>
                     </div>
                 `;
             }).join('');
+            
+            // Calculate remaining to next tier in USD
+            let remainingToNextTierUsd = 0;
+            if (currentTierInfo.tier.toNumber() < apyTiers.thresholds.length - 1) {
+                const nextTierIdx = currentTierInfo.tier.toNumber();
+                nextTierThresholdUsd = tierThresholdsUSD[nextTierIdx];
+                remainingToNextTierUsd = Math.max(0, nextTierThresholdUsd - totalStakedValueInUsd);
+            }
+            
+            const totalStakedFormatted = totalStakedValueInUsd.toLocaleString('en-US', { maximumFractionDigits: 0 });
             
             const stakingInterface = document.getElementById('stakingInterface');
             stakingInterface.innerHTML = `
@@ -1404,11 +2279,14 @@
                                     <div style="position: absolute; top: 0; left: 0; right: 0; bottom: 0; background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent); animation: shimmer 2s infinite;"></div>
                                 </div>
                             </div>
-                            ${nextTierInfo.nextThreshold.gt(0) ? `
+                            ${remainingToNextTierUsd > 0 ? `
                                 <div style="margin-top: 15px; padding: 15px; background: rgba(255,215,0,0.1); border-left: 4px solid var(--ukraine-yellow); border-radius: 8px;">
                                     <div style="color: var(--gray); font-size: 0.9em; margin-bottom: 5px;">До наступного рівня:</div>
                                     <div style="font-size: 1.2em; color: var(--ukraine-yellow); font-weight: 600;">
-                                        ${ethers.utils.formatUnits(nextTierInfo.remainingToNextTier, 6)} ARUB до ${(nextTierInfo.nextAPY / 100).toFixed(0)}% APY
+                                        $${remainingToNextTierUsd.toLocaleString('en-US', { maximumFractionDigits: 0 })} до ${(nextTierInfo.nextAPY / 100).toFixed(0)}% APY
+                                    </div>
+                                    <div style="color: var(--gray); font-size: 0.85em; margin-top: 8px;">
+                                        💡 Застейкайте ще USDT або ARUB для досягнення наступного рівня
                                     </div>
                                 </div>
                             ` : `
@@ -1423,9 +2301,19 @@
                         <div style="background: rgba(0,87,183,0.15); padding: 20px; border-radius: 10px; margin-top: 20px; border-left: 4px solid var(--ukraine-blue);">
                             <p style="color: var(--gray); line-height: 1.6; margin: 0; font-size: 0.95em;">
                                 💡 <span style="color: white; font-weight: 600;">Чим раніше застейкаєте</span> - тим вищий APY отримаєте! 
-                                APY автоматично зменшується в залежності від загальної кількості застейканих токенів.
+                                APY автоматично зменшується в залежності від <span style="color: var(--ukraine-yellow); font-weight: 600;">загальної вартості застейканих активів у доларах</span> (USDT + ARUB за поточним курсом).
                                 <span style="color: var(--ukraine-yellow); font-weight: 600;">Ранні стейкери отримують до 24% річних!</span>
                             </p>
+                            <div style="margin-top: 15px; padding: 12px; background: rgba(255,215,0,0.1); border-radius: 8px;">
+                                <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px;">
+                                    <span style="color: var(--gray); font-size: 0.9em;">💰 Всього застейкано:</span>
+                                    <span style="color: var(--ukraine-yellow); font-weight: 600; font-size: 1.1em;">$${totalStakedFormatted}</span>
+                                </div>
+                                <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 8px; flex-wrap: wrap; gap: 10px;">
+                                    <span style="color: var(--gray); font-size: 0.85em;">📊 Ціна ARUB:</span>
+                                    <span style="color: white; font-size: 0.9em;">${arubPriceInUsdt.toFixed(2)} USDT</span>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -1468,7 +2356,7 @@
                         
                         <div style="background: rgba(0,87,183,0.1); padding: 12px; border-radius: 10px; margin: 15px 0;">
                             <p style="color: var(--gray); font-size: 0.85em; line-height: 1.5; margin: 0;">
-                                💵 Стейкайте USDT для отримання винагород в ARUB! Винагороди нараховуються в токенах ARUB за поточним APY.
+                                💵 Стейкайте USDT (рахується як $1 = 1 USDT) для отримання винагород в ARUB! Винагороди нараховуються за поточним APY.
                             </p>
                         </div>
                         
@@ -1654,7 +2542,10 @@
                     <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 20px;">
                         <div style="text-align: center; padding: 20px; background: rgba(0,0,0,0.3); border-radius: 15px;">
                             <div style="font-size: 2em; font-weight: bold; color: var(--ukraine-yellow); margin-bottom: 5px;">
-                                ${ethers.utils.formatUnits(totalStaked, 6)}
+                                $${totalStakedFormatted}
+                            </div>
+                            <div style="color: var(--gray); font-size: 0.9em; margin-top: 5px;">
+                                (${ethers.utils.formatUnits(totalStaked, 6)} токенів)
                             </div>
                             <div style="color: var(--gray);">Всього застейкано</div>
                         </div>
@@ -1670,6 +2561,27 @@
                             </div>
                             <div style="color: var(--gray);">Нарахування винагород</div>
                         </div>
+                    </div>
+                    
+                    <div style="margin-top: 25px; padding: 20px; background: rgba(255,215,0,0.1); border-radius: 15px; border: 2px solid rgba(255,215,0,0.2);">
+                        <div style="text-align: center; margin-bottom: 15px;">
+                            <span style="font-size: 1.2em; color: var(--ukraine-yellow); font-weight: 600;">💰 Ціна ARUB = ${arubPriceInUsdt.toFixed(2)} USDT</span>
+                        </div>
+                        <div style="background: rgba(0,0,0,0.2); padding: 15px; border-radius: 10px; margin-bottom: 15px;">
+                            <div style="color: white; font-weight: 600; margin-bottom: 10px; font-size: 1.05em;">📈 Етапи APY (фіксовані пороги в доларах):</div>
+                            <div style="color: var(--gray); font-size: 0.9em; line-height: 1.8;">
+                                • <strong style="color: var(--ukraine-yellow);">Tier 1 (24%):</strong> $0 - $100,000<br>
+                                • <strong style="color: #10b981;">Tier 2 (20%):</strong> $100k - $250k<br>
+                                • <strong style="color: #3b82f6;">Tier 3 (16%):</strong> $250k - $500k<br>
+                                • <strong style="color: #8b5cf6;">Tier 4 (12%):</strong> $500k - $1M<br>
+                                • <strong style="color: #ef4444;">Tier 5 (8%):</strong> $1M+
+                            </div>
+                        </div>
+                        <p style="color: var(--gray); font-size: 0.9em; text-align: center; margin: 0; line-height: 1.6;">
+                            Пороги тірів (етапів) розраховуються як: <strong style="color: white;">сума застейканих USDT + вартість застейканих ARUB у доларах</strong> (за поточним курсом ${arubPriceInUsdt.toFixed(2)} USDT за 1 ARUB).
+                            <br><br>
+                            <span style="color: var(--ukraine-yellow); font-weight: 600;">Чим вище курс рубля → тим дорожчий ARUB → тим швидше досягаєте наступного тіру!</span>
+                        </p>
                     </div>
                 </div>
                 
@@ -2185,8 +3097,178 @@
             await fetchUsdtRubRate();
             setInterval(fetchUsdtRubRate, 300000);
             
+            // Update arbitrage section rates
+            updateArbitrageRates();
+            setInterval(updateArbitrageRates, 300000);
+            
             console.log('✅ Initialization complete');
         });
+        
+        // Update arbitrage section with current rates
+        function updateArbitrageRates() {
+            const rate = currentRate || 81.22;
+            const arbCurrentRate = document.getElementById('arb-current-rate');
+            const arbArubPrice = document.getElementById('arb-arub-price');
+            
+            if (arbCurrentRate) {
+                arbCurrentRate.textContent = `${rate.toFixed(2)} ₽`;
+            }
+            if (arbArubPrice) {
+                arbArubPrice.textContent = `$${rate.toFixed(2)}`;
+            }
+        }
+        
+        // FAQ Toggle Function
+        function toggleFAQ(element) {
+            const content = element.querySelector('.faq-content');
+            const arrow = element.querySelector('.faq-arrow');
+            
+            if (content.style.display === 'none' || !content.style.display) {
+                content.style.display = 'block';
+                arrow.style.transform = 'rotate(180deg)';
+            } else {
+                content.style.display = 'none';
+                arrow.style.transform = 'rotate(0deg)';
+            }
+        }
+        
+        // AI Support Toggle
+        function toggleAISupport() {
+            const chat = document.getElementById('aiSupportChat');
+            chat.classList.toggle('active');
+        }
+        
+        // AI Quick Question Handler
+        function askAI(question) {
+            const chatBody = document.getElementById('aiChatBody');
+            
+            // Add user message
+            const userMessage = document.createElement('div');
+            userMessage.className = 'ai-message ai-message-user';
+            userMessage.innerHTML = `
+                <div class="ai-message-avatar">👤</div>
+                <div class="ai-message-content">
+                    <p>${question}</p>
+                </div>
+            `;
+            chatBody.appendChild(userMessage);
+            
+            // Hide quick questions
+            const quickQuestions = document.querySelector('.ai-quick-questions');
+            if (quickQuestions) {
+                quickQuestions.style.display = 'none';
+            }
+            
+            // Simulate AI response
+            setTimeout(() => {
+                const botResponse = getAIResponse(question);
+                const aiMessage = document.createElement('div');
+                aiMessage.className = 'ai-message ai-message-bot';
+                aiMessage.innerHTML = `
+                    <div class="ai-message-avatar">🤖</div>
+                    <div class="ai-message-content">
+                        ${botResponse}
+                    </div>
+                `;
+                chatBody.appendChild(aiMessage);
+                
+                // Scroll to bottom
+                chatBody.scrollTop = chatBody.scrollHeight;
+            }, 800);
+            
+            // Scroll to bottom
+            chatBody.scrollTop = chatBody.scrollHeight;
+        }
+        
+        // Send AI Message
+        function sendAIMessage() {
+            const input = document.getElementById('aiInput');
+            const question = input.value.trim();
+            
+            if (!question) return;
+            
+            askAI(question);
+            input.value = '';
+        }
+        
+        // Get AI Response
+        function getAIResponse(question) {
+            const responses = {
+                'Як купити ARUB?': `
+                    <p><strong>Купівля ARUB - це просто! 🚀</strong></p>
+                    <p><strong>Крок 1:</strong> Підключіть ваш Web3 гаманець (MetaMask, Trust Wallet тощо)</p>
+                    <p><strong>Крок 2:</strong> Перейдіть у розділ "Купівля та продаж токена ARUB"</p>
+                    <p><strong>Крок 3:</strong> Введіть суму USDT, яку хочете обміняти на ARUB</p>
+                    <p><strong>Крок 4:</strong> Натисніть "Купити ARUB" та підтвердіть транзакцію</p>
+                    <p style="margin-top: 15px; padding: 10px; background: rgba(0,87,183,0.1); border-radius: 8px;">
+                        💡 <strong>Комісія:</strong> 0.5% при купівлі<br>
+                        💡 <strong>Ціна:</strong> 1 ARUB = поточний курс USDT/RUB
+                    </p>
+                `,
+                'Що таке стейкінг?': `
+                    <p><strong>Стейкінг - це заробіток на ваших токенах! 💰</strong></p>
+                    <p>Ви блокуєте свої USDT або ARUB токени в смарт-контракті та отримуєте пасивний дохід від 8% до 24% річних в токенах ARUB!</p>
+                    <p style="margin-top: 15px;"><strong>Переваги:</strong></p>
+                    <ul style="margin: 10px 0; padding-left: 20px;">
+                        <li>Без блокування - знімайте в будь-який час</li>
+                        <li>Динамічний APY - ранні стейкери отримують більше</li>
+                        <li>Без комісій за стейкінг та зняття</li>
+                        <li>Винагороди нараховуються 24/7</li>
+                    </ul>
+                    <p style="margin-top: 15px; padding: 10px; background: rgba(255,215,0,0.1); border-radius: 8px;">
+                        🔥 <strong>Рекомендація:</strong> Стейкайте ARUB для подвійної вигоди - APY + зростання ціни токена!
+                    </p>
+                `,
+                'Як заробити більше?': `
+                    <p><strong>3 стратегії максимального заробітку: 📈</strong></p>
+                    <p><strong>1️⃣ Стейкінг ARUB (найприбутковіше!):</strong></p>
+                    <p>Подвійна вигода: отримуєте APY + ціна токена зростає при падінні рубля</p>
+                    <p><strong>2️⃣ Арбітраж:</strong></p>
+                    <p>Купуйте ARUB при низькому курсі, продавайте при високому. Потенціал +12% за місяць!</p>
+                    <p><strong>3️⃣ Ранній стейкінг:</strong></p>
+                    <p>Чим раніше почнете, тим вищий APY! Зараз можна отримати до 24% річних.</p>
+                    <p style="margin-top: 15px; padding: 10px; background: rgba(16,185,129,0.1); border-radius: 8px;">
+                        💎 <strong>Експертна рада:</strong> Застейкайте ARUB зараз, поки APY максимальний, та тримайте довгостроково!
+                    </p>
+                `,
+                'Чи безпечна платформа?': `
+                    <p><strong>Так, безпека - наш пріоритет! 🛡️</strong></p>
+                    <p><strong>Що захищає ваші кошти:</strong></p>
+                    <ul style="margin: 10px 0; padding-left: 20px;">
+                        <li>✅ Перевірені смарт-контракти Ethereum</li>
+                        <li>✅ Відкритий вихідний код</li>
+                        <li>✅ Професійний аудит безпеки</li>
+                        <li>✅ Децентралізація - ваші ключі у вас</li>
+                        <li>✅ Без доступу до приватних ключів</li>
+                    </ul>
+                    <p style="margin-top: 15px; padding: 10px; background: rgba(0,87,183,0.1); border-radius: 8px;">
+                        🔍 Перевірте самі:<br>
+                        Всі контракти доступні на Etherscan Sepolia Testnet
+                    </p>
+                `
+            };
+            
+            // Check for exact match
+            for (const [key, value] of Object.entries(responses)) {
+                if (question.includes(key) || key.includes(question)) {
+                    return value;
+                }
+            }
+            
+            // Default response
+            return `
+                <p>Дякую за запитання! 🤖</p>
+                <p>Я можу допомогти вам з:</p>
+                <ul style="margin: 10px 0; padding-left: 20px;">
+                    <li>Купівлею та продажем токенів ARUB</li>
+                    <li>Стейкінгом і винагородами</li>
+                    <li>Арбітражними можливостями</li>
+                    <li>Технічними питаннями про платформу</li>
+                </ul>
+                <p style="margin-top: 15px;">Оберіть одну з швидких кнопок або задайте більш конкретне питання!</p>
+                <p style="margin-top: 10px; color: var(--ukraine-yellow);">💡 Спробуйте запитати: "Як купити ARUB?" або "Що таке стейкінг?"</p>
+            `;
+        }
     </script>
 </body>
 </html>
