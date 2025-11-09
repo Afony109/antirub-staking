@@ -2359,6 +2359,47 @@
                             </button>
                         </div>
                         
+                        <!-- Unstake ARUB Card -->
+                        <div class="staking-card">
+                            <div class="card-header">
+                                <div class="card-icon">💎</div>
+                                <h3 class="card-title">Зняти ARUB</h3>
+                            </div>
+                            
+                            <div class="input-group">
+                                <label class="input-label">Кількість ARUB</label>
+                                <div class="input-wrapper">
+                                    <input type="number" 
+                                           class="input-field" 
+                                           id="unstakeArubAmount" 
+                                           placeholder="0.00"
+                                           step="0.01"
+                                           min="0">
+                                    <button class="max-btn" onclick="setMaxUnstakeArub()">MAX</button>
+                                </div>
+                            </div>
+                            
+                            <div class="info-row">
+                                <span class="info-label">Застейкано ARUB:</span>
+                                <span class="info-value">${ethers.utils.formatUnits(stakedBalance, 6)} ARUB</span>
+                            </div>
+                            
+                            <div class="info-row">
+                                <span class="info-label">Доступні винагороди:</span>
+                                <span class="info-value">${ethers.utils.formatUnits(rewards, 6)} ARUB</span>
+                            </div>
+                            
+                            <div style="background: rgba(255,215,0,0.1); padding: 12px; border-radius: 10px; margin: 15px 0;">
+                                <p style="color: var(--gray); font-size: 0.85em; line-height: 1.5; margin: 0;">
+                                    💡 При знятті ARUB ви автоматично отримаєте всі накопичені винагороди
+                                </p>
+                            </div>
+                            
+                            <button class="action-btn" onclick="unstakeArubTokens()">
+                                💎 Зняти ARUB
+                            </button>
+                        </div>
+                        
                         <!-- Rewards Card -->
                         <div class="staking-card">
                             <div class="card-header">
@@ -3131,6 +3172,48 @@
             } catch (error) {
                 console.error('Error unstaking:', error);
                 showNotification('❌ Помилка зняття', 'error');
+            }
+        }
+        
+        // ==========================================
+        // UNSTAKE ARUB FUNCTIONS
+        // ==========================================
+        async function setMaxUnstakeArub() {
+            if (!stakingContract || !userAddress) return;
+            
+            try {
+                const userInfo = await stakingContract.getUserInfo(userAddress);
+                const stakedBalance = userInfo[0]; // stakedAmount
+                document.getElementById('unstakeArubAmount').value = ethers.utils.formatUnits(stakedBalance, 6);
+            } catch (error) {
+                console.log('⚠️ Could not get staked ARUB balance');
+                document.getElementById('unstakeArubAmount').value = '0';
+            }
+        }
+        
+        async function unstakeArubTokens() {
+            const amount = document.getElementById('unstakeArubAmount').value;
+            
+            if (!amount || parseFloat(amount) <= 0) {
+                showNotification('❌ Введіть коректну суму', 'error');
+                return;
+            }
+            
+            try {
+                const amountWei = ethers.utils.parseUnits(amount, 6);
+                
+                showNotification('🔄 Зняття ARUB...', 'info');
+                const unstakeTx = await stakingContract.unstakeArub(amountWei);
+                await unstakeTx.wait();
+                
+                showNotification('✅ ARUB успішно знято! Винагороди автоматично отримано.', 'success');
+                
+                document.getElementById('unstakeArubAmount').value = '';
+                await updateUI();
+                
+            } catch (error) {
+                console.error('Error unstaking ARUB:', error);
+                showNotification('❌ Помилка зняття ARUB', 'error');
             }
         }
         
