@@ -2052,20 +2052,31 @@
                 'function canClaimFromFaucet(address user) view returns (bool canClaim, uint256 timeUntilNextClaim)'
             ];
             
-            // Staking ABI (Dynamic APY)
+            // Staking ABI (ARUBStakingFixed.sol) - CORRECTED
             const STAKING_ABI = [
-                'function stake(uint256 amount) external',
-                'function stakeArub(uint256 amount) external',
-                'function unstake(uint256 amount) external',
-                'function getStakedBalance(address user) view returns (uint256)',
-                'function getTotalStaked() view returns (uint256)',
-                'function getRewards(address user) view returns (uint256)',
-                'function claimRewards() external',
+                // Main staking functions
+                'function stakeArub(uint256 _amount) external',
+                'function unstakeArub(uint256 _amount) external',
+                'function claimRewards(bool _compound) external',
+                'function emergencyWithdraw() external',
+                
+                // View functions
+                'function getUserInfo(address _user) view returns (uint256 stakedAmount, uint256 pendingRewards, uint256 totalClaimed, uint256 lastStakeTime, uint256 currentAPY_)',
+                'function getPoolStats() view returns (uint256 totalStaked_, uint256 totalStakers_, uint256 totalRewardsDistributed_, uint256 currentAPY_, uint256 totalStakes_, uint256 totalUnstakes_, uint256 totalClaims_)',
+                'function calculateExpectedReward(address _user, uint256 _days) view returns (uint256)',
+                
+                // APY functions
                 'function getAPYTiers() view returns (uint256[] memory thresholds, uint256[] memory apys)',
                 'function getCurrentAPYTier() view returns (uint256 tier, uint256 threshold, uint256 apy, string memory description)',
                 'function getNextAPYTier() view returns (uint256 nextThreshold, uint256 nextAPY, uint256 remainingToNextTier)',
+                
+                // Public variables
+                'function totalStaked() view returns (uint256)',
                 'function currentAPY() view returns (uint256)',
-                'function totalStaked() view returns (uint256)'
+                'function totalStakers() view returns (uint256)',
+                'function minStakeAmount() view returns (uint256)',
+                'function emergencyMode() view returns (bool)',
+                'function compoundingEnabled() view returns (bool)'
             ];
             
             // Token ABI (ARUB)
@@ -2113,7 +2124,12 @@
         // UI UPDATES
         // ==========================================
         async function updateUI() {
-            if (!userAddress) return;
+            if (!userAddress) {
+                console.log('⚠️ No user address, skipping UI update');
+                return;
+            }
+            
+            console.log('🔵 Starting UI update...');
             
             let usdtBalance = ethers.BigNumber.from(0);
             let stakedBalance = ethers.BigNumber.from(0);
@@ -2121,26 +2137,61 @@
             let rewards = ethers.BigNumber.from(0);
             let totalStaked = ethers.BigNumber.from(0);
             
+            let contractsWorking = {
+                usdt: false,
+                staking: false,
+                token: false
+            };
+            
             try {
-                const balances = await Promise.all([
-                    usdtContract.balanceOf(userAddress).catch(() => ethers.BigNumber.from(0)),
-                    stakingContract.getStakedBalance(userAddress).catch(() => ethers.BigNumber.from(0)),
-                    tokenContract.balanceOf(userAddress).catch(() => ethers.BigNumber.from(0)),
-                    stakingContract.getRewards(userAddress).catch(() => ethers.BigNumber.from(0))
-                ]);
+                // Try to get USDT balance
+                try {
+                    usdtBalance = await usdtContract.balanceOf(userAddress);
+                    contractsWorking.usdt = true;
+                    console.log('✅ USDT contract working, balance:', ethers.utils.formatUnits(usdtBalance, 6));
+                } catch (error) {
+                    console.log('⚠️ USDT contract call failed (will use 0)');
+                }
                 
-                usdtBalance = balances[0];
-                stakedBalance = balances[1];
-                arubBalance = balances[2];
-                rewards = balances[3];
+                // Try to get staked balance and rewards using getUserInfo
+                try {
+                    const userInfo = await stakingContract.getUserInfo(userAddress);
+                    stakedBalance = userInfo[0]; // stakedAmount
+                    rewards = userInfo[1];        // pendingRewards
+                    contractsWorking.staking = true;
+                    console.log('✅ Staking contract working, staked:', ethers.utils.formatUnits(stakedBalance, 6));
+                    console.log('✅ Pending rewards:', ethers.utils.formatUnits(rewards, 6));
+                } catch (error) {
+                    console.log('⚠️ Staking contract call failed (will use 0)');
+                }
                 
-                totalStaked = await stakingContract.getTotalStaked().catch(() => ethers.BigNumber.from(0));
+                // Try to get ARUB balance
+                try {
+                    arubBalance = await tokenContract.balanceOf(userAddress);
+                    contractsWorking.token = true;
+                    console.log('✅ Token contract working, balance:', ethers.utils.formatUnits(arubBalance, 6));
+                } catch (error) {
+                    console.log('⚠️ Token contract call failed (will use 0)');
+                }
                 
-                document.getElementById('totalStaked').textContent = 
-                    `$${ethers.utils.formatUnits(totalStaked, 6)}`;
+                // Try to get total staked
+                try {
+                    totalStaked = await stakingContract.totalStaked();
+                    console.log('✅ Total staked:', ethers.utils.formatUnits(totalStaked, 6));
+                } catch (error) {
+                    console.log('⚠️ Get total staked failed (will use 0)');
+                }
+                
+                // Update UI with available data
+                if (document.getElementById('totalStaked')) {
+                    document.getElementById('totalStaked').textContent = 
+                        `$${ethers.utils.formatUnits(totalStaked, 6)}`;
+                }
+                
+                console.log('📊 Contract status:', contractsWorking);
+                
             } catch (error) {
-                console.warn('Не вдалося отримати баланси для стейкінгу, показуємо 0:', error);
-                // Continue with zero balances
+                console.warn('⚠️ Error in updateUI (non-critical):', error.message);
             }
             
             const testModeWarningStaking = (usdtBalance.eq(0) && stakedBalance.eq(0) && arubBalance.eq(0)) ?
@@ -2429,7 +2480,7 @@
                 }
                 
             } catch (error) {
-                console.error('Помилка оновлення динамічного APY:', error);
+                console.log('⚠️ Dynamic APY not available (showing defaults):', error.message);
                 // Показати дефолтні значення
                 document.getElementById('currentAPYValue').textContent = '24%';
                 document.getElementById('currentTierName').textContent = 'Tier 1: 0-100k ARUB';
@@ -2467,11 +2518,18 @@
         // FAUCET UI UPDATE
         // ==========================================
         async function updateFaucetUI() {
-            if (!userAddress) return;
+            if (!userAddress) {
+                console.log('⚠️ No user address, skipping faucet UI update');
+                return;
+            }
+            
+            console.log('🔵 Updating faucet UI...');
             
             try {
                 const [canClaim, timeLeft] = await usdtContract.canClaimFromFaucet(userAddress);
                 const usdtBalance = await usdtContract.balanceOf(userAddress);
+                
+                console.log('✅ Faucet data loaded successfully');
                 
                 const faucetInterface = document.getElementById('faucetInterface');
                 faucetInterface.innerHTML = `
@@ -2516,7 +2574,38 @@
                     </div>
                 `;
             } catch (error) {
-                console.error('Error updating faucet UI:', error);
+                console.log('⚠️ Faucet contract not available (showing placeholder):', error.message);
+                
+                // Show placeholder UI when contract is not available
+                const faucetInterface = document.getElementById('faucetInterface');
+                if (faucetInterface) {
+                    faucetInterface.innerHTML = `
+                        <div style="max-width: 600px; margin: 0 auto;">
+                            <div class="staking-card" style="text-align: center;">
+                                <div class="card-header" style="justify-content: center;">
+                                    <div class="card-icon">💰</div>
+                                    <h3 class="card-title">MockUSDT Faucet</h3>
+                                </div>
+                                
+                                <div style="background: rgba(239,68,68,0.1); padding: 20px; border-radius: 15px; margin: 20px 0; border: 2px solid rgba(239,68,68,0.3);">
+                                    <div style="font-size: 3em; margin-bottom: 10px;">⚠️</div>
+                                    <div style="color: #ef4444; font-weight: bold; margin-bottom: 10px;">
+                                        Контракт недоступний
+                                    </div>
+                                    <div style="color: var(--gray); font-size: 0.9em;">
+                                        Можливо, контракт ще не задеплоєно або є проблеми з мережею Sepolia
+                                    </div>
+                                </div>
+                                
+                                <div style="margin-top: 20px; padding: 15px; background: rgba(0,87,183,0.1); border-radius: 10px;">
+                                    <p style="color: var(--gray); font-size: 0.9em; margin: 0;">
+                                        💡 Перевірте адресу контракту на Etherscan Sepolia
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                    `;
+                }
             }
         }
         
@@ -2524,21 +2613,32 @@
         // TRADING UI UPDATE
         // ==========================================
         async function updateTradingUI() {
-            if (!userAddress) return;
+            if (!userAddress) {
+                console.log('⚠️ No user address, skipping trading UI update');
+                return;
+            }
+            
+            console.log('🔵 Updating trading UI...');
             
             let usdtBalance = ethers.BigNumber.from(0);
             let arubBalance = ethers.BigNumber.from(0);
             
             try {
                 const balances = await Promise.all([
-                    usdtContract.balanceOf(userAddress).catch(() => ethers.BigNumber.from(0)),
-                    tokenContract.balanceOf(userAddress).catch(() => ethers.BigNumber.from(0))
+                    usdtContract.balanceOf(userAddress).catch((err) => {
+                        console.log('⚠️ Could not get USDT balance (using 0)');
+                        return ethers.BigNumber.from(0);
+                    }),
+                    tokenContract.balanceOf(userAddress).catch((err) => {
+                        console.log('⚠️ Could not get ARUB balance (using 0)');
+                        return ethers.BigNumber.from(0);
+                    })
                 ]);
                 usdtBalance = balances[0];
                 arubBalance = balances[1];
+                console.log('✅ Trading balances loaded');
             } catch (error) {
-                console.warn('Не вдалося отримати баланси, показуємо 0:', error);
-                // Continue with zero balances
+                console.log('⚠️ Trading balances not available (using 0)');
             }
             
             // ВАЖЛИВО: Ціна ARUB = поточний курс USDT/RUB
@@ -2916,12 +3016,17 @@
         // ==========================================
         // HELPER FUNCTIONS
         // ==========================================
-        function setMaxUnstake() {
+        async function setMaxUnstake() {
             if (!stakingContract || !userAddress) return;
             
-            stakingContract.getStakedBalance(userAddress).then(balance => {
-                document.getElementById('unstakeAmount').value = ethers.utils.formatUnits(balance, 6);
-            });
+            try {
+                const userInfo = await stakingContract.getUserInfo(userAddress);
+                const stakedBalance = userInfo[0]; // stakedAmount
+                document.getElementById('unstakeAmount').value = ethers.utils.formatUnits(stakedBalance, 6);
+            } catch (error) {
+                console.log('⚠️ Could not get staked balance');
+                document.getElementById('unstakeAmount').value = '0';
+            }
         }
         
         async function stakeTokens() {
@@ -2949,7 +3054,7 @@
                 }
                 
                 showNotification('🔄 Стейкінг USDT...', 'info');
-                const stakeTx = await stakingContract.stake(amountWei);
+                const stakeTx = await stakingContract.stakeArub(amountWei);
                 await stakeTx.wait();
                 
                 showNotification('✅ USDT успішно застейкано!', 'success');
@@ -3015,7 +3120,7 @@
                 const amountWei = ethers.utils.parseUnits(amount, 6);
                 
                 showNotification('🔄 Зняття USDT...', 'info');
-                const unstakeTx = await stakingContract.unstake(amountWei);
+                const unstakeTx = await stakingContract.unstakeArub(amountWei);
                 await unstakeTx.wait();
                 
                 showNotification('✅ USDT успішно знято!', 'success');
@@ -3032,7 +3137,7 @@
         async function claimRewards() {
             try {
                 showNotification('🔄 Отримання винагород...', 'info');
-                const claimTx = await stakingContract.claimRewards();
+                const claimTx = await stakingContract.claimRewards(false); // false = не компаундити
                 await claimTx.wait();
                 
                 showNotification('✅ Винагороди успішно отримано!', 'success');
