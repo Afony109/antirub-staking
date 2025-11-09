@@ -11,9 +11,9 @@
     
     <style>
         :root {
-            --primary: #0057B7; /* Синій українського прапора */
+            --primary: #0057B7;
             --secondary: #0057B7;
-            --accent: #FFD700; /* Жовтий українського прапора */
+            --accent: #FFD700;
             --dark: #0a0a0a;
             --gray: #888;
             --red: #ef4444;
@@ -40,7 +40,6 @@
             line-height: 1.6;
         }
         
-        /* Animated Background */
         .bg-animated {
             position: fixed;
             top: 0;
@@ -52,7 +51,6 @@
             opacity: 0.12;
         }
         
-        /* Ukraine Support Banner */
         .ukraine-banner {
             position: fixed;
             top: 0;
@@ -87,10 +85,9 @@
             75% { transform: rotate(10deg); }
         }
         
-        /* Navigation */
         nav {
             position: fixed;
-            top: 60px; /* Offset for Ukraine banner */
+            top: 60px;
             width: 100%;
             padding: 20px 50px;
             display: flex;
@@ -178,7 +175,6 @@
             box-shadow: 0 6px 20px rgba(0,87,183,0.5);
         }
         
-        /* Hero Section */
         .hero {
             padding: 180px 50px 100px;
             text-align: center;
@@ -246,7 +242,6 @@
             transform: translateY(-3px);
         }
         
-        /* Stats Section */
         .stats-section {
             padding: 60px 50px;
             background: rgba(0,87,183,0.05);
@@ -291,7 +286,6 @@
             font-size: 1.1em;
         }
         
-        /* Staking Section */
         .staking-section {
             padding: 100px 50px;
             max-width: 1400px;
@@ -444,7 +438,6 @@
             cursor: not-allowed;
         }
         
-        /* Wallet Modal */
         .wallet-modal {
             position: fixed;
             top: 0;
@@ -508,216 +501,6 @@
             font-weight: 600;
         }
         
-        /* Features Section */
-        .features-section {
-            padding: 100px 50px;
-            background: rgba(0,87,183,0.03);
-        }
-        
-        .features-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-            gap: 40px;
-            max-width: 1400px;
-            margin: 0 auto;
-        }
-        
-        .feature-card {
-            background: var(--card-bg);
-            padding: 40px;
-            border-radius: 20px;
-            text-align: center;
-            border: 2px solid rgba(0,87,183,0.2);
-            transition: all 0.3s;
-        }
-        
-        .feature-card:hover {
-            transform: translateY(-10px);
-            border-color: var(--ukraine-blue);
-            box-shadow: 0 15px 40px rgba(0,87,183,0.3);
-        }
-        
-        .feature-icon {
-            font-size: 4em;
-            margin-bottom: 20px;
-            filter: drop-shadow(0 0 20px var(--ukraine-blue));
-        }
-        
-        .feature-title {
-            font-size: 1.5em;
-            margin-bottom: 15px;
-            color: var(--ukraine-yellow);
-        }
-        
-        .feature-description {
-            color: var(--gray);
-            line-height: 1.8;
-        }
-        
-        /* How It Works */
-        .how-it-works {
-            padding: 100px 50px;
-        }
-        
-        .steps-container {
-            max-width: 1000px;
-            margin: 0 auto;
-        }
-        
-        .step {
-            display: flex;
-            gap: 30px;
-            margin-bottom: 50px;
-            align-items: center;
-        }
-        
-        .step-number {
-            min-width: 80px;
-            height: 80px;
-            background: linear-gradient(135deg, var(--ukraine-blue), var(--ukraine-yellow));
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 2em;
-            font-weight: bold;
-            box-shadow: 0 10px 30px rgba(0,87,183,0.4);
-        }
-        
-        .step-content {
-            flex: 1;
-            background: var(--card-bg);
-            padding: 30px;
-            border-radius: 15px;
-            border-left: 4px solid var(--ukraine-blue);
-        }
-        
-        .step-title {
-            font-size: 1.5em;
-            margin-bottom: 15px;
-            color: var(--ukraine-yellow);
-        }
-        
-        .step-description {
-            color: var(--gray);
-            line-height: 1.8;
-        }
-        
-        /* FAQ */
-        .faq-section {
-            padding: 100px 50px;
-            background: rgba(0,87,183,0.03);
-        }
-        
-        .faq-container {
-            max-width: 900px;
-            margin: 0 auto;
-        }
-        
-        .faq-item {
-            background: var(--card-bg);
-            margin-bottom: 20px;
-            border-radius: 15px;
-            overflow: hidden;
-            border: 2px solid rgba(0,87,183,0.2);
-            transition: all 0.3s;
-        }
-        
-        .faq-item:hover {
-            border-color: var(--ukraine-blue);
-        }
-        
-        .faq-question {
-            padding: 25px;
-            cursor: pointer;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            font-size: 1.2em;
-            font-weight: 600;
-        }
-        
-        .faq-question:hover {
-            background: rgba(0,87,183,0.1);
-        }
-        
-        .faq-answer {
-            padding: 0 25px 25px;
-            color: var(--gray);
-            line-height: 1.8;
-            display: none;
-        }
-        
-        .faq-answer.active {
-            display: block;
-        }
-        
-        /* Footer */
-        footer {
-            padding: 60px 50px 30px;
-            background: rgba(0,0,0,0.5);
-            border-top: 2px solid var(--ukraine-blue);
-        }
-        
-        .footer-content {
-            max-width: 1400px;
-            margin: 0 auto;
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-            gap: 40px;
-            margin-bottom: 40px;
-        }
-        
-        .footer-section h3 {
-            margin-bottom: 20px;
-            color: var(--ukraine-yellow);
-        }
-        
-        .footer-section p, .footer-section a {
-            color: var(--gray);
-            line-height: 2;
-            text-decoration: none;
-            display: block;
-            transition: all 0.3s;
-        }
-        
-        .footer-section a:hover {
-            color: var(--ukraine-blue);
-            padding-left: 5px;
-        }
-        
-        .social-links {
-            display: flex;
-            gap: 15px;
-            margin-top: 20px;
-        }
-        
-        .social-link {
-            width: 40px;
-            height: 40px;
-            background: var(--card-bg);
-            border: 2px solid var(--ukraine-blue);
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            transition: all 0.3s;
-            font-size: 1.2em;
-        }
-        
-        .social-link:hover {
-            background: var(--ukraine-blue);
-            transform: translateY(-3px);
-        }
-        
-        .footer-bottom {
-            text-align: center;
-            padding-top: 30px;
-            border-top: 1px solid rgba(255,255,255,0.1);
-            color: var(--gray);
-        }
-        
-        /* Notification */
         .notification {
             position: fixed;
             top: 100px;
@@ -752,7 +535,6 @@
             }
         }
         
-        /* Loading */
         .loading {
             display: inline-block;
             width: 20px;
@@ -767,343 +549,9 @@
             to { transform: rotate(360deg); }
         }
         
-        /* Support Widget */
-        .support-widget {
-            position: fixed;
-            bottom: 30px;
-            right: 30px;
-            z-index: 3000;
-        }
-        
-        .support-button {
-            width: 65px;
-            height: 65px;
-            background: linear-gradient(135deg, var(--ukraine-blue), var(--ukraine-yellow));
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            cursor: pointer;
-            box-shadow: 0 8px 25px rgba(0,87,183,0.4);
-            transition: all 0.3s;
-            border: none;
-            font-size: 2em;
-            animation: pulse 2s infinite;
-        }
-        
-        .support-button:hover {
-            transform: scale(1.1);
-            box-shadow: 0 12px 35px rgba(0,87,183,0.6);
-        }
-        
-        @keyframes pulse {
-            0%, 100% {
-                box-shadow: 0 8px 25px rgba(0,87,183,0.4);
-            }
-            50% {
-                box-shadow: 0 8px 35px rgba(255,215,0,0.6);
-            }
-        }
-        
-        .support-badge {
-            position: absolute;
-            top: -5px;
-            right: -5px;
-            background: var(--red);
-            color: white;
-            width: 24px;
-            height: 24px;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 0.75em;
-            font-weight: bold;
-            border: 3px solid var(--dark);
-        }
-        
-        .support-chat {
-            position: fixed;
-            bottom: 110px;
-            right: 30px;
-            width: 380px;
-            max-height: 600px;
-            background: var(--dark);
-            border: 2px solid var(--ukraine-blue);
-            border-radius: 20px;
-            box-shadow: 0 20px 60px rgba(0,0,0,0.5);
-            display: none;
-            flex-direction: column;
-            z-index: 2999;
-            animation: slideUp 0.3s ease-out;
-        }
-        
-        .support-chat.active {
-            display: flex;
-        }
-        
-        @keyframes slideUp {
-            from {
-                opacity: 0;
-                transform: translateY(20px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
-        
-        .support-header {
-            background: linear-gradient(135deg, var(--ukraine-blue), var(--ukraine-yellow));
-            padding: 20px;
-            border-radius: 18px 18px 0 0;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-        }
-        
-        .support-header-content {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-        }
-        
-        .support-avatar {
-            width: 45px;
-            height: 45px;
-            background: white;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 1.5em;
-        }
-        
-        .support-header-text h3 {
-            margin: 0;
-            font-size: 1.1em;
-            color: white;
-        }
-        
-        .support-header-text p {
-            margin: 0;
-            font-size: 0.85em;
-            color: rgba(255,255,255,0.9);
-        }
-        
-        .support-close {
-            background: rgba(255,255,255,0.2);
-            border: none;
-            color: white;
-            width: 32px;
-            height: 32px;
-            border-radius: 50%;
-            cursor: pointer;
-            font-size: 1.2em;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            transition: all 0.3s;
-        }
-        
-        .support-close:hover {
-            background: rgba(255,255,255,0.3);
-        }
-        
-        .support-body {
-            flex: 1;
-            overflow-y: auto;
-            padding: 20px;
-            max-height: 400px;
-        }
-        
-        .quick-questions {
-            display: flex;
-            flex-direction: column;
-            gap: 10px;
-        }
-        
-        .quick-question-btn {
-            background: var(--card-bg);
-            border: 2px solid rgba(0,87,183,0.3);
-            padding: 12px 15px;
-            border-radius: 12px;
-            color: white;
-            text-align: left;
-            cursor: pointer;
-            transition: all 0.3s;
-            font-size: 0.95em;
-        }
-        
-        .quick-question-btn:hover {
-            border-color: var(--ukraine-blue);
-            background: rgba(0,87,183,0.1);
-            transform: translateX(5px);
-        }
-        
-        .quick-question-btn:before {
-            content: "💬 ";
-            margin-right: 8px;
-        }
-        
-        .support-message {
-            background: rgba(0,87,183,0.1);
-            padding: 15px;
-            border-radius: 12px;
-            margin-bottom: 15px;
-            border-left: 4px solid var(--ukraine-blue);
-        }
-        
-        .support-message p {
-            margin: 0;
-            color: var(--gray);
-            line-height: 1.6;
-            font-size: 0.95em;
-        }
-        
-        .support-footer {
-            padding: 20px;
-            border-top: 1px solid rgba(255,255,255,0.1);
-        }
-        
-        .support-contact-methods {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 10px;
-        }
-        
-        .contact-method {
-            padding: 12px;
-            background: var(--card-bg);
-            border: 2px solid rgba(0,87,183,0.3);
-            border-radius: 12px;
-            text-align: center;
-            cursor: pointer;
-            transition: all 0.3s;
-            text-decoration: none;
-            color: white;
-        }
-        
-        .contact-method:hover {
-            border-color: var(--ukraine-blue);
-            background: rgba(0,87,183,0.1);
-            transform: translateY(-3px);
-        }
-        
-        .contact-method .icon {
-            font-size: 1.8em;
-            margin-bottom: 5px;
-        }
-        
-        .contact-method .label {
-            font-size: 0.8em;
-            color: var(--gray);
-        }
-        
-        .contact-form {
-            display: none;
-            flex-direction: column;
-            gap: 15px;
-        }
-        
-        .contact-form.active {
-            display: flex;
-        }
-        
-        .contact-form input,
-        .contact-form textarea {
-            width: 100%;
-            padding: 12px;
-            background: rgba(255,255,255,0.05);
-            border: 2px solid rgba(0,87,183,0.3);
-            border-radius: 10px;
-            color: white;
-            font-size: 0.95em;
-            transition: all 0.3s;
-        }
-        
-        .contact-form input:focus,
-        .contact-form textarea:focus {
-            outline: none;
-            border-color: var(--ukraine-blue);
-        }
-        
-        .contact-form textarea {
-            resize: vertical;
-            min-height: 100px;
-        }
-        
-        .contact-form button {
-            padding: 12px;
-            background: linear-gradient(45deg, var(--ukraine-blue), var(--ukraine-yellow));
-            border: none;
-            border-radius: 10px;
-            color: white;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.3s;
-        }
-        
-        .contact-form button:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 6px 20px rgba(0,87,183,0.4);
-        }
-        
-        .support-tabs {
-            display: flex;
-            gap: 10px;
-            margin-bottom: 15px;
-        }
-        
-        .support-tab {
-            flex: 1;
-            padding: 10px;
-            background: var(--card-bg);
-            border: 2px solid rgba(0,87,183,0.3);
-            border-radius: 10px;
-            color: var(--gray);
-            cursor: pointer;
-            text-align: center;
-            font-size: 0.9em;
-            transition: all 0.3s;
-        }
-        
-        .support-tab.active {
-            background: rgba(0,87,183,0.2);
-            border-color: var(--ukraine-blue);
-            color: white;
-            font-weight: 600;
-        }
-        
-        .tab-content {
-            display: none;
-        }
-        
-        .tab-content.active {
-            display: block;
-        }
-        
-        /* Responsive */
         @media (max-width: 768px) {
             nav {
                 padding: 15px 20px;
-            }
-            
-            .support-chat {
-                width: calc(100vw - 40px);
-                right: 20px;
-                bottom: 100px;
-            }
-            
-            .support-button {
-                width: 60px;
-                height: 60px;
-                font-size: 1.8em;
-            }
-            
-            .support-widget {
-                bottom: 20px;
-                right: 20px;
             }
             
             .hero {
@@ -1125,256 +573,12 @@
             .section-title {
                 font-size: 2em;
             }
-            
-            .step {
-                flex-direction: column;
-                text-align: center;
-            }
-            
-            .footer-content {
-                grid-template-columns: 1fr;
-            }
-            
-            .support-contact-methods {
-                grid-template-columns: 1fr;
-            }
-            
-            .hero-buttons {
-                flex-direction: column;
-                width: 100%;
-            }
-            
-            .hero-buttons button {
-                width: 100%;
-            }
-        }
-        
-        /* Dynamic APY Styles */
-        .apy-banner {
-            background: linear-gradient(135deg, rgba(0,87,183,0.2), rgba(255,215,0,0.2));
-            border: 2px solid var(--ukraine-blue);
-            border-radius: 20px;
-            padding: 40px;
-            margin-bottom: 40px;
-            position: relative;
-            overflow: hidden;
-        }
-        
-        .apy-banner::before {
-            content: '';
-            position: absolute;
-            top: -50%;
-            right: -50%;
-            width: 200%;
-            height: 200%;
-            background: radial-gradient(circle, rgba(255,215,0,0.1) 0%, transparent 70%);
-            animation: rotate 20s linear infinite;
-        }
-        
-        @keyframes rotate {
-            from { transform: rotate(0deg); }
-            to { transform: rotate(360deg); }
-        }
-        
-        .apy-banner-content {
-            position: relative;
-            z-index: 1;
-        }
-        
-        .apy-header {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            margin-bottom: 30px;
-            flex-wrap: wrap;
-            gap: 20px;
-        }
-        
-        .apy-title {
-            display: flex;
-            align-items: center;
-            gap: 15px;
-            font-size: 1.8em;
-            font-weight: bold;
-        }
-        
-        .apy-icon {
-            font-size: 1.5em;
-            animation: pulse 2s ease-in-out infinite;
-        }
-        
-        @keyframes pulse {
-            0%, 100% { transform: scale(1); }
-            50% { transform: scale(1.1); }
-        }
-        
-        .apy-current {
-            display: flex;
-            flex-direction: column;
-            align-items: flex-end;
-        }
-        
-        .apy-value {
-            font-size: 3em;
-            font-weight: bold;
-            background: linear-gradient(45deg, var(--ukraine-blue), var(--ukraine-yellow));
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
-            line-height: 1;
-        }
-        
-        .apy-tier-name {
-            color: var(--ukraine-yellow);
-            font-size: 1.1em;
-            margin-top: 5px;
-        }
-        
-        .apy-tiers-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
-            gap: 15px;
-            margin-bottom: 25px;
-        }
-        
-        .apy-tier-card {
-            background: rgba(0,0,0,0.3);
-            border: 2px solid rgba(255,255,255,0.1);
-            border-radius: 12px;
-            padding: 20px;
-            text-align: center;
-            transition: all 0.3s;
-        }
-        
-        .apy-tier-card.active {
-            border-color: var(--ukraine-yellow);
-            background: rgba(255,215,0,0.1);
-            transform: scale(1.05);
-            box-shadow: 0 8px 25px rgba(255,215,0,0.3);
-        }
-        
-        .apy-tier-card:hover {
-            border-color: var(--ukraine-blue);
-        }
-        
-        .tier-number {
-            font-size: 0.9em;
-            color: var(--gray);
-            margin-bottom: 5px;
-        }
-        
-        .tier-apy {
-            font-size: 2em;
-            font-weight: bold;
-            color: var(--ukraine-yellow);
-            margin: 10px 0;
-        }
-        
-        .tier-range {
-            font-size: 0.85em;
-            color: var(--gray);
-            line-height: 1.4;
-        }
-        
-        .apy-progress-section {
-            background: rgba(0,0,0,0.3);
-            border-radius: 15px;
-            padding: 25px;
-        }
-        
-        .apy-progress-header {
-            display: flex;
-            justify-content: space-between;
-            margin-bottom: 15px;
-            font-size: 0.95em;
-        }
-        
-        .progress-label {
-            color: var(--gray);
-        }
-        
-        .progress-value {
-            color: var(--ukraine-yellow);
-            font-weight: 600;
-        }
-        
-        .apy-progress-bar {
-            height: 20px;
-            background: rgba(255,255,255,0.1);
-            border-radius: 10px;
-            overflow: hidden;
-            position: relative;
-        }
-        
-        .apy-progress-fill {
-            height: 100%;
-            background: linear-gradient(90deg, var(--ukraine-blue), var(--ukraine-yellow));
-            border-radius: 10px;
-            transition: width 0.5s ease;
-            position: relative;
-            overflow: hidden;
-        }
-        
-        .apy-progress-fill::after {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
-            animation: shimmer 2s infinite;
-        }
-        
-        @keyframes shimmer {
-            0% { transform: translateX(-100%); }
-            100% { transform: translateX(100%); }
-        }
-        
-        .apy-next-tier {
-            margin-top: 15px;
-            padding: 15px;
-            background: rgba(255,215,0,0.1);
-            border-left: 4px solid var(--ukraine-yellow);
-            border-radius: 8px;
-        }
-        
-        .next-tier-text {
-            color: var(--gray);
-            font-size: 0.9em;
-            margin-bottom: 5px;
-        }
-        
-        .next-tier-value {
-            font-size: 1.2em;
-            color: var(--ukraine-yellow);
-            font-weight: 600;
-        }
-        
-        .apy-info-banner {
-            background: rgba(0,87,183,0.1);
-            border-left: 4px solid var(--ukraine-blue);
-            padding: 20px;
-            border-radius: 10px;
-            margin-top: 20px;
-        }
-        
-        .apy-info-text {
-            color: var(--gray);
-            line-height: 1.6;
-            margin: 0;
-        }
-        
-        .apy-highlight {
-            color: var(--ukraine-yellow);
-            font-weight: 600;
         }
     </style>
 </head>
 <body>
     <div class="bg-animated"></div>
     
-    <!-- Ukraine Support Banner -->
     <div class="ukraine-banner">
         <div class="ukraine-banner-text">
             <span class="ukraine-flag">🇺🇦</span>
@@ -1383,7 +587,6 @@
         </div>
     </div>
     
-    <!-- Navigation -->
     <nav>
         <div class="logo">
             <div class="logo-icon">₽</div>
@@ -1398,7 +601,6 @@
         </div>
     </nav>
     
-    <!-- Hero Section -->
     <section class="hero">
         <h1 class="hero-title">Заробляємо на падінні рубля, купуючи токен Антируб</h1>
         <p class="hero-subtitle">
@@ -1412,13 +614,12 @@
             <button class="btn-primary" onclick="document.getElementById('staking').scrollIntoView({behavior: 'smooth'})">
                 🔒 Почати стейкінг
             </button>
-            <button class="btn-secondary" onclick="document.getElementById('how-it-works').scrollIntoView({behavior: 'smooth'})">
-                Як це працює
+            <button class="btn-secondary" onclick="document.getElementById('faucet').scrollIntoView({behavior: 'smooth'})">
+                💸 Отримати тестові USDT
             </button>
         </div>
     </section>
     
-    <!-- Stats Section -->
     <section class="stats-section">
         <div class="stats-grid">
             <div class="stat-card">
@@ -1440,7 +641,6 @@
         </div>
     </section>
     
-    <!-- Trading Section -->
     <section class="staking-section" id="trading" style="padding-top: 80px;">
         <h2 class="section-title">Купівля та продаж токена ARUB</h2>
         
@@ -1460,7 +660,6 @@
         </div>
     </section>
     
-    <!-- USDT Faucet Section -->
     <section class="staking-section" id="faucet" style="background: linear-gradient(135deg, rgba(0,87,183,0.05), rgba(255,215,0,0.05));">
         <h2 class="section-title">💰 Отримати тестові USDT</h2>
         <p style="text-align: center; color: var(--gray); max-width: 800px; margin: 0 auto 40px;">
@@ -1475,399 +674,29 @@
         </div>
     </section>
     
-    <!-- Staking Section -->
-    <section class="staking-section" id="staking">
-        <h2 class="section-title">Стейкаємо Антируб і USDT — отримуємо більше Антируб</h2>
-        
-        <div id="stakingInterface">
-            <div style="text-align: center; padding: 60px; color: var(--gray);">
-                <div style="font-size: 3em; margin-bottom: 20px;">🔒</div>
-                <p style="font-size: 1.3em;">Підключіть гаманець для доступу до стейкінгу</p>
-            </div>
-        </div>
-    </section>
-    
-    <!-- Features Section -->
-    <section class="features-section">
-        <h2 class="section-title">Чому обирають ANTI RUB?</h2>
-        <div class="features-grid">
-            <div class="feature-card">
-                <div class="feature-icon">🛡️</div>
-                <h3 class="feature-title">Захист активів</h3>
-                <p class="feature-description">
-                    Ваші ARUB та USDT захищені смарт-контрактом. Повна прозорість і безпека на блокчейні Ethereum.
-                </p>
-            </div>
-            <div class="feature-card">
-                <div class="feature-icon">💰</div>
-                <h3 class="feature-title">Високі винагороди</h3>
-                <p class="feature-description">
-                    Отримуйте токени ARUB за стейкінг ARUB або USDT. Чим більше застейкано, тим більша ваша винагорода.
-                </p>
-            </div>
-            <div class="feature-card">
-                <div class="feature-icon">📊</div>
-                <h3 class="feature-title">Заробіток на падінні рубля</h3>
-                <p class="feature-description">
-                    Ціна токена ARUB = курс USDT/RUB. Купуйте дешевше, продавайте дорожче. Чим слабший рубль, тим більша вартість вашого токена у доларах.
-                </p>
-            </div>
-            <div class="feature-card">
-                <div class="feature-icon">⚡</div>
-                <h3 class="feature-title">Миттєві операції</h3>
-                <p class="feature-description">
-                    Стейкайте та знімайте кошти миттєво. Без затримок і додаткових комісій.
-                </p>
-            </div>
-            <div class="feature-card">
-                <div class="feature-icon">🔓</div>
-                <h3 class="feature-title">Повна прозорість</h3>
-                <p class="feature-description">
-                    Весь код відкритий. Перевірте смарт-контракт самостійно на Etherscan.
-                </p>
-            </div>
-            <div class="feature-card">
-                <div class="feature-icon">🌍</div>
-                <h3 class="feature-title">Глобальний доступ</h3>
-                <p class="feature-description">
-                    Доступно з будь-якої точки світу. Достатньо мати крипто-гаманець.
-                </p>
-            </div>
-        </div>
-    </section>
-    
-    <!-- How It Works -->
-    <section class="how-it-works" id="how-it-works">
-        <h2 class="section-title">Як це працює?</h2>
-        <div class="steps-container">
-            <div class="step">
-                <div class="step-number">1</div>
-                <div class="step-content">
-                    <h3 class="step-title">Підключіть гаманець</h3>
-                    <p class="step-description">
-                        Підключіть будь-який Web3 гаманець (MetaMask, Trust Wallet, Coinbase Wallet тощо) до платформи.
-                    </p>
-                </div>
-            </div>
-            
-            <div class="step">
-                <div class="step-number">2</div>
-                <div class="step-content">
-                    <h3 class="step-title">Застейкайте ARUB або USDT</h3>
-                    <p class="step-description">
-                        Виберіть суму ARUB або USDT для стейкінгу. Мінімальна сума — 10 USDT або еквівалент в ARUB. Підтвердіть транзакцію у вашому гаманці.
-                    </p>
-                </div>
-            </div>
-            
-            <div class="step">
-                <div class="step-number">3</div>
-                <div class="step-content">
-                    <h3 class="step-title">Отримуйте винагороди</h3>
-                    <p class="step-description">
-                        Автоматично отримуйте токени ARUB як винагороду. Ваша частка розраховується пропорційно до застейканої суми.
-                    </p>
-                </div>
-            </div>
-            
-            <div class="step">
-                <div class="step-number">4</div>
-                <div class="step-content">
-                    <h3 class="step-title">Знімайте в будь-який час</h3>
-                    <p class="step-description">
-                        Виведіть свої ARUB або USDT разом з нарахованими винагородами в будь-який момент без штрафів і комісій.
-                    </p>
-                </div>
-            </div>
-        </div>
-    </section>
-    
-    <!-- FAQ -->
-    <section class="faq-section">
-        <h2 class="section-title">Часті питання</h2>
-        <div class="faq-container">
-            <div class="faq-item">
-                <div class="faq-question" onclick="this.nextElementSibling.classList.toggle('active')">
-                    <span>Як формується ціна токена ARUB?</span>
-                    <span>▼</span>
-                </div>
-                <div class="faq-answer">
-                    Ціна токена ARUB прив'язана до курсу USDT/RUB. 1 ARUB = поточний курс USDT/RUB в доларах. Наприклад, якщо курс USDT/RUB = 81.22₽, то 1 ARUB = 81.22 USDT. Чим слабший рубль (вищий курс), тим дорожчий токен ARUB. Це робить ARUB справжнім "антирублем".
-                </div>
-            </div>
-            
-            <div class="faq-item">
-                <div class="faq-question" onclick="this.nextElementSibling.classList.toggle('active')">
-                    <span>Що таке ANTI RUB?</span>
-                    <span>▼</span>
-                </div>
-                <div class="faq-answer">
-                    Заробляємо на падінні рубля, купуючи токен Антируб. Стейкаємо Антируб і USDT. Отримуємо ще більше Антируб. Чим слабший рубль, тим дорожчий токен Антируб!
-                </div>
-            </div>
-            
-            <div class="faq-item">
-                <div class="faq-question" onclick="this.nextElementSibling.classList.toggle('active')">
-                    <span>Чи безпечна платформа?</span>
-                    <span>▼</span>
-                </div>
-                <div class="faq-answer">
-                    Так, платформа побудована на смарт-контрактах Ethereum. Весь код відкритий і може бути перевірений. Ваші кошти завжди під вашим контролем.
-                </div>
-            </div>
-            
-            <div class="faq-item">
-                <div class="faq-question" onclick="this.nextElementSibling.classList.toggle('active')">
-                    <span>Яка мінімальна сума для стейкінгу?</span>
-                    <span>▼</span>
-                </div>
-                <div class="faq-answer">
-                    Мінімальна сума для стейкінгу: 10 USDT або 0.1 ARUB. Максимальної суми немає. Можна стейкати USDT, ARUB або обидва токени одночасно.
-                </div>
-            </div>
-            
-            <div class="faq-item">
-                <div class="faq-question" onclick="this.nextElementSibling.classList.toggle('active')">
-                    <span>Як розраховується винагорода?</span>
-                    <span>▼</span>
-                </div>
-                <div class="faq-answer">
-                    Винагорода у токенах ARUB розраховується пропорційно до вашої частки в загальному пулі стейкінгу. Можна стейкати USDT, ARUB або обидва токени. Чим більше ви застейкали, тим більша ваша винагорода в ARUB токенах.
-                </div>
-            </div>
-            
-            <div class="faq-item">
-                <div class="faq-question" onclick="this.nextElementSibling.classList.toggle('active')">
-                    <span>Чому вигідно стейкати ARUB?</span>
-                    <span>▼</span>
-                </div>
-                <div class="faq-answer">
-                    Стейкінг ARUB дає подвійну вигоду: 1) Ви отримуєте більше токенів ARUB як винагороду за стейкінг. 2) Ціна кожного токена ARUB зростає разом з курсом USDT/RUB. Чим слабший рубль, тим дорожчий ваш токен. Це максимальний заробіток на падінні рубля!
-                </div>
-            </div>
-            
-            <div class="faq-item">
-                <div class="faq-question" onclick="this.nextElementSibling.classList.toggle('active')">
-                    <span>Чи можу я зняти кошти в будь-який час?</span>
-                    <span>▼</span>
-                </div>
-                <div class="faq-answer">
-                    Так, ви можете зняти свої USDT або ARUB разом з нарахованими токенами ARUB в будь-який момент. Немає періоду блокування або штрафів за дострокове зняття.
-                </div>
-            </div>
-            
-            <div class="faq-item">
-                <div class="faq-question" onclick="this.nextElementSibling.classList.toggle('active')">
-                    <span>Які комісії за використання платформи?</span>
-                    <span>▼</span>
-                </div>
-                <div class="faq-answer">
-                    За стейкінг платформа не стягує додаткових комісій - тільки gas за транзакції в Ethereum. При купівлі токенів ARUB комісія становить 0.5%, при продажу - 1%. Ці комісії йдуть на аудит смарт-контрактів, розвиток проекту та оплату команді.
-                </div>
-            </div>
-            
-            <div class="faq-item">
-                <div class="faq-question" onclick="this.nextElementSibling.classList.toggle('active')">
-                    <span>Як купити або продати токени ARUB?</span>
-                    <span>▼</span>
-                </div>
-                <div class="faq-answer">
-                    Після підключення гаманця перейдіть у розділ "Купівля та продаж токена ARUB". Ви можете купити ARUB за USDT з комісією 0.5% або продати з комісією 1%. Всі операції відбуваються миттєво через смарт-контракт.
-                </div>
-            </div>
-            
-            <div class="faq-item">
-                <div class="faq-question" onclick="this.nextElementSibling.classList.toggle('active')">
-                    <span>Куди йдуть комісії від торгівлі?</span>
-                    <span>▼</span>
-                </div>
-                <div class="faq-answer">
-                    Всі комісії (0.5% при купівлі та 1% при продажу) направляються на: аудит смарт-контрактів для безпеки, розвиток платформи та нових функцій, оплату команді розробників, маркетинг та просування проекту.
-                </div>
-            </div>
-        </div>
-    </section>
-    
-    <!-- Support Widget -->
-    <div class="support-widget">
-        <button class="support-button" onclick="toggleSupportChat()">
-            💬
-            <span class="support-badge">?</span>
-        </button>
-        
-        <div class="support-chat" id="supportChat">
-            <div class="support-header">
-                <div class="support-header-content">
-                    <div class="support-avatar">🤝</div>
-                    <div class="support-header-text">
-                        <h3>Підтримка ANTI RUB</h3>
-                        <p>Онлайн • Відповідаємо швидко</p>
-                    </div>
-                </div>
-                <button class="support-close" onclick="toggleSupportChat()">✕</button>
-            </div>
-            
-            <div class="support-body">
-                <div class="support-tabs">
-                    <div class="support-tab active" onclick="switchSupportTab('questions')">
-                        ❓ Питання
-                    </div>
-                    <div class="support-tab" onclick="switchSupportTab('contact')">
-                        📧 Контакт
-                    </div>
-                </div>
-                
-                <!-- Quick Questions Tab -->
-                <div class="tab-content active" id="questionsTab">
-                    <div class="quick-questions">
-                        <button class="quick-question-btn" onclick="showQuickAnswer('wallet')">
-                            Як підключити гаманець?
-                        </button>
-                        <button class="quick-question-btn" onclick="showQuickAnswer('buy')">
-                            Як купити токени ARUB?
-                        </button>
-                        <button class="quick-question-btn" onclick="showQuickAnswer('stake')">
-                            Як працює стейкінг?
-                        </button>
-                        <button class="quick-question-btn" onclick="showQuickAnswer('fees')">
-                            Які комісії на платформі?
-                        </button>
-                        <button class="quick-question-btn" onclick="showQuickAnswer('security')">
-                            Чи безпечна платформа?
-                        </button>
-                        <button class="quick-question-btn" onclick="showQuickAnswer('withdraw')">
-                            Як вивести кошти?
-                        </button>
-                    </div>
-                    
-                    <div id="answerArea" style="margin-top: 20px;"></div>
-                </div>
-                
-                <!-- Contact Tab -->
-                <div class="tab-content" id="contactTab">
-                    <div class="support-message">
-                        <p><strong>Зв'яжіться з нами зручним способом:</strong></p>
-                    </div>
-                    
-                    <div class="support-contact-methods">
-                        <a href="https://t.me/antirub_support" target="_blank" class="contact-method">
-                            <div class="icon">📱</div>
-                            <div class="label">Telegram</div>
-                        </a>
-                        <a href="https://discord.gg/antirub" target="_blank" class="contact-method">
-                            <div class="icon">💬</div>
-                            <div class="label">Discord</div>
-                        </a>
-                        <a href="/cdn-cgi/l/email-protection#b6c5c3c6c6d9c4c2f6d7d8c2dfc4c3d498dfd9" class="contact-method">
-                            <div class="icon">📧</div>
-                            <div class="label">Email</div>
-                        </a>
-                    </div>
-                    
-                    <div style="margin-top: 20px; text-align: center;">
-                        <button class="quick-question-btn" onclick="showContactForm()" style="width: 100%;">
-                            ✍️ Написати повідомлення
-                        </button>
-                    </div>
-                    
-                    <form class="contact-form" id="contactForm" onsubmit="submitContactForm(event)">
-                        <input type="text" placeholder="Ваше ім'я" required>
-                        <input type="email" placeholder="Email" required>
-                        <textarea placeholder="Ваше повідомлення..." required></textarea>
-                        <button type="submit">📤 Відправити</button>
-                        <button type="button" onclick="hideContactForm()" style="background: rgba(255,255,255,0.1); margin-top: -5px;">
-                            Скасувати
-                        </button>
-                    </form>
-                </div>
-            </div>
-            
-            <div class="support-footer" style="padding: 15px 20px;">
-                <div style="text-align: center; color: var(--gray); font-size: 0.85em;">
-                    <p style="margin: 0;">⏰ Час роботи: 24/7</p>
-                    <p style="margin: 5px 0 0 0;">📍 Середній час відповіді: 5-10 хв</p>
-                </div>
-            </div>
-        </div>
-    </div>
-    
-    <!-- Footer -->
-    <footer>
-        <div class="footer-content">
-            <div class="footer-section">
-                <h3>ANTI RUB</h3>
-                <p>Заробляємо на падінні рубля, купуючи токен Антируб. Стейкаємо Антируб і USDT. Отримуємо ще більше Антируб. Чим слабший рубль, тим дорожчий токен!</p>
-                <div class="social-links">
-                    <a href="#" class="social-link">𝕏</a>
-                    <a href="#" class="social-link">📱</a>
-                    <a href="#" class="social-link">💬</a>
-                </div>
-            </div>
-            
-            <div class="footer-section">
-                <h3>Швидкі посилання</h3>
-                <a href="#trading">Купити/Продати токени</a>
-                <a href="#staking">Стейкінг</a>
-                <a href="#how-it-works">Як це працює</a>
-                <a href="#" onclick="showWalletGuide(); return false;">Додати токен</a>
-                <a href="https://etherscan.io" target="_blank">Etherscan</a>
-            </div>
-            
-            <div class="footer-section">
-                <h3>Підтримка</h3>
-                <a href="#" onclick="toggleSupportChat(); return false;">Чат підтримки</a>
-                <a href="#">Документація</a>
-                <a href="#" onclick="document.querySelector('.faq-section').scrollIntoView({behavior: 'smooth'}); return false;">FAQ</a>
-                <a href="https://t.me/antirub_support" target="_blank">Telegram підтримка</a>
-                <a href="#">Повідомити про помилку</a>
-            </div>
-            
-            <div class="footer-section">
-                <h3>Юридична інформація</h3>
-                <a href="#">Умови використання</a>
-                <a href="#">Політика конфіденційності</a>
-                <a href="#">Відмова від відповідальності</a>
-            </div>
-        </div>
-        
-        <div class="footer-bottom">
-            <p>© 2025 ANTI RUB. Всі права захищені. 🇺🇦</p>
-            <p style="margin-top: 10px; font-size: 0.9em;">
-                Смарт-контракт перевірений і відкритий для аудиту. Завжди DYOR (проводьте власне дослідження).
-            </p>
-        </div>
-    </footer>
-    
-    <script>
+    <script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script>
         console.log('🚀 ANTI RUB Platform Starting...');
-        console.log('🔵 Ethers.js available:', typeof ethers !== 'undefined');
         
-        // ==========================================
-        // CONFIGURATION
-        // ==========================================
         const CONFIG = {
-            USDT_ADDRESS: '0x4e6175f449b04e20437b2A2AD8221884Bda38f39', // ✅ MockUSDT (Sepolia)
-            TOKEN_ADDRESS: '0xe4A39E3D2C64C2D3a1d9c7C6B9eB63db55277b71', // ✅ ARUB Token (Sepolia)
-            STAKING_ADDRESS: '0x2e2f5c01Ce66ad0780519b12a6012a1977077665', // ✅ NEW Staking with Dynamic APY!
+            USDT_ADDRESS: '0x4e6175f449b04e20437b2A2AD8221884Bda38f39',
+            TOKEN_ADDRESS: '0xe4A39E3D2C64C2D3a1d9c7C6B9eB63db55277b71',
+            STAKING_ADDRESS: '0x2e2f5c01Ce66ad0780519b12a6012a1977077665',
             NETWORK: {
-                chainId: '0xaa36a7', // Sepolia testnet
+                chainId: '0xaa36a7',
                 chainName: 'Sepolia Testnet',
                 rpcUrls: ['https://rpc.sepolia.org'],
                 blockExplorerUrls: ['https://sepolia.etherscan.io']
             }
         };
         
-        // ==========================================
-        // STATE
-        // ==========================================
         let provider = null;
         let signer = null;
         let userAddress = null;
         let usdtContract = null;
         let stakingContract = null;
         let tokenContract = null;
+        let currentRate = null;
         
-        // EIP-6963 Provider Discovery
         const discoveredProviders = new Map();
         
         window.addEventListener('eip6963:announceProvider', (event) => {
@@ -1876,21 +705,7 @@
             console.log('✅ Discovered provider:', providerDetail.info.name);
         });
         
-        // Request providers immediately
-        console.log('🔵 Requesting EIP-6963 providers...');
         window.dispatchEvent(new Event('eip6963:requestProvider'));
-        
-        // Also check window.ethereum
-        setTimeout(() => {
-            console.log('🔵 Providers check after 500ms:');
-            console.log('  - EIP-6963 providers:', discoveredProviders.size);
-            console.log('  - window.ethereum:', !!window.ethereum);
-        }, 500);
-        
-        // ==========================================
-        // USDT/RUB RATE FETCHING
-        // ==========================================
-        let currentRate = null;
         
         async function fetchUsdtRubRate() {
             try {
@@ -1901,88 +716,59 @@
                 
                 document.getElementById('currentRate').textContent = `${usdToRub.toFixed(2)} ₽`;
                 document.getElementById('arubPrice').textContent = `$${usdToRub.toFixed(2)}`;
-                console.log('USDT/RUB rate updated:', usdToRub);
-                console.log('ARUB price:', usdToRub, 'USDT');
+                console.log('✅ USDT/RUB rate:', usdToRub);
             } catch (error) {
-                console.error('Error fetching USDT/RUB rate:', error);
-                document.getElementById('currentRate').textContent = '—';
-                document.getElementById('arubPrice').textContent = '—';
+                console.error('Error fetching rate:', error);
+                currentRate = 81.22;
+                document.getElementById('currentRate').textContent = '81.22 ₽';
+                document.getElementById('arubPrice').textContent = '$81.22';
             }
         }
         
-        // ==========================================
-        // WALLET CONNECTION
-        // ==========================================
         async function connectWallet() {
             try {
-                console.log('🚀 === CONNECTING WALLET ===');
+                console.log('🚀 Connecting wallet...');
                 let selectedProvider = null;
                 
-                console.log('🔵 Discovered providers:', discoveredProviders.size);
-                console.log('🔵 window.ethereum:', !!window.ethereum);
-                
                 if (discoveredProviders.size > 0) {
-                    console.log('🔵 Using EIP-6963 providers');
                     if (discoveredProviders.size === 1) {
                         selectedProvider = Array.from(discoveredProviders.values())[0].provider;
-                        console.log('🔵 Single provider selected:', Array.from(discoveredProviders.values())[0].info.name);
                     } else {
-                        console.log('🔵 Multiple providers, showing selector...');
                         selectedProvider = await showWalletSelector();
                     }
                 } else if (window.ethereum) {
-                    console.log('🔵 Using window.ethereum');
                     selectedProvider = window.ethereum;
                 } else {
-                    console.log('❌ No wallet found!');
-                    showNotification('❌ Крипто-гаманець не знайдено. Будь ласка, встановіть MetaMask або інший Web3 гаманець.', 'error');
+                    showNotification('❌ Крипто-гаманець не знайдено', 'error');
                     return;
                 }
                 
-                if (!selectedProvider) {
-                    console.log('❌ No provider selected (user cancelled?)');
-                    return;
-                }
+                if (!selectedProvider) return;
                 
-                console.log('🔵 Creating Web3Provider...');
                 provider = new ethers.providers.Web3Provider(selectedProvider);
                 
-                console.log('🔵 Checking network...');
                 const network = await provider.getNetwork();
-                const expectedChainId = parseInt(CONFIG.NETWORK.chainId, 16); // 11155111 for Sepolia
-                console.log('🔵 Current network:', network.chainId, 'Expected:', expectedChainId);
+                const expectedChainId = parseInt(CONFIG.NETWORK.chainId, 16);
                 
                 if (network.chainId !== expectedChainId) {
-                    console.log('🔵 Switching to Sepolia...');
                     await switchToEthereum(selectedProvider);
                 }
                 
-                console.log('🔵 Requesting accounts...');
                 const accounts = await provider.send('eth_requestAccounts', []);
                 userAddress = accounts[0];
-                console.log('✅ Connected address:', userAddress);
+                console.log('✅ Connected:', userAddress);
                 
-                console.log('🔵 Getting signer...');
                 signer = provider.getSigner();
-                
-                console.log('🔵 Initializing contracts...');
                 initializeContracts();
-                
-                console.log('🔵 Updating UI...');
-                updateUI();
                 updateTradingUI();
                 updateFaucetUI();
                 
                 showNotification('✅ Гаманець успішно підключено!', 'success');
-                
                 document.getElementById('connectBtn').textContent = 
                     `${userAddress.substring(0, 6)}...${userAddress.substring(38)}`;
                 
-                console.log('✅ === CONNECTION SUCCESSFUL ===');
-                
             } catch (error) {
-                console.error('❌ === CONNECTION ERROR ===');
-                console.error('Error details:', error);
+                console.error('Connection error:', error);
                 showNotification('❌ Помилка підключення гаманця', 'error');
             }
         }
@@ -2025,78 +811,34 @@
             });
         }
         
-        // ==========================================
-        // CONTRACT INITIALIZATION
-        // ==========================================
         function initializeContracts() {
-            if (!provider || !signer) {
-                console.error('Provider or signer not available');
-                return;
-            }
+            console.log('🔵 Initializing contracts...');
             
-            console.log('Initializing contracts...');
-            console.log('USDT Address:', CONFIG.USDT_ADDRESS);
-            console.log('Token Address:', CONFIG.TOKEN_ADDRESS);
-            console.log('Staking Address:', CONFIG.STAKING_ADDRESS);
-            
-            // USDT ABI (MockUSDT with faucet)
             const USDT_ABI = [
                 'function balanceOf(address owner) view returns (uint256)',
-                'function transfer(address to, uint256 amount) returns (bool)',
                 'function approve(address spender, uint256 amount) returns (bool)',
                 'function allowance(address owner, address spender) view returns (uint256)',
                 'function decimals() view returns (uint8)',
-                'function totalSupply() view returns (uint256)',
                 'function claimFromFaucet() external',
-                'function mint(uint256 amount) external',
-                'function canClaimFromFaucet(address user) view returns (bool canClaim, uint256 timeUntilNextClaim)'
+                'function canClaimFromFaucet(address user) view returns (bool canClaim, uint256 timeUntilNextClaim)',
+                'function transfer(address to, uint256 amount) returns (bool)'
             ];
             
-            // Staking ABI (ARUBStakingFixed.sol) - CORRECTED
-            const STAKING_ABI = [
-                // Main staking functions
-                'function stakeArub(uint256 _amount) external',
-                'function unstakeArub(uint256 _amount) external',
-                'function claimRewards(bool _compound) external',
-                'function emergencyWithdraw() external',
-                
-                // View functions
-                'function getUserInfo(address _user) view returns (uint256 stakedAmount, uint256 pendingRewards, uint256 totalClaimed, uint256 lastStakeTime, uint256 currentAPY_)',
-                'function getPoolStats() view returns (uint256 totalStaked_, uint256 totalStakers_, uint256 totalRewardsDistributed_, uint256 currentAPY_, uint256 totalStakes_, uint256 totalUnstakes_, uint256 totalClaims_)',
-                'function calculateExpectedReward(address _user, uint256 _days) view returns (uint256)',
-                
-                // APY functions
-                'function getAPYTiers() view returns (uint256[] memory thresholds, uint256[] memory apys)',
-                'function getCurrentAPYTier() view returns (uint256 tier, uint256 threshold, uint256 apy, string memory description)',
-                'function getNextAPYTier() view returns (uint256 nextThreshold, uint256 nextAPY, uint256 remainingToNextTier)',
-                
-                // Public variables
-                'function totalStaked() view returns (uint256)',
-                'function currentAPY() view returns (uint256)',
-                'function totalStakers() view returns (uint256)',
-                'function minStakeAmount() view returns (uint256)',
-                'function emergencyMode() view returns (bool)',
-                'function compoundingEnabled() view returns (bool)'
-            ];
-            
-            // Token ABI (ARUB)
+            // ✅ ПРАВИЛЬНИЙ ABI ДЛЯ ТОКЕНА (з декомпільованого контракту)
             const TOKEN_ABI = [
                 'function balanceOf(address owner) view returns (uint256)',
                 'function decimals() view returns (uint8)',
-                'function buy(uint256 usdtAmount) external',
-                'function sell(uint256 arubAmount) external',
-                'function getPrice() view returns (uint256)',
                 'function approve(address spender, uint256 amount) returns (bool)',
-                'function allowance(address owner, address spender) view returns (uint256)'
+                'function allowance(address owner, address spender) view returns (uint256)',
+                'function oraclePrice() view returns (uint256)',
+                'function mint(uint256 _wad) external',  // ✅ Купівля токенів
+                'function burn(uint256 _value) external' // ✅ Продаж токенів
             ];
             
-            // Initialize all contracts
             try {
                 usdtContract = new ethers.Contract(CONFIG.USDT_ADDRESS, USDT_ABI, signer);
-                stakingContract = new ethers.Contract(CONFIG.STAKING_ADDRESS, STAKING_ABI, signer);
                 tokenContract = new ethers.Contract(CONFIG.TOKEN_ADDRESS, TOKEN_ABI, signer);
-                
-                console.log('✅ All contracts initialized successfully');
+                console.log('✅ Contracts initialized');
             } catch (error) {
                 console.error('❌ Error initializing contracts:', error);
             }
@@ -2120,457 +862,182 @@
             }
         }
         
-        // ==========================================
-        // UI UPDATES
-        // ==========================================
-        async function updateUI() {
-            if (!userAddress) {
-                console.log('⚠️ No user address, skipping UI update');
-                return;
-            }
+        async function updateTradingUI() {
+            if (!userAddress) return;
             
-            console.log('🔵 Starting UI update...');
+            console.log('🔵 Updating trading UI...');
             
             let usdtBalance = ethers.BigNumber.from(0);
-            let stakedBalance = ethers.BigNumber.from(0);
             let arubBalance = ethers.BigNumber.from(0);
-            let rewards = ethers.BigNumber.from(0);
-            let totalStaked = ethers.BigNumber.from(0);
-            
-            let contractsWorking = {
-                usdt: false,
-                staking: false,
-                token: false
-            };
             
             try {
-                // Try to get USDT balance
-                try {
-                    usdtBalance = await usdtContract.balanceOf(userAddress);
-                    contractsWorking.usdt = true;
-                    console.log('✅ USDT contract working, balance:', ethers.utils.formatUnits(usdtBalance, 6));
-                } catch (error) {
-                    console.log('⚠️ USDT contract call failed (will use 0)');
-                }
-                
-                // Try to get staked balance and rewards using getUserInfo
-                try {
-                    const userInfo = await stakingContract.getUserInfo(userAddress);
-                    stakedBalance = userInfo[0]; // stakedAmount
-                    rewards = userInfo[1];        // pendingRewards
-                    contractsWorking.staking = true;
-                    console.log('✅ Staking contract working, staked:', ethers.utils.formatUnits(stakedBalance, 6));
-                    console.log('✅ Pending rewards:', ethers.utils.formatUnits(rewards, 6));
-                } catch (error) {
-                    console.log('⚠️ Staking contract call failed (will use 0)');
-                }
-                
-                // Try to get ARUB balance
-                try {
-                    arubBalance = await tokenContract.balanceOf(userAddress);
-                    contractsWorking.token = true;
-                    console.log('✅ Token contract working, balance:', ethers.utils.formatUnits(arubBalance, 6));
-                } catch (error) {
-                    console.log('⚠️ Token contract call failed (will use 0)');
-                }
-                
-                // Try to get total staked
-                try {
-                    totalStaked = await stakingContract.totalStaked();
-                    console.log('✅ Total staked:', ethers.utils.formatUnits(totalStaked, 6));
-                } catch (error) {
-                    console.log('⚠️ Get total staked failed (will use 0)');
-                }
-                
-                // Update UI with available data
-                if (document.getElementById('totalStaked')) {
-                    document.getElementById('totalStaked').textContent = 
-                        `$${ethers.utils.formatUnits(totalStaked, 6)}`;
-                }
-                
-                console.log('📊 Contract status:', contractsWorking);
-                
+                [usdtBalance, arubBalance] = await Promise.all([
+                    usdtContract.balanceOf(userAddress).catch(() => ethers.BigNumber.from(0)),
+                    tokenContract.balanceOf(userAddress).catch(() => ethers.BigNumber.from(0))
+                ]);
+                console.log('✅ Balances loaded');
             } catch (error) {
-                console.warn('⚠️ Error in updateUI (non-critical):', error.message);
+                console.log('⚠️ Could not load balances');
             }
             
-            const testModeWarningStaking = (usdtBalance.eq(0) && stakedBalance.eq(0) && arubBalance.eq(0)) ?
-                '<div style="background: rgba(255,215,0,0.1); padding: 20px; border-radius: 15px; margin-bottom: 30px; border: 2px solid var(--ukraine-yellow);">' +
-                    '<h3 style="color: var(--ukraine-yellow); margin-bottom: 10px;">⚠️ Тестовий режим</h3>' +
-                    '<p style="color: var(--gray); margin: 0;">' +
-                        'Платформа працює з тестовими адресами смарт-контрактів. ' +
-                        'Після розгортання реальних контрактів всі функції будуть доступні.' +
-                    '</p>' +
-                '</div>' : '';
+            const arubPriceInUsdt = currentRate || 81.22;
             
-            const stakingInterface = document.getElementById('stakingInterface');
-            stakingInterface.innerHTML = testModeWarningStaking + `
-                    <!-- Dynamic APY Banner -->
-                    <div class="apy-banner">
-                        <div class="apy-banner-content">
-                            <div class="apy-header">
-                                <div class="apy-title">
-                                    <span class="apy-icon">📊</span>
-                                    <span>Динамічний APY</span>
-                                </div>
-                                <div class="apy-current">
-                                    <div class="apy-value" id="currentAPYValue">24%</div>
-                                    <div class="apy-tier-name" id="currentTierName">Tier 1: 0-100k ARUB</div>
-                                </div>
-                            </div>
-                            
-                            <div class="apy-tiers-grid" id="apyTiersGrid">
-                                <!-- Tiers будуть додані динамічно -->
-                            </div>
-                            
-                            <div class="apy-progress-section">
-                                <div class="apy-progress-header">
-                                    <span class="progress-label">Прогрес до наступного рівня</span>
-                                    <span class="progress-value" id="progressPercentText">0%</span>
-                                </div>
-                                <div class="apy-progress-bar">
-                                    <div class="apy-progress-fill" id="apyProgressFill" style="width: 0%"></div>
-                                </div>
-                                <div class="apy-next-tier" id="nextTierInfo">
-                                    <div class="next-tier-text">До наступного рівня:</div>
-                                    <div class="next-tier-value" id="nextTierValue">100,000 ARUB до 20% APY</div>
-                                </div>
-                            </div>
-                            
-                            <div class="apy-info-banner">
-                                <p class="apy-info-text">
-                                    💡 <span class="apy-highlight">Чим раніше застейкаєте</span> - тим вищий APY отримаєте! 
-                                    APY автоматично зменшується в залежності від загальної кількості застейканих токенів.
-                                    <span class="apy-highlight">Ранні стейкери отримують до 24% річних!</span>
-                                </p>
+            const tradingInterface = document.getElementById('tradingInterface');
+            tradingInterface.innerHTML = `
+                <div class="staking-grid">
+                    <div class="staking-card">
+                        <div class="card-header">
+                            <div class="card-icon">💰</div>
+                            <h3 class="card-title">Купити ARUB</h3>
+                        </div>
+                        
+                        <div class="input-group">
+                            <label class="input-label">Сума USDT для купівлі</label>
+                            <div class="input-wrapper">
+                                <input type="number" 
+                                       class="input-field" 
+                                       id="buyAmount" 
+                                       placeholder="0.00"
+                                       step="0.01"
+                                       min="1"
+                                       oninput="calculateBuyAmount()">
+                                <button class="max-btn" onclick="setMaxBuy()">MAX</button>
                             </div>
                         </div>
+                        
+                        <div class="info-row">
+                            <span class="info-label">Отримаєте ARUB:</span>
+                            <span class="info-value" id="buyReceiveAmount">0</span>
+                        </div>
+                        
+                        <div class="info-row">
+                            <span class="info-label">Комісія (0.5%):</span>
+                            <span class="info-value" id="buyFeeAmount">0 USDT</span>
+                        </div>
+                        
+                        <div class="info-row">
+                            <span class="info-label">Ваш баланс USDT:</span>
+                            <span class="info-value">${ethers.utils.formatUnits(usdtBalance, 6)} USDT</span>
+                        </div>
+                        
+                        <div style="background: rgba(0,87,183,0.1); padding: 15px; border-radius: 10px; margin: 15px 0;">
+                            <p style="color: var(--gray); font-size: 0.9em; line-height: 1.6; margin: 0;">
+                                💡 <strong style="color: white;">Логіка:</strong> При купівлі ARUB використовується функція <code style="color: var(--ukraine-yellow);">mint()</code>. 
+                                Ваші USDT переводяться на контракт, і ви отримуєте ARUB за поточним курсом USDT/RUB. 
+                                Комісія 0.5% йде на розвиток проекту.
+                            </p>
+                        </div>
+                        
+                        <button class="action-btn" onclick="buyTokens()">
+                            💰 Купити ARUB
+                        </button>
                     </div>
                     
-                    <div class="staking-grid">
-                        <!-- Stake Card -->
-                        <div class="staking-card">
-                            <div class="card-header">
-                                <div class="card-icon">📈</div>
-                                <h3 class="card-title">Застейкати USDT</h3>
-                            </div>
-                            
-                            <div class="input-group">
-                                <label class="input-label">Сума USDT</label>
-                                <div class="input-wrapper">
-                                    <input type="number" 
-                                           class="input-field" 
-                                           id="stakeAmount" 
-                                           placeholder="0.00"
-                                           step="0.01"
-                                           min="10">
-                                    <button class="max-btn" onclick="setMaxStake()">MAX</button>
-                                </div>
-                            </div>
-                            
-                            <div class="info-row">
-                                <span class="info-label">Ваш баланс:</span>
-                                <span class="info-value">${ethers.utils.formatUnits(usdtBalance, 6)} USDT</span>
-                            </div>
-                            
-                            <div class="info-row">
-                                <span class="info-label">Мінімальна сума:</span>
-                                <span class="info-value">10 USDT</span>
-                            </div>
-                            
-                            <button class="action-btn" onclick="stakeTokens()">
-                                🔒 Застейкати USDT
-                            </button>
+                    <div class="staking-card">
+                        <div class="card-header">
+                            <div class="card-icon">💵</div>
+                            <h3 class="card-title">Продати ARUB</h3>
                         </div>
                         
-                        <!-- Stake ARUB Card -->
-                        <div class="staking-card">
-                            <div class="card-header">
-                                <div class="card-icon">💎</div>
-                                <h3 class="card-title">Застейкати ARUB</h3>
+                        <div class="input-group">
+                            <label class="input-label">Кількість ARUB для продажу</label>
+                            <div class="input-wrapper">
+                                <input type="number" 
+                                       class="input-field" 
+                                       id="sellAmount" 
+                                       placeholder="0.00"
+                                       step="0.01"
+                                       min="0"
+                                       oninput="calculateSellAmount()">
+                                <button class="max-btn" onclick="setMaxSell()">MAX</button>
                             </div>
-                            
-                            <div class="input-group">
-                                <label class="input-label">Кількість ARUB</label>
-                                <div class="input-wrapper">
-                                    <input type="number" 
-                                           class="input-field" 
-                                           id="stakeArubAmount" 
-                                           placeholder="0.00"
-                                           step="0.01"
-                                           min="0.1">
-                                    <button class="max-btn" onclick="setMaxStakeArub()">MAX</button>
-                                </div>
+                        </div>
+                        
+                        <div class="info-row">
+                            <span class="info-label">Отримаєте USDT:</span>
+                            <span class="info-value" id="sellReceiveAmount">0</span>
+                        </div>
+                        
+                        <div class="info-row">
+                            <span class="info-label">Комісія (1%):</span>
+                            <span class="info-value" id="sellFeeAmount">0 USDT</span>
+                        </div>
+                        
+                        <div class="info-row">
+                            <span class="info-label">Ваш баланс ARUB:</span>
+                            <span class="info-value">${ethers.utils.formatUnits(arubBalance, 6)} ARUB</span>
+                        </div>
+                        
+                        <div style="background: rgba(255,215,0,0.1); padding: 15px; border-radius: 10px; margin: 15px 0;">
+                            <p style="color: var(--gray); font-size: 0.9em; line-height: 1.6; margin: 0;">
+                                💡 <strong style="color: white;">Логіка:</strong> При продажу ARUB використовується функція <code style="color: var(--ukraine-yellow);">burn()</code>. 
+                                Ваші токени спалюються, і ви отримуєте USDT назад за поточним курсом. 
+                                Комісія 1% йде на розвиток проекту.
+                            </p>
+                        </div>
+                        
+                        <button class="action-btn" onclick="sellTokens()">
+                            💵 Продати ARUB
+                        </button>
+                    </div>
+                    
+                    <div class="staking-card">
+                        <div class="card-header">
+                            <div class="card-icon">📊</div>
+                            <h3 class="card-title">Інформація про торгівлю</h3>
+                        </div>
+                        
+                        <div style="padding: 20px 0;">
+                            <div class="info-row">
+                                <span class="info-label">Ціна ARUB:</span>
+                                <span class="info-value">${arubPriceInUsdt.toFixed(2)} USDT</span>
                             </div>
                             
                             <div class="info-row">
-                                <span class="info-label">Ваш баланс:</span>
-                                <span class="info-value">${ethers.utils.formatUnits(arubBalance, 6)} ARUB</span>
+                                <span class="info-label">Курс USDT/RUB:</span>
+                                <span class="info-value">${arubPriceInUsdt.toFixed(2)} ₽</span>
                             </div>
                             
-                            <div class="info-row">
-                                <span class="info-label">Вартість у USDT:</span>
-                                <span class="info-value" id="arubValueInUsdt">0 USDT</span>
-                            </div>
-                            
-                            <div style="background: rgba(255,215,0,0.1); padding: 12px; border-radius: 10px; margin: 15px 0;">
+                            <div style="background: rgba(0,87,183,0.1); padding: 12px; border-radius: 8px; margin: 15px 0;">
                                 <p style="color: var(--gray); font-size: 0.85em; line-height: 1.5; margin: 0;">
-                                    💎 Стейкайте ARUB разом з USDT для максимальних винагород!
+                                    💡 <strong style="color: white;">Логіка ціни:</strong> 1 ARUB = поточний курс USDT/RUB. 
+                                    Чим слабший рубль, тим дорожчий токен!
                                 </p>
                             </div>
                             
-                            <button class="action-btn" onclick="stakeArubTokens()">
-                                💎 Застейкати ARUB
-                            </button>
+                            <div class="info-row">
+                                <span class="info-label">Комісія купівлі:</span>
+                                <span class="info-value" style="color: #10b981;">0.5%</span>
+                            </div>
+                            
+                            <div class="info-row">
+                                <span class="info-label">Комісія продажу:</span>
+                                <span class="info-value" style="color: #f59e0b;">1%</span>
+                            </div>
                         </div>
                         
-                        <!-- Unstake Card -->
-                        <div class="staking-card">
-                            <div class="card-header">
-                                <div class="card-icon">📉</div>
-                                <h3 class="card-title">Зняти USDT</h3>
-                            </div>
-                            
-                            <div class="input-group">
-                                <label class="input-label">Сума USDT</label>
-                                <div class="input-wrapper">
-                                    <input type="number" 
-                                           class="input-field" 
-                                           id="unstakeAmount" 
-                                           placeholder="0.00"
-                                           step="0.01"
-                                           min="0">
-                                    <button class="max-btn" onclick="setMaxUnstake()">MAX</button>
-                                </div>
-                            </div>
-                            
-                            <div class="info-row">
-                                <span class="info-label">Застейкано:</span>
-                                <span class="info-value">${ethers.utils.formatUnits(stakedBalance, 6)} USDT</span>
-                            </div>
-                            
-                            <div class="info-row">
-                                <span class="info-label">Винагороди:</span>
-                                <span class="info-value">${ethers.utils.formatUnits(rewards, 6)} ARUB</span>
-                            </div>
-                            
-                            <button class="action-btn" onclick="unstakeTokens()">
-                                🔓 Зняти USDT
-                            </button>
-                        </div>
-                        
-                        <!-- Unstake ARUB Card -->
-                        <div class="staking-card">
-                            <div class="card-header">
-                                <div class="card-icon">💎</div>
-                                <h3 class="card-title">Зняти ARUB</h3>
-                            </div>
-                            
-                            <div class="input-group">
-                                <label class="input-label">Кількість ARUB</label>
-                                <div class="input-wrapper">
-                                    <input type="number" 
-                                           class="input-field" 
-                                           id="unstakeArubAmount" 
-                                           placeholder="0.00"
-                                           step="0.01"
-                                           min="0">
-                                    <button class="max-btn" onclick="setMaxUnstakeArub()">MAX</button>
-                                </div>
-                            </div>
-                            
-                            <div class="info-row">
-                                <span class="info-label">Застейкано ARUB:</span>
-                                <span class="info-value">${ethers.utils.formatUnits(stakedBalance, 6)} ARUB</span>
-                            </div>
-                            
-                            <div class="info-row">
-                                <span class="info-label">Доступні винагороди:</span>
-                                <span class="info-value">${ethers.utils.formatUnits(rewards, 6)} ARUB</span>
-                            </div>
-                            
-                            <div style="background: rgba(255,215,0,0.1); padding: 12px; border-radius: 10px; margin: 15px 0;">
-                                <p style="color: var(--gray); font-size: 0.85em; line-height: 1.5; margin: 0;">
-                                    💡 При знятті ARUB ви автоматично отримаєте всі накопичені винагороди
-                                </p>
-                            </div>
-                            
-                            <button class="action-btn" onclick="unstakeArubTokens()">
-                                💎 Зняти ARUB
-                            </button>
-                        </div>
-                        
-                        <!-- Rewards Card -->
-                        <div class="staking-card">
-                            <div class="card-header">
-                                <div class="card-icon">🎁</div>
-                                <h3 class="card-title">Ваші винагороди</h3>
-                            </div>
-                            
-                            <div style="text-align: center; padding: 30px 0;">
-                                <div style="font-size: 3em; font-weight: bold; background: linear-gradient(45deg, var(--ukraine-blue), var(--ukraine-yellow)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; margin-bottom: 10px;">
-                                    ${ethers.utils.formatUnits(rewards, 6)}
-                                </div>
-                                <div style="color: var(--gray); font-size: 1.2em; margin-bottom: 30px;">
-                                    ARUB токенів
-                                </div>
-                            </div>
-                            
-                            <div class="info-row">
-                                <span class="info-label">Баланс ARUB:</span>
-                                <span class="info-value">${ethers.utils.formatUnits(arubBalance, 6)} ARUB</span>
-                            </div>
-                            
-                            <button class="action-btn" onclick="claimRewards()" ${rewards.eq(0) ? 'disabled' : ''}>
-                                💰 Забрати винагороди
-                            </button>
-                            
-                            <button class="action-btn" onclick="showWalletGuide()" style="margin-top: 10px; background: rgba(0,87,183,0.3);">
-                                📋 Додати ARUB до гаманця
-                            </button>
+                        <div style="background: linear-gradient(135deg, rgba(0,87,183,0.1), rgba(255,215,0,0.1)); padding: 20px; border-radius: 12px; margin-top: 20px;">
+                            <h4 style="color: var(--ukraine-yellow); margin-bottom: 15px; font-size: 1.1em;">🔧 Технічні деталі</h4>
+                            <ul style="color: var(--gray); line-height: 2; list-style: none; padding: 0; font-size: 0.9em;">
+                                <li>✅ Купівля: <code style="color: var(--ukraine-yellow);">mint(uint256 _wad)</code></li>
+                                <li>✅ Продаж: <code style="color: var(--ukraine-yellow);">burn(uint256 _value)</code></li>
+                                <li>✅ Ціна: <code style="color: var(--ukraine-yellow);">oraclePrice()</code></li>
+                                <li>✅ Decimals: 6 (як USDT)</li>
+                            </ul>
                         </div>
                     </div>
-                `;
-            
-            // Update Dynamic APY information
-            await updateDynamicAPY();
+                </div>
+            `;
         }
         
-        // ==========================================
-        // DYNAMIC APY UPDATE
-        // ==========================================
-        async function updateDynamicAPY() {
-            if (!stakingContract) return;
-            
-            try {
-                // Отримати всі APY tiers
-                const [thresholds, apys] = await stakingContract.getAPYTiers();
-                
-                // Отримати поточний tier
-                const [currentTier, currentThreshold, currentAPY, tierDescription] = 
-                    await stakingContract.getCurrentAPYTier();
-                
-                // Отримати наступний tier
-                const [nextThreshold, nextAPY, remainingToNextTier] = 
-                    await stakingContract.getNextAPYTier();
-                
-                // Отримати total staked
-                const totalStakedAmount = await stakingContract.totalStaked();
-                
-                // Оновити поточний APY
-                document.getElementById('currentAPYValue').textContent = 
-                    `${(currentAPY / 100).toFixed(0)}%`;
-                document.getElementById('currentTierName').textContent = 
-                    tierDescription;
-                
-                // Створити карточки для всіх tiers
-                const tiersHTML = thresholds.map((threshold, index) => {
-                    const apy = apys[index];
-                    const isActive = index === currentTier.toNumber();
-                    const isMaxTier = threshold.eq(ethers.constants.MaxUint256);
-                    
-                    let rangeText;
-                    if (index === 0) {
-                        rangeText = `0 - ${ethers.utils.formatUnits(threshold, 6)} ARUB`;
-                    } else if (isMaxTier) {
-                        rangeText = `${ethers.utils.formatUnits(thresholds[index - 1], 6)}+ ARUB`;
-                    } else {
-                        rangeText = `${ethers.utils.formatUnits(thresholds[index - 1], 6)} - ${ethers.utils.formatUnits(threshold, 6)} ARUB`;
-                    }
-                    
-                    return `
-                        <div class="apy-tier-card ${isActive ? 'active' : ''}">
-                            <div class="tier-number">Tier ${index + 1}${isActive ? ' 🔥' : ''}</div>
-                            <div class="tier-apy">${(apy / 100).toFixed(0)}%</div>
-                            <div class="tier-range">${rangeText}</div>
-                        </div>
-                    `;
-                }).join('');
-                
-                document.getElementById('apyTiersGrid').innerHTML = tiersHTML;
-                
-                // Оновити прогрес до наступного tier
-                if (nextThreshold.gt(0)) {
-                    const currentTierThreshold = currentThreshold;
-                    const prevTierThreshold = currentTier.toNumber() > 0 ? 
-                        thresholds[currentTier.toNumber() - 1] : 
-                        ethers.BigNumber.from(0);
-                    
-                    const tierRange = currentTierThreshold.sub(prevTierThreshold);
-                    const progress = totalStakedAmount.sub(prevTierThreshold);
-                    const progressPercent = tierRange.gt(0) ? 
-                        progress.mul(100).div(tierRange).toNumber() : 0;
-                    
-                    document.getElementById('apyProgressFill').style.width = 
-                        `${Math.min(progressPercent, 100)}%`;
-                    document.getElementById('progressPercentText').textContent = 
-                        `${Math.min(progressPercent, 100).toFixed(1)}%`;
-                    
-                    document.getElementById('nextTierValue').textContent = 
-                        `${ethers.utils.formatUnits(remainingToNextTier, 6)} ARUB до ${(nextAPY / 100).toFixed(0)}% APY`;
-                    
-                    document.getElementById('nextTierInfo').style.display = 'block';
-                } else {
-                    // Вже на останньому tier
-                    document.getElementById('apyProgressFill').style.width = '100%';
-                    document.getElementById('progressPercentText').textContent = '100%';
-                    document.getElementById('nextTierInfo').innerHTML = `
-                        <div class="next-tier-text">🏆 Досягнуто максимальний рівень!</div>
-                        <div class="next-tier-value">APY: ${(currentAPY / 100).toFixed(0)}%</div>
-                    `;
-                }
-                
-            } catch (error) {
-                console.log('⚠️ Dynamic APY not available (showing defaults):', error.message);
-                // Показати дефолтні значення
-                document.getElementById('currentAPYValue').textContent = '24%';
-                document.getElementById('currentTierName').textContent = 'Tier 1: 0-100k ARUB';
-                document.getElementById('apyTiersGrid').innerHTML = `
-                    <div class="apy-tier-card active">
-                        <div class="tier-number">Tier 1 🔥</div>
-                        <div class="tier-apy">24%</div>
-                        <div class="tier-range">0 - 100k ARUB</div>
-                    </div>
-                    <div class="apy-tier-card">
-                        <div class="tier-number">Tier 2</div>
-                        <div class="tier-apy">20%</div>
-                        <div class="tier-range">100k - 200k ARUB</div>
-                    </div>
-                    <div class="apy-tier-card">
-                        <div class="tier-number">Tier 3</div>
-                        <div class="tier-apy">16%</div>
-                        <div class="tier-range">200k - 400k ARUB</div>
-                    </div>
-                    <div class="apy-tier-card">
-                        <div class="tier-number">Tier 4</div>
-                        <div class="tier-apy">12%</div>
-                        <div class="tier-range">400k - 800k ARUB</div>
-                    </div>
-                    <div class="apy-tier-card">
-                        <div class="tier-number">Tier 5</div>
-                        <div class="tier-apy">8%</div>
-                        <div class="tier-range">800k+ ARUB</div>
-                    </div>
-                `;
-            }
-        }
-        
-        // ==========================================
-        // FAUCET UI UPDATE
-        // ==========================================
         async function updateFaucetUI() {
-            if (!userAddress) {
-                console.log('⚠️ No user address, skipping faucet UI update');
-                return;
-            }
+            if (!userAddress) return;
             
             console.log('🔵 Updating faucet UI...');
             
             try {
                 const [canClaim, timeLeft] = await usdtContract.canClaimFromFaucet(userAddress);
                 const usdtBalance = await usdtContract.balanceOf(userAddress);
-                
-                console.log('✅ Faucet data loaded successfully');
                 
                 const faucetInterface = document.getElementById('faucetInterface');
                 faucetInterface.innerHTML = `
@@ -2615,252 +1082,19 @@
                     </div>
                 `;
             } catch (error) {
-                console.log('⚠️ Faucet contract not available (showing placeholder):', error.message);
-                
-                // Show placeholder UI when contract is not available
-                const faucetInterface = document.getElementById('faucetInterface');
-                if (faucetInterface) {
-                    faucetInterface.innerHTML = `
-                        <div style="max-width: 600px; margin: 0 auto;">
-                            <div class="staking-card" style="text-align: center;">
-                                <div class="card-header" style="justify-content: center;">
-                                    <div class="card-icon">💰</div>
-                                    <h3 class="card-title">MockUSDT Faucet</h3>
-                                </div>
-                                
-                                <div style="background: rgba(239,68,68,0.1); padding: 20px; border-radius: 15px; margin: 20px 0; border: 2px solid rgba(239,68,68,0.3);">
-                                    <div style="font-size: 3em; margin-bottom: 10px;">⚠️</div>
-                                    <div style="color: #ef4444; font-weight: bold; margin-bottom: 10px;">
-                                        Контракт недоступний
-                                    </div>
-                                    <div style="color: var(--gray); font-size: 0.9em;">
-                                        Можливо, контракт ще не задеплоєно або є проблеми з мережею Sepolia
-                                    </div>
-                                </div>
-                                
-                                <div style="margin-top: 20px; padding: 15px; background: rgba(0,87,183,0.1); border-radius: 10px;">
-                                    <p style="color: var(--gray); font-size: 0.9em; margin: 0;">
-                                        💡 Перевірте адресу контракту на Etherscan Sepolia
-                                    </p>
-                                </div>
-                            </div>
-                        </div>
-                    `;
-                }
+                console.log('⚠️ Faucet not available');
             }
         }
         
-        // ==========================================
-        // TRADING UI UPDATE
-        // ==========================================
-        async function updateTradingUI() {
-            if (!userAddress) {
-                console.log('⚠️ No user address, skipping trading UI update');
-                return;
-            }
-            
-            console.log('🔵 Updating trading UI...');
-            
-            let usdtBalance = ethers.BigNumber.from(0);
-            let arubBalance = ethers.BigNumber.from(0);
-            
-            try {
-                const balances = await Promise.all([
-                    usdtContract.balanceOf(userAddress).catch((err) => {
-                        console.log('⚠️ Could not get USDT balance (using 0)');
-                        return ethers.BigNumber.from(0);
-                    }),
-                    tokenContract.balanceOf(userAddress).catch((err) => {
-                        console.log('⚠️ Could not get ARUB balance (using 0)');
-                        return ethers.BigNumber.from(0);
-                    })
-                ]);
-                usdtBalance = balances[0];
-                arubBalance = balances[1];
-                console.log('✅ Trading balances loaded');
-            } catch (error) {
-                console.log('⚠️ Trading balances not available (using 0)');
-            }
-            
-            // ВАЖЛИВО: Ціна ARUB = поточний курс USDT/RUB
-            // 1 ARUB = курс USDT/RUB в доларах
-            // Наприклад: якщо USDT/RUB = 81.22, то 1 ARUB = 81.22 USDT
-            const arubPriceInUsdt = currentRate || 81.22; // Використовуємо поточний курс USDT/RUB
-            
-            const testModeWarning = (usdtBalance.eq(0) && arubBalance.eq(0)) ? 
-                '<div style="background: rgba(255,215,0,0.1); padding: 20px; border-radius: 15px; margin-bottom: 30px; border: 2px solid var(--ukraine-yellow);">' +
-                    '<h3 style="color: var(--ukraine-yellow); margin-bottom: 10px;">⚠️ Тестовий режим</h3>' +
-                    '<p style="color: var(--gray); margin: 0;">' +
-                        'Платформа працює з тестовими адресами смарт-контрактів. ' +
-                        'Після розгортання реальних контрактів всі функції будуть доступні.' +
-                    '</p>' +
-                '</div>' : '';
-            
-            const tradingInterface = document.getElementById('tradingInterface');
-            tradingInterface.innerHTML = testModeWarning + `
-                <div class="staking-grid">
-                    <!-- Buy ARUB Card -->
-                    <div class="staking-card">
-                        <div class="card-header">
-                            <div class="card-icon">💰</div>
-                            <h3 class="card-title">Купити ARUB</h3>
-                        </div>
-                        
-                        <div class="input-group">
-                            <label class="input-label">Сума USDT для купівлі</label>
-                            <div class="input-wrapper">
-                                <input type="number" 
-                                       class="input-field" 
-                                       id="buyAmount" 
-                                       placeholder="0.00"
-                                       step="0.01"
-                                       min="1"
-                                       oninput="calculateBuyAmount()">
-                                <button class="max-btn" onclick="setMaxBuy()">MAX</button>
-                            </div>
-                        </div>
-                        
-                        <div class="info-row">
-                            <span class="info-label">Отримаєте ARUB:</span>
-                            <span class="info-value" id="buyReceiveAmount">0</span>
-                        </div>
-                        
-                        <div class="info-row">
-                            <span class="info-label">Комісія (0.5%):</span>
-                            <span class="info-value" id="buyFeeAmount">0 USDT</span>
-                        </div>
-                        
-                        <div class="info-row">
-                            <span class="info-label">Ваш баланс USDT:</span>
-                            <span class="info-value">${ethers.utils.formatUnits(usdtBalance, 6)} USDT</span>
-                        </div>
-                        
-                        <div style="background: rgba(0,87,183,0.1); padding: 15px; border-radius: 10px; margin-top: 15px; margin-bottom: 15px;">
-                            <p style="color: var(--gray); font-size: 0.9em; line-height: 1.6;">
-                                💡 Комісія 0.5% йде на: аудит смарт-контрактів, розвиток проекту та оплату команді
-                            </p>
-                        </div>
-                        
-                        <button class="action-btn" onclick="buyTokens()">
-                            💰 Купити ARUB
-                        </button>
-                    </div>
-                    
-                    <!-- Sell ARUB Card -->
-                    <div class="staking-card">
-                        <div class="card-header">
-                            <div class="card-icon">💵</div>
-                            <h3 class="card-title">Продати ARUB</h3>
-                        </div>
-                        
-                        <div class="input-group">
-                            <label class="input-label">Кількість ARUB для продажу</label>
-                            <div class="input-wrapper">
-                                <input type="number" 
-                                       class="input-field" 
-                                       id="sellAmount" 
-                                       placeholder="0.00"
-                                       step="0.01"
-                                       min="0"
-                                       oninput="calculateSellAmount()">
-                                <button class="max-btn" onclick="setMaxSell()">MAX</button>
-                            </div>
-                        </div>
-                        
-                        <div class="info-row">
-                            <span class="info-label">Отримаєте USDT:</span>
-                            <span class="info-value" id="sellReceiveAmount">0</span>
-                        </div>
-                        
-                        <div class="info-row">
-                            <span class="info-label">Комісія (1%):</span>
-                            <span class="info-value" id="sellFeeAmount">0 USDT</span>
-                        </div>
-                        
-                        <div class="info-row">
-                            <span class="info-label">Ваш баланс ARUB:</span>
-                            <span class="info-value">${ethers.utils.formatUnits(arubBalance, 6)} ARUB</span>
-                        </div>
-                        
-                        <div style="background: rgba(255,215,0,0.1); padding: 15px; border-radius: 10px; margin-top: 15px; margin-bottom: 15px;">
-                            <p style="color: var(--gray); font-size: 0.9em; line-height: 1.6;">
-                                💡 Комісія 1% йде на: аудит смарт-контрактів, розвиток проекту та оплату команді
-                            </p>
-                        </div>
-                        
-                        <button class="action-btn" onclick="sellTokens()">
-                            💵 Продати ARUB
-                        </button>
-                    </div>
-                    
-                    <!-- Info Card -->
-                    <div class="staking-card">
-                        <div class="card-header">
-                            <div class="card-icon">📊</div>
-                            <h3 class="card-title">Інформація про торгівлю</h3>
-                        </div>
-                        
-                        <div style="padding: 20px 0;">
-                            <div class="info-row">
-                                <span class="info-label">Ціна ARUB:</span>
-                                <span class="info-value">${arubPriceInUsdt.toFixed(2)} USDT</span>
-                            </div>
-                            
-                            <div class="info-row">
-                                <span class="info-label">Курс USDT/RUB:</span>
-                                <span class="info-value">${arubPriceInUsdt.toFixed(2)} ₽</span>
-                            </div>
-                            
-                            <div style="background: rgba(0,87,183,0.1); padding: 12px; border-radius: 8px; margin: 15px 0;">
-                                <p style="color: var(--gray); font-size: 0.85em; line-height: 1.5; margin: 0;">
-                                    💡 <strong style="color: white;">Логіка ціни:</strong> 1 ARUB = поточний курс USDT/RUB. 
-                                    Чим слабший рубль, тим дорожчий токен!
-                                </p>
-                            </div>
-                            
-                            <div class="info-row">
-                                <span class="info-label">Комісія купівлі:</span>
-                                <span class="info-value" style="color: #10b981;">0.5%</span>
-                            </div>
-                            
-                            <div class="info-row">
-                                <span class="info-label">Комісія продажу:</span>
-                                <span class="info-value" style="color: #f59e0b;">1%</span>
-                            </div>
-                        </div>
-                        
-                        <div style="background: linear-gradient(135deg, rgba(0,87,183,0.1), rgba(255,215,0,0.1)); padding: 20px; border-radius: 12px; margin-top: 20px;">
-                            <h4 style="color: var(--ukraine-yellow); margin-bottom: 15px; font-size: 1.1em;">💰 Куди йдуть комісії?</h4>
-                            <ul style="color: var(--gray); line-height: 2; list-style: none; padding: 0;">
-                                <li>✅ Аудит смарт-контрактів</li>
-                                <li>✅ Розвиток платформи</li>
-                                <li>✅ Оплата команді розробників</li>
-                                <li>✅ Маркетинг та просування</li>
-                            </ul>
-                        </div>
-                        
-                        <div style="margin-top: 20px; padding: 15px; background: rgba(0,87,183,0.1); border-radius: 10px; border-left: 4px solid var(--ukraine-blue);">
-                            <p style="color: var(--gray); font-size: 0.95em; line-height: 1.6;">
-                                <strong style="color: white;">Важливо:</strong> Всі транзакції відбуваються через смарт-контракт. Ваші кошти завжди під вашим контролем.
-                            </p>
-                        </div>
-                    </div>
-                </div>
-            `;
-        }
-        
-        // ==========================================
-        // TRADING CALCULATION FUNCTIONS
-        // ==========================================
         function calculateBuyAmount() {
             const buyAmount = parseFloat(document.getElementById('buyAmount')?.value || 0);
             if (buyAmount > 0) {
-                const fee = buyAmount * 0.005; // 0.5%
+                const fee = buyAmount * 0.005;
                 const amountAfterFee = buyAmount - fee;
-                const arubPrice = currentRate || 81.22; // 1 ARUB = курс USDT/RUB
+                const arubPrice = currentRate || 81.22;
                 const arubReceived = amountAfterFee / arubPrice;
                 
-                document.getElementById('buyReceiveAmount').textContent = `${arubReceived.toFixed(4)} ARUB`;
+                document.getElementById('buyReceiveAmount').textContent = `${arubReceived.toFixed(6)} ARUB`;
                 document.getElementById('buyFeeAmount').textContent = `${fee.toFixed(4)} USDT`;
             } else {
                 document.getElementById('buyReceiveAmount').textContent = '0';
@@ -2871,9 +1105,9 @@
         function calculateSellAmount() {
             const sellAmount = parseFloat(document.getElementById('sellAmount')?.value || 0);
             if (sellAmount > 0) {
-                const arubPrice = currentRate || 81.22; // 1 ARUB = курс USDT/RUB
+                const arubPrice = currentRate || 81.22;
                 const usdtValue = sellAmount * arubPrice;
-                const fee = usdtValue * 0.01; // 1%
+                const fee = usdtValue * 0.01;
                 const usdtReceived = usdtValue - fee;
                 
                 document.getElementById('sellReceiveAmount').textContent = `${usdtReceived.toFixed(4)} USDT`;
@@ -2886,7 +1120,6 @@
         
         function setMaxBuy() {
             if (!usdtContract || !userAddress) return;
-            
             usdtContract.balanceOf(userAddress).then(balance => {
                 document.getElementById('buyAmount').value = ethers.utils.formatUnits(balance, 6);
                 calculateBuyAmount();
@@ -2895,16 +1128,13 @@
         
         function setMaxSell() {
             if (!tokenContract || !userAddress) return;
-            
             tokenContract.balanceOf(userAddress).then(balance => {
                 document.getElementById('sellAmount').value = ethers.utils.formatUnits(balance, 6);
                 calculateSellAmount();
             });
         }
         
-        // ==========================================
-        // TRADING FUNCTIONS
-        // ==========================================
+        // ✅ ПРАВИЛЬНА ФУНКЦІЯ КУПІВЛІ (використовує mint)
         async function buyTokens() {
             const amount = document.getElementById('buyAmount')?.value;
             
@@ -2916,25 +1146,25 @@
             try {
                 const amountWei = ethers.utils.parseUnits(amount, 6);
                 
-                showNotification('🔄 Перевірка дозволу...', 'info');
+                showNotification('🔄 Перевірка дозволу USDT...', 'info');
                 
-                // Check allowance
                 const allowance = await usdtContract.allowance(userAddress, CONFIG.TOKEN_ADDRESS);
                 
                 if (allowance.lt(amountWei)) {
-                    showNotification('🔄 Схвалення USDT...', 'info');
+                    showNotification('🔄 Схвалення USDT для контракту токена...', 'info');
                     const approveTx = await usdtContract.approve(
                         CONFIG.TOKEN_ADDRESS,
                         ethers.constants.MaxUint256
                     );
                     await approveTx.wait();
+                    showNotification('✅ USDT схвалено!', 'success');
                 }
                 
-                showNotification('🔄 Купівля ARUB...', 'info');
+                showNotification('🔄 Купівля ARUB через mint()...', 'info');
                 
-                // Call buy function on token contract (you need to implement this in your contract)
-                const buyTx = await tokenContract.buy(amountWei);
-                await buyTx.wait();
+                // ✅ ВИКОРИСТОВУЄМО ФУНКЦІЮ mint() для купівлі
+                const mintTx = await tokenContract.mint(amountWei);
+                await mintTx.wait();
                 
                 showNotification('✅ ARUB успішно куплено!', 'success');
                 
@@ -2942,14 +1172,14 @@
                 document.getElementById('buyReceiveAmount').textContent = '0';
                 document.getElementById('buyFeeAmount').textContent = '0 USDT';
                 await updateTradingUI();
-                await updateUI();
                 
             } catch (error) {
-                console.error('Error buying tokens:', error);
-                showNotification('❌ Помилка купівлі токенів', 'error');
+                console.error('Buy error:', error);
+                showNotification(`❌ Помилка купівлі: ${error.message}`, 'error');
             }
         }
         
+        // ✅ ПРАВИЛЬНА ФУНКЦІЯ ПРОДАЖУ (використовує burn)
         async function sellTokens() {
             const amount = document.getElementById('sellAmount')?.value;
             
@@ -2961,11 +1191,11 @@
             try {
                 const amountWei = ethers.utils.parseUnits(amount, 6);
                 
-                showNotification('🔄 Продаж ARUB...', 'info');
+                showNotification('🔄 Продаж ARUB через burn()...', 'info');
                 
-                // Call sell function on token contract (you need to implement this in your contract)
-                const sellTx = await tokenContract.sell(amountWei);
-                await sellTx.wait();
+                // ✅ ВИКОРИСТОВУЄМО ФУНКЦІЮ burn() для продажу
+                const burnTx = await tokenContract.burn(amountWei);
+                await burnTx.wait();
                 
                 showNotification('✅ ARUB успішно продано!', 'success');
                 
@@ -2973,49 +1203,13 @@
                 document.getElementById('sellReceiveAmount').textContent = '0';
                 document.getElementById('sellFeeAmount').textContent = '0 USDT';
                 await updateTradingUI();
-                await updateUI();
                 
             } catch (error) {
-                console.error('Error selling tokens:', error);
-                showNotification('❌ Помилка продажу токенів', 'error');
+                console.error('Sell error:', error);
+                showNotification(`❌ Помилка продажу: ${error.message}`, 'error');
             }
         }
         
-        // ==========================================
-        // STAKING FUNCTIONS
-        // ==========================================
-        function setMaxStake() {
-            if (!usdtContract || !userAddress) return;
-            
-            usdtContract.balanceOf(userAddress).then(balance => {
-                document.getElementById('stakeAmount').value = ethers.utils.formatUnits(balance, 6);
-            });
-        }
-        
-        function setMaxStakeArub() {
-            if (!tokenContract || !userAddress) return;
-            
-            tokenContract.balanceOf(userAddress).then(balance => {
-                const arubAmount = ethers.utils.formatUnits(balance, 6);
-                document.getElementById('stakeArubAmount').value = arubAmount;
-                updateArubValueInUsdt(arubAmount);
-            });
-        }
-        
-        function updateArubValueInUsdt(arubAmount) {
-            if (!arubAmount || parseFloat(arubAmount) <= 0) {
-                document.getElementById('arubValueInUsdt').textContent = '0 USDT';
-                return;
-            }
-            const valueInUsdt = parseFloat(arubAmount) * (currentRate || 81.22);
-            document.getElementById('arubValueInUsdt').textContent = `${valueInUsdt.toFixed(2)} USDT`;
-        }
-        
-        // Додаємо обробник input для оновлення вартості ARUB
-        
-        // ==========================================
-        // FAUCET FUNCTIONS
-        // ==========================================
         async function claimFromFaucet() {
             if (!usdtContract || !userAddress) {
                 showNotification('❌ Спочатку підключіть гаманець', 'error');
@@ -3023,7 +1217,6 @@
             }
             
             try {
-                // Перевірити чи можна клеймати
                 const [canClaim, timeLeft] = await usdtContract.canClaimFromFaucet(userAddress);
                 
                 if (!canClaim) {
@@ -3039,202 +1232,15 @@
                 
                 showNotification('✅ Отримано 100,000 USDT!', 'success');
                 
-                // Оновити UI
                 await updateFaucetUI();
                 await updateTradingUI();
-                await updateUI();
                 
             } catch (error) {
-                console.error('Faucet claim error:', error);
-                if (error.message.includes('Faucet cooldown')) {
-                    showNotification('⏱️ Зачекайте до наступного клейму', 'error');
-                } else {
-                    showNotification('❌ Помилка отримання USDT', 'error');
-                }
+                console.error('Faucet error:', error);
+                showNotification('❌ Помилка отримання USDT', 'error');
             }
         }
         
-        // ==========================================
-        // HELPER FUNCTIONS
-        // ==========================================
-        async function setMaxUnstake() {
-            if (!stakingContract || !userAddress) return;
-            
-            try {
-                const userInfo = await stakingContract.getUserInfo(userAddress);
-                const stakedBalance = userInfo[0]; // stakedAmount
-                document.getElementById('unstakeAmount').value = ethers.utils.formatUnits(stakedBalance, 6);
-            } catch (error) {
-                console.log('⚠️ Could not get staked balance');
-                document.getElementById('unstakeAmount').value = '0';
-            }
-        }
-        
-        async function stakeTokens() {
-            const amount = document.getElementById('stakeAmount').value;
-            
-            if (!amount || parseFloat(amount) < 10) {
-                showNotification('❌ Мінімальна сума для стейкінгу — 10 USDT', 'error');
-                return;
-            }
-            
-            try {
-                const amountWei = ethers.utils.parseUnits(amount, 6);
-                
-                showNotification('🔄 Перевірка дозволу...', 'info');
-                
-                const allowance = await usdtContract.allowance(userAddress, CONFIG.STAKING_ADDRESS);
-                
-                if (allowance.lt(amountWei)) {
-                    showNotification('🔄 Схвалення USDT...', 'info');
-                    const approveTx = await usdtContract.approve(
-                        CONFIG.STAKING_ADDRESS,
-                        ethers.constants.MaxUint256
-                    );
-                    await approveTx.wait();
-                }
-                
-                showNotification('🔄 Стейкінг USDT...', 'info');
-                const stakeTx = await stakingContract.stakeArub(amountWei);
-                await stakeTx.wait();
-                
-                showNotification('✅ USDT успішно застейкано!', 'success');
-                
-                document.getElementById('stakeAmount').value = '';
-                await updateUI();
-                
-            } catch (error) {
-                console.error('Error staking:', error);
-                showNotification('❌ Помилка стейкінгу', 'error');
-            }
-        }
-        
-        async function stakeArubTokens() {
-            const amount = document.getElementById('stakeArubAmount').value;
-            
-            if (!amount || parseFloat(amount) < 0.1) {
-                showNotification('❌ Мінімальна кількість для стейкінгу — 0.1 ARUB', 'error');
-                return;
-            }
-            
-            try {
-                const amountWei = ethers.utils.parseUnits(amount, 6);
-                
-                showNotification('🔄 Перевірка дозволу...', 'info');
-                
-                const allowance = await tokenContract.allowance(userAddress, CONFIG.STAKING_ADDRESS);
-                
-                if (allowance.lt(amountWei)) {
-                    showNotification('🔄 Схвалення ARUB...', 'info');
-                    const approveTx = await tokenContract.approve(
-                        CONFIG.STAKING_ADDRESS,
-                        ethers.constants.MaxUint256
-                    );
-                    await approveTx.wait();
-                }
-                
-                showNotification('🔄 Стейкінг ARUB...', 'info');
-                const stakeTx = await stakingContract.stakeArub(amountWei);
-                await stakeTx.wait();
-                
-                showNotification('✅ ARUB успішно застейкано!', 'success');
-                
-                document.getElementById('stakeArubAmount').value = '';
-                document.getElementById('arubValueInUsdt').textContent = '0 USDT';
-                await updateUI();
-                
-            } catch (error) {
-                console.error('Error staking ARUB:', error);
-                showNotification('❌ Помилка стейкінгу ARUB', 'error');
-            }
-        }
-        
-        async function unstakeTokens() {
-            const amount = document.getElementById('unstakeAmount').value;
-            
-            if (!amount || parseFloat(amount) <= 0) {
-                showNotification('❌ Введіть коректну суму', 'error');
-                return;
-            }
-            
-            try {
-                const amountWei = ethers.utils.parseUnits(amount, 6);
-                
-                showNotification('🔄 Зняття USDT...', 'info');
-                const unstakeTx = await stakingContract.unstakeArub(amountWei);
-                await unstakeTx.wait();
-                
-                showNotification('✅ USDT успішно знято!', 'success');
-                
-                document.getElementById('unstakeAmount').value = '';
-                await updateUI();
-                
-            } catch (error) {
-                console.error('Error unstaking:', error);
-                showNotification('❌ Помилка зняття', 'error');
-            }
-        }
-        
-        // ==========================================
-        // UNSTAKE ARUB FUNCTIONS
-        // ==========================================
-        async function setMaxUnstakeArub() {
-            if (!stakingContract || !userAddress) return;
-            
-            try {
-                const userInfo = await stakingContract.getUserInfo(userAddress);
-                const stakedBalance = userInfo[0]; // stakedAmount
-                document.getElementById('unstakeArubAmount').value = ethers.utils.formatUnits(stakedBalance, 6);
-            } catch (error) {
-                console.log('⚠️ Could not get staked ARUB balance');
-                document.getElementById('unstakeArubAmount').value = '0';
-            }
-        }
-        
-        async function unstakeArubTokens() {
-            const amount = document.getElementById('unstakeArubAmount').value;
-            
-            if (!amount || parseFloat(amount) <= 0) {
-                showNotification('❌ Введіть коректну суму', 'error');
-                return;
-            }
-            
-            try {
-                const amountWei = ethers.utils.parseUnits(amount, 6);
-                
-                showNotification('🔄 Зняття ARUB...', 'info');
-                const unstakeTx = await stakingContract.unstakeArub(amountWei);
-                await unstakeTx.wait();
-                
-                showNotification('✅ ARUB успішно знято! Винагороди автоматично отримано.', 'success');
-                
-                document.getElementById('unstakeArubAmount').value = '';
-                await updateUI();
-                
-            } catch (error) {
-                console.error('Error unstaking ARUB:', error);
-                showNotification('❌ Помилка зняття ARUB', 'error');
-            }
-        }
-        
-        async function claimRewards() {
-            try {
-                showNotification('🔄 Отримання винагород...', 'info');
-                const claimTx = await stakingContract.claimRewards(false); // false = не компаундити
-                await claimTx.wait();
-                
-                showNotification('✅ Винагороди успішно отримано!', 'success');
-                await updateUI();
-                
-            } catch (error) {
-                console.error('Error claiming rewards:', error);
-                showNotification('❌ Помилка отримання винагород', 'error');
-            }
-        }
-        
-        // ==========================================
-        // NOTIFICATIONS
-        // ==========================================
         function showNotification(message, type = 'info') {
             const notification = document.createElement('div');
             notification.className = `notification ${type}`;
@@ -3248,366 +1254,19 @@
             }, 3000);
         }
         
-        // ==========================================
-        // WALLET GUIDE
-        // ==========================================
-        function showWalletGuide() {
-            const modal = document.createElement('div');
-            modal.className = 'wallet-modal';
-            modal.innerHTML = `
-                <div class="wallet-modal-content" style="max-width: 700px; max-height: 85vh; overflow-y: auto;">
-                    <h2 class="wallet-modal-title">Як додати ARUB токен до гаманця</h2>
-                    
-                    <div style="background: rgba(0,87,183,0.1); padding: 20px; border-radius: 12px; margin-bottom: 25px; border: 2px solid var(--ukraine-blue);">
-                        <h3 style="color: white; margin-bottom: 15px;">📋 Інформація про токен</h3>
-                        <div style="background: rgba(0,0,0,0.3); padding: 15px; border-radius: 8px;">
-                            <div style="margin-bottom: 10px;">
-                                <strong style="color: var(--primary);">Адреса контракту:</strong><br>
-                                <span style="color: var(--accent); word-break: break-all;">${CONFIG.TOKEN_ADDRESS}</span>
-                                <button onclick="navigator.clipboard.writeText('${CONFIG.TOKEN_ADDRESS}'); showNotification('✅ Адресу скопійовано!', 'success')" 
-                                        style="margin-left: 10px; padding: 5px 10px; background: var(--primary); border: none; border-radius: 5px; color: white; cursor: pointer;">
-                                    📋
-                                </button>
-                            </div>
-                            <div style="margin-bottom: 10px;">
-                                <strong style="color: var(--primary);">Символ токена:</strong> ARUB
-                            </div>
-                            <div>
-                                <strong style="color: var(--primary);">Decimals:</strong> 6
-                            </div>
-                        </div>
-                    </div>
-                    
-                    <h4 style="color: white; margin-bottom: 15px;">Інструкції для різних гаманців:</h4>
-                    
-                    <div class="wallet-instructions">
-                        <details style="margin-bottom: 15px; background: var(--card-bg); padding: 15px; border-radius: 10px; border: 1px solid rgba(0,87,183,0.3);">
-                            <summary style="cursor: pointer; font-weight: 600; color: white; padding: 5px;">
-                                🦊 MetaMask
-                            </summary>
-                            <ol style="margin-top: 15px; padding-left: 20px; color: var(--gray);">
-                                <li>Відкрийте MetaMask</li>
-                                <li>Перейдіть на вкладку "Assets" (Активи)</li>
-                                <li>Прокрутіть вниз і натисніть "Import tokens"</li>
-                                <li>Вставте адресу контракту: <code style="color: var(--accent);">${CONFIG.TOKEN_ADDRESS}</code></li>
-                                <li>Символ і decimals заповняться автоматично</li>
-                                <li>Натисніть "Add Custom Token" → "Import Tokens"</li>
-                            </ol>
-                        </details>
-                        
-                        <details style="margin-bottom: 15px; background: var(--card-bg); padding: 15px; border-radius: 10px; border: 1px solid rgba(0,87,183,0.3);">
-                            <summary style="cursor: pointer; font-weight: 600; color: white; padding: 5px;">
-                                🛡️ Trust Wallet
-                            </summary>
-                            <ol style="margin-top: 15px; padding-left: 20px; color: var(--gray);">
-                                <li>Відкрийте Trust Wallet</li>
-                                <li>Натисніть на іконку налаштувань (⚙️) у правому верхньому куті</li>
-                                <li>Виберіть "Manage Crypto"</li>
-                                <li>Натисніть "+" у правому верхньому куті</li>
-                                <li>Виберіть "Ethereum" → "Add Custom Token"</li>
-                                <li>Вставте адресу контракту</li>
-                                <li>Заповніть: Name: ARUB, Symbol: ARUB, Decimals: 6</li>
-                                <li>Натисніть "Done"</li>
-                            </ol>
-                        </details>
-                        
-                        <details style="margin-bottom: 15px; background: var(--card-bg); padding: 15px; border-radius: 10px; border: 1px solid rgba(0,87,183,0.3);">
-                            <summary style="cursor: pointer; font-weight: 600; color: white; padding: 5px;">
-                                💼 Coinbase Wallet
-                            </summary>
-                            <ol style="margin-top: 15px; padding-left: 20px; color: var(--gray);">
-                                <li>Відкрийте Coinbase Wallet</li>
-                                <li>Перейдіть на вкладку "Assets"</li>
-                                <li>Натисніть на "+" або "Add Asset"</li>
-                                <li>Виберіть "Token" → "Custom Token"</li>
-                                <li>Вставте адресу контракту</li>
-                                <li>Переконайтеся, що мережа "Ethereum"</li>
-                                <li>Натисніть "Add"</li>
-                            </ol>
-                        </details>
-                        
-                        <details style="margin-bottom: 15px; background: var(--card-bg); padding: 15px; border-radius: 10px; border: 1px solid rgba(0,87,183,0.3);">
-                            <summary style="cursor: pointer; font-weight: 600; color: white; padding: 5px;">
-                                🐰 Rabby Wallet
-                            </summary>
-                            <ol style="margin-top: 15px; padding-left: 20px; color: var(--gray);">
-                                <li>Відкрийте Rabby Wallet</li>
-                                <li>Перейдіть на вкладку "Assets"</li>
-                                <li>Натисніть "Add Token" внизу списку</li>
-                                <li>Вставте адресу контракту</li>
-                                <li>Rabby автоматично визначить токен</li>
-                                <li>Натисніть "Confirm"</li>
-                            </ol>
-                        </details>
-                        
-                        <details style="margin-bottom: 15px; background: var(--card-bg); padding: 15px; border-radius: 10px; border: 1px solid rgba(0,87,183,0.3);">
-                            <summary style="cursor: pointer; font-weight: 600; color: white; padding: 5px;">
-                                🌈 Rainbow
-                            </summary>
-                            <ol style="margin-top: 15px; padding-left: 20px; color: var(--gray);">
-                                <li>Відкрийте Rainbow</li>
-                                <li>Перейдіть на вкладку "Wallet"</li>
-                                <li>Прокрутіть вниз і знайдіть "Manage Tokens"</li>
-                                <li>Натисніть "Add Custom Token"</li>
-                                <li>Вставте адресу контракту</li>
-                                <li>Натисніть "Import"</li>
-                            </ol>
-                        </details>
-                        
-                        <details style="margin-bottom: 15px; background: var(--card-bg); padding: 15px; border-radius: 10px; border: 1px solid rgba(0,87,183,0.3);">
-                            <summary style="cursor: pointer; font-weight: 600; color: white; padding: 5px;">
-                                ⭕ OKX Wallet
-                            </summary>
-                            <ol style="margin-top: 15px; padding-left: 20px; color: var(--gray);">
-                                <li>Відкрийте OKX Wallet</li>
-                                <li>Перейдіть у розділ "Assets"</li>
-                                <li>Натисніть на "+" або "Add token"</li>
-                                <li>Виберіть "Custom token"</li>
-                                <li>Виберіть мережу "Ethereum"</li>
-                                <li>Вставте адресу контракту</li>
-                                <li>Натисніть "Add"</li>
-                            </ol>
-                        </details>
-                        
-                        <details style="background: var(--card-bg); padding: 15px; border-radius: 10px; border: 1px solid rgba(0,87,183,0.3);">
-                            <summary style="cursor: pointer; font-weight: 600; color: white; padding: 5px;">
-                                💎 Інші гаманці
-                            </summary>
-                            <p style="margin-top: 15px; color: var(--gray);">
-                                Для більшості гаманців процес схожий:
-                            </p>
-                            <ol style="margin-top: 10px; padding-left: 20px; color: var(--gray);">
-                                <li>Знайдіть розділ "Tokens" або "Assets"</li>
-                                <li>Знайдіть кнопку "Add Token" або "Import Token"</li>
-                                <li>Виберіть "Custom Token" або "ERC-20"</li>
-                                <li>Вставте адресу контракту: <code style="color: var(--accent);">${CONFIG.TOKEN_ADDRESS}</code></li>
-                                <li>Вкажіть Symbol: ARUB та Decimals: 6 (якщо не заповнилося автоматично)</li>
-                                <li>Підтвердіть додавання</li>
-                            </ol>
-                        </details>
-                    </div>
-                    
-                    <div style="margin-top: 25px; text-align: center;">
-                        <button onclick="this.closest('.wallet-modal').remove()" 
-                                style="padding: 12px 30px; background: var(--primary); border: none; border-radius: 12px; color: white; cursor: pointer; font-size: 1em;">
-                            Закрити
-                        </button>
-                    </div>
-                </div>
-            `;
-            
-            document.body.appendChild(modal);
-            
-            modal.addEventListener('click', (e) => {
-                if (e.target === modal) {
-                    modal.remove();
-                }
-            });
-        }
-        
-        // ==========================================
-        // SUPPORT WIDGET FUNCTIONS
-        // ==========================================
-        function toggleSupportChat() {
-            const chat = document.getElementById('supportChat');
-            chat.classList.toggle('active');
-            
-            // Remove welcome tooltip if it exists
-            const tooltips = document.querySelectorAll('[style*="bottom: 110px"]');
-            tooltips.forEach(tooltip => {
-                if (tooltip.textContent.includes('Вітаємо')) {
-                    tooltip.remove();
-                }
-            });
-        }
-        
-        function switchSupportTab(tab) {
-            // Remove active class from all tabs
-            document.querySelectorAll('.support-tab').forEach(t => t.classList.remove('active'));
-            document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
-            
-            // Add active class to selected tab
-            if (tab === 'questions') {
-                document.querySelectorAll('.support-tab')[0].classList.add('active');
-                document.getElementById('questionsTab').classList.add('active');
-            } else {
-                document.querySelectorAll('.support-tab')[1].classList.add('active');
-                document.getElementById('contactTab').classList.add('active');
-            }
-            
-            // Clear answer area and hide form
-            document.getElementById('answerArea').innerHTML = '';
-            document.getElementById('contactForm').classList.remove('active');
-        }
-        
-        function showQuickAnswer(topic) {
-            const answers = {
-                wallet: {
-                    title: '🔐 Підключення гаманця',
-                    text: 'Натисніть кнопку "Підключити гаманець" у верхньому правому куті. Виберіть ваш гаманець (MetaMask, Trust Wallet, Coinbase Wallet тощо). Підтвердіть підключення у вашому гаманці. Готово!'
-                },
-                buy: {
-                    title: '💰 Купівля токенів Антируб',
-                    text: 'Заробляємо на падінні рубля, купуючи токен Антируб! Ціна 1 Антируб = поточний курс USDT/RUB (зараз ~81 USDT). Перейдіть у розділ торгівлі, введіть суму USDT, комісія 0.5%. Потім стейкайте Антируб і USDT — отримуйте ще більше Антируб!'
-                },
-                stake: {
-                    title: '🔒 Як працює стейкінг',
-                    text: 'Стейкаємо ARUB і USDT — отримуємо ще більше ARUB! Мінімум: 10 USDT або 0.1 ARUB. Винагороди нараховуються автоматично в токенах ARUB. Можете зняти в будь-який час без штрафів. Чим слабший рубль, тим дорожчий кожен ваш токен!'
-                },
-                fees: {
-                    title: '💳 Комісії платформи',
-                    text: 'Купівля ARUB: 0.5% комісія. Продаж ARUB: 1% комісія. Стейкінг: без комісій платформи (тільки gas Ethereum). Всі комісії йдуть на аудит, розвиток та оплату команді.'
-                },
-                security: {
-                    title: '🛡️ Безпека платформи',
-                    text: 'Всі операції відбуваються через перевірені смарт-контракти на Ethereum. Код повністю відкритий для аудиту. Ваші кошти завжди під вашим контролем. Ми не маємо доступу до ваших приватних ключів.'
-                },
-                withdraw: {
-                    title: '💸 Виведення коштів',
-                    text: 'Перейдіть у розділ стейкінгу або торгівлі. Виберіть суму для зняття. Натисніть "Зняти" або "Продати". Підтвердіть транзакцію у гаманці. Кошти надійдуть миттєво після підтвердження в блокчейні.'
-                }
-            };
-            
-            const answer = answers[topic];
-            const answerArea = document.getElementById('answerArea');
-            
-            answerArea.innerHTML = `
-                <div class="support-message" style="animation: slideIn 0.3s ease-out;">
-                    <h4 style="color: var(--ukraine-yellow); margin-bottom: 10px;">${answer.title}</h4>
-                    <p style="white-space: pre-line;">${answer.text}</p>
-                    <div style="margin-top: 15px; padding-top: 15px; border-top: 1px solid rgba(255,255,255,0.1);">
-                        <p style="font-size: 0.85em; color: var(--gray);">
-                            💡 Це не відповіло на ваше питання? <a href="#" onclick="switchSupportTab('contact'); return false;" style="color: var(--ukraine-blue);">Зв'яжіться з нами</a>
-                        </p>
-                    </div>
-                </div>
-            `;
-            
-            // Scroll to answer
-            answerArea.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
-        }
-        
-        function showContactForm() {
-            document.getElementById('contactForm').classList.add('active');
-            document.querySelector('.support-contact-methods').parentElement.style.display = 'none';
-        }
-        
-        function hideContactForm() {
-            document.getElementById('contactForm').classList.remove('active');
-            document.querySelector('.support-contact-methods').parentElement.style.display = 'block';
-        }
-        
-        function submitContactForm(event) {
-            event.preventDefault();
-            
-            // Here you would normally send the form data to your backend
-            showNotification('✅ Повідомлення відправлено! Ми зв\'яжемося з вами найближчим часом.', 'success');
-            
-            // Reset form and hide it
-            event.target.reset();
-            hideContactForm();
-            
-            // Close support chat after a delay
-            setTimeout(() => {
-                toggleSupportChat();
-            }, 2000);
-        }
-        
-        // ==========================================
-        // INITIALIZATION - ALL IN ONE PLACE
-        // ==========================================
-        console.log('🔵 Script loaded, waiting for DOM...');
-        
         window.addEventListener('DOMContentLoaded', async () => {
-            console.log('✅ DOM Content Loaded!');
+            console.log('✅ DOM loaded');
             
-            // 1. Setup Connect Button
             const connectBtn = document.getElementById('connectBtn');
             if (connectBtn) {
-                console.log('✅ Connect button found, attaching listener');
-                connectBtn.addEventListener('click', () => {
-                    console.log('🔵 Connect button clicked!');
-                    connectWallet();
-                });
-            } else {
-                console.error('❌ Connect button NOT found!');
+                connectBtn.addEventListener('click', connectWallet);
             }
             
-            // 2. Setup input listener for stakeArubAmount
-            document.addEventListener('input', (e) => {
-                if (e.target && e.target.id === 'stakeArubAmount') {
-                    updateArubValueInUsdt(e.target.value);
-                }
-            });
-            
-            // 3. Request EIP-6963 providers
-            console.log('🔵 Requesting EIP-6963 providers in DOM...');
-            window.dispatchEvent(new Event('eip6963:requestProvider'));
-            
-            await new Promise(resolve => setTimeout(resolve, 100));
-            console.log('✅ EIP-6963 providers discovered:', discoveredProviders.size);
-            
-            // 4. Fetch USDT/RUB rate
             await fetchUsdtRubRate();
-            
-            // 5. Setup rate update interval (every 5 minutes)
             setInterval(fetchUsdtRubRate, 300000);
             
-            // 6. Show welcome tooltip after 3 seconds
-            setTimeout(() => {
-                showWelcomeTooltip();
-            }, 3000);
-            
-            console.log('✅ All initialization complete!');
+            console.log('✅ Initialization complete');
         });
-        
-        // Show welcome tooltip for support widget
-        function showWelcomeTooltip() {
-            // Check if user has seen the tooltip before
-            if (localStorage.getItem('supportTooltipSeen')) {
-                return;
-            }
-            
-            const tooltip = document.createElement('div');
-            tooltip.style.cssText = `
-                position: fixed;
-                bottom: 110px;
-                right: 30px;
-                background: linear-gradient(135deg, var(--ukraine-blue), var(--ukraine-yellow));
-                color: white;
-                padding: 15px 20px;
-                border-radius: 15px;
-                box-shadow: 0 10px 30px rgba(0,0,0,0.3);
-                max-width: 280px;
-                z-index: 3001;
-                animation: slideUp 0.5s ease-out;
-                font-size: 0.95em;
-            `;
-            
-            tooltip.innerHTML = `
-                <div style="display: flex; align-items: start; gap: 10px;">
-                    <div style="font-size: 1.5em;">👋</div>
-                    <div>
-                        <strong>Вітаємо в ANTI RUB!</strong><br>
-                        <span style="opacity: 0.9;">Є питання? Натисніть на кнопку підтримки</span>
-                    </div>
-                    <button onclick="this.parentElement.parentElement.remove()" style="background: none; border: none; color: white; cursor: pointer; font-size: 1.2em; padding: 0; margin-left: auto;">✕</button>
-                </div>
-            `;
-            
-            document.body.appendChild(tooltip);
-            
-            // Auto-hide after 8 seconds
-            setTimeout(() => {
-                if (tooltip.parentElement) {
-                    tooltip.style.animation = 'slideUp 0.3s ease-out reverse';
-                    setTimeout(() => tooltip.remove(), 300);
-                }
-            }, 8000);
-            
-            // Mark as seen
-            localStorage.setItem("supportTooltipSeen", "true");
-        }
     </script>
 </body>
 </html>
