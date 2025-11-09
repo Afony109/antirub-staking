@@ -902,8 +902,9 @@
                 <div class="stat-label">Ціна 1 ARUB (USDT)</div>
             </div>
             <div class="stat-card">
-                <div class="stat-value" id="totalStaked">0</div>
-                <div class="stat-label">Всього застейкано (USDT)</div>
+                <div class="stat-value" id="totalStaked">$0</div>
+                <div class="stat-label">Всього застейкано (USD)</div>
+                <div style="color: var(--gray); font-size: 0.85em; margin-top: 5px;">USDT + ARUB у доларах</div>
             </div>
             <div class="stat-card">
                 <div class="stat-value" id="rubDevaluation">-65%</div>
@@ -2148,8 +2149,9 @@
             
             // Update stats
             if (document.getElementById('totalStaked')) {
-                document.getElementById('totalStaked').textContent = 
-                    `$${ethers.utils.formatUnits(totalStaked, 6)}`;
+                // Calculate total staked in USD: USDT + (ARUB × price)
+                const totalStakedUSD = totalStakedFormatted;
+                document.getElementById('totalStaked').textContent = `$${totalStakedUSD}`;
             }
             
             // Get current ARUB price in USDT for converting thresholds
@@ -3101,8 +3103,61 @@
             updateArbitrageRates();
             setInterval(updateArbitrageRates, 300000);
             
+            // Load public stats without wallet connection
+            await loadPublicStats();
+            setInterval(loadPublicStats, 60000); // Update every minute
+            
             console.log('✅ Initialization complete');
         });
+        
+        // Load public statistics (without wallet connection)
+        async function loadPublicStats() {
+            try {
+                console.log('🔵 Loading public stats...');
+                
+                // Create read-only provider for Sepolia
+                const publicProvider = new ethers.providers.JsonRpcProvider('https://rpc.sepolia.org');
+                
+                // Initialize contracts with read-only provider
+                const STAKING_ABI = [
+                    'function totalStaked() view returns (uint256)',
+                    'function currentAPY() view returns (uint256)',
+                    'function totalStakers() view returns (uint256)'
+                ];
+                
+                const publicStakingContract = new ethers.Contract(
+                    CONFIG.STAKING_ADDRESS,
+                    STAKING_ABI,
+                    publicProvider
+                );
+                
+                // Get total staked from contract
+                const totalStaked = await publicStakingContract.totalStaked();
+                
+                // Calculate total staked in USD
+                const totalStakedInArub = parseFloat(ethers.utils.formatUnits(totalStaked, 6));
+                const arubPriceInUsdt = currentRate || 81.22;
+                const totalStakedValueInUsd = totalStakedInArub * arubPriceInUsdt;
+                
+                // Update stats display
+                if (document.getElementById('totalStaked')) {
+                    document.getElementById('totalStaked').textContent = 
+                        `$${totalStakedValueInUsd.toLocaleString('en-US', { maximumFractionDigits: 0 })}`;
+                }
+                
+                console.log('✅ Public stats loaded:', {
+                    totalStaked: ethers.utils.formatUnits(totalStaked, 6),
+                    totalStakedUSD: totalStakedValueInUsd.toFixed(2)
+                });
+                
+            } catch (error) {
+                console.log('⚠️ Could not load public stats (contract may not be deployed yet)');
+                // Set default value if contract not available
+                if (document.getElementById('totalStaked')) {
+                    document.getElementById('totalStaked').textContent = '$0';
+                }
+            }
+        }
         
         // Update arbitrage section with current rates
         function updateArbitrageRates() {
