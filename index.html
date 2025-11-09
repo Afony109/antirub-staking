@@ -674,6 +674,158 @@
         </div>
     </section>
     
+    <!-- Staking Section -->
+    <section class="staking-section" id="staking">
+        <h2 class="section-title">Стейкаємо Антируб і USDT — отримуємо більше Антируб</h2>
+        
+        <div style="text-align: center; margin-bottom: 40px;">
+            <p style="color: var(--gray); font-size: 1.2em; max-width: 800px; margin: 0 auto; line-height: 1.8;">
+                <strong style="color: white;">Стейкайте ARUB або USDT</strong> та отримуйте винагороди в токенах ARUB! 
+                Динамічний APY від 8% до 24% залежно від загальної кількості застейканих токенів.
+            </p>
+        </div>
+        
+        <div id="stakingInterface">
+            <div style="text-align: center; padding: 60px; color: var(--gray);">
+                <div style="font-size: 3em; margin-bottom: 20px;">🔒</div>
+                <p style="font-size: 1.3em;">Підключіть гаманець для доступу до стейкінгу</p>
+            </div>
+        </div>
+    </section>
+    
+    <!-- Add Token Guide Section -->
+    <section class="staking-section" id="add-token-guide" style="background: linear-gradient(135deg, rgba(0,87,183,0.05), rgba(255,215,0,0.05));">
+        <h2 class="section-title">📋 Додайте ARUB до вашого гаманця</h2>
+        
+        <div style="max-width: 900px; margin: 0 auto;">
+            <div style="text-align: center; margin-bottom: 40px;">
+                <p style="color: var(--gray); font-size: 1.2em; line-height: 1.8;">
+                    Щоб бачити ваші токени ARUB у гаманці, додайте контракт токена вручну
+                </p>
+            </div>
+            
+            <!-- Token Info Card -->
+            <div class="staking-card" style="margin-bottom: 40px;">
+                <div class="card-header" style="justify-content: center;">
+                    <div class="card-icon">🪙</div>
+                    <h3 class="card-title">Інформація про токен ARUB</h3>
+                </div>
+                
+                <div style="background: rgba(0,87,183,0.1); padding: 25px; border-radius: 15px; margin-bottom: 25px;">
+                    <div style="display: grid; gap: 20px;">
+                        <div>
+                            <div style="color: var(--gray); font-size: 0.9em; margin-bottom: 8px;">Адреса контракту:</div>
+                            <div style="display: flex; align-items: center; gap: 10px; background: rgba(0,0,0,0.3); padding: 15px; border-radius: 10px;">
+                                <code style="color: var(--ukraine-yellow); font-size: 0.95em; word-break: break-all; flex: 1;" id="tokenAddressDisplay">0xe4A39E3D2C64C2D3a1d9c7C6B9eB63db55277b71</code>
+                                <button onclick="copyTokenAddress()" style="padding: 8px 16px; background: var(--ukraine-blue); border: none; border-radius: 8px; color: white; cursor: pointer; white-space: nowrap; font-weight: 600;">
+                                    📋 Копіювати
+                                </button>
+                            </div>
+                        </div>
+                        
+                        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px;">
+                            <div style="background: rgba(0,0,0,0.3); padding: 15px; border-radius: 10px;">
+                                <div style="color: var(--gray); font-size: 0.9em; margin-bottom: 5px;">Символ токена:</div>
+                                <div style="color: var(--ukraine-yellow); font-size: 1.3em; font-weight: bold;">ARUB</div>
+                            </div>
+                            
+                            <div style="background: rgba(0,0,0,0.3); padding: 15px; border-radius: 10px;">
+                                <div style="color: var(--gray); font-size: 0.9em; margin-bottom: 5px;">Decimals:</div>
+                                <div style="color: var(--ukraine-yellow); font-size: 1.3em; font-weight: bold;">6</div>
+                            </div>
+                            
+                            <div style="background: rgba(0,0,0,0.3); padding: 15px; border-radius: 10px;">
+                                <div style="color: var(--gray); font-size: 0.9em; margin-bottom: 5px;">Мережа:</div>
+                                <div style="color: var(--ukraine-yellow); font-size: 1.3em; font-weight: bold;">Sepolia</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div style="text-align: center;">
+                    <button class="action-btn" onclick="showDetailedWalletGuide()" style="max-width: 400px; margin: 0 auto;">
+                        📖 Детальна інструкція для всіх гаманців
+                    </button>
+                </div>
+            </div>
+            
+            <!-- Quick Guides Grid -->
+            <div class="staking-grid" style="grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));">
+                <!-- MetaMask Guide -->
+                <div class="staking-card">
+                    <div class="card-header">
+                        <div class="card-icon">🦊</div>
+                        <h3 class="card-title">MetaMask</h3>
+                    </div>
+                    
+                    <ol style="color: var(--gray); line-height: 2; padding-left: 20px;">
+                        <li>Відкрийте MetaMask</li>
+                        <li>Перейдіть на вкладку <strong style="color: white;">"Assets"</strong></li>
+                        <li>Прокрутіть вниз і натисніть <strong style="color: white;">"Import tokens"</strong></li>
+                        <li>Вставте адресу контракту (скопіюйте вище)</li>
+                        <li>Символ і decimals заповняться автоматично</li>
+                        <li>Натисніть <strong style="color: white;">"Import Tokens"</strong></li>
+                    </ol>
+                    
+                    <div style="margin-top: 20px; padding: 15px; background: rgba(0,87,183,0.1); border-radius: 10px;">
+                        <p style="color: var(--gray); font-size: 0.85em; margin: 0;">
+                            💡 MetaMask автоматично визначить символ <strong style="color: white;">ARUB</strong> та decimals <strong style="color: white;">6</strong>
+                        </p>
+                    </div>
+                </div>
+                
+                <!-- Trust Wallet Guide -->
+                <div class="staking-card">
+                    <div class="card-header">
+                        <div class="card-icon">🛡️</div>
+                        <h3 class="card-title">Trust Wallet</h3>
+                    </div>
+                    
+                    <ol style="color: var(--gray); line-height: 2; padding-left: 20px;">
+                        <li>Відкрийте Trust Wallet</li>
+                        <li>Натисніть <strong style="color: white;">⚙️</strong> (налаштування)</li>
+                        <li>Виберіть <strong style="color: white;">"Manage Crypto"</strong></li>
+                        <li>Натисніть <strong style="color: white;">"+"</strong> (додати токен)</li>
+                        <li>Виберіть <strong style="color: white;">"Ethereum"</strong> → <strong style="color: white;">"Add Custom Token"</strong></li>
+                        <li>Заповніть дані (адреса, ARUB, 6)</li>
+                    </ol>
+                    
+                    <div style="margin-top: 20px; padding: 15px; background: rgba(255,215,0,0.1); border-radius: 10px;">
+                        <p style="color: var(--gray); font-size: 0.85em; margin: 0;">
+                            ⚠️ Важливо вказати правильну мережу: <strong style="color: white;">Ethereum Sepolia</strong>
+                        </p>
+                    </div>
+                </div>
+                
+                <!-- Other Wallets Guide -->
+                <div class="staking-card">
+                    <div class="card-header">
+                        <div class="card-icon">💼</div>
+                        <h3 class="card-title">Інші гаманці</h3>
+                    </div>
+                    
+                    <div style="color: var(--gray); line-height: 1.8;">
+                        <p style="margin-bottom: 15px;">Для більшості гаманців процес схожий:</p>
+                        <ol style="padding-left: 20px; line-height: 2;">
+                            <li>Знайдіть розділ <strong style="color: white;">"Tokens"</strong> або <strong style="color: white;">"Assets"</strong></li>
+                            <li>Знайдіть кнопку <strong style="color: white;">"Add Token"</strong></li>
+                            <li>Виберіть <strong style="color: white;">"Custom Token"</strong></li>
+                            <li>Вставте адресу контракту</li>
+                            <li>Вкажіть Symbol: <strong style="color: white;">ARUB</strong></li>
+                            <li>Вкажіть Decimals: <strong style="color: white;">6</strong></li>
+                        </ol>
+                    </div>
+                    
+                    <div style="margin-top: 20px; padding: 15px; background: rgba(0,87,183,0.1); border-radius: 10px;">
+                        <p style="color: var(--gray); font-size: 0.85em; margin: 0;">
+                            🔗 Підтримуються: Coinbase Wallet, Rainbow, Rabby, OKX Wallet та інші
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+    
     <script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script>
         console.log('🚀 ANTI RUB Platform Starting...');
         
@@ -762,6 +914,7 @@
                 initializeContracts();
                 updateTradingUI();
                 updateFaucetUI();
+                updateStakingUI();
                 
                 showNotification('✅ Гаманець успішно підключено!', 'success');
                 document.getElementById('connectBtn').textContent = 
@@ -831,14 +984,28 @@
                 'function approve(address spender, uint256 amount) returns (bool)',
                 'function allowance(address owner, address spender) view returns (uint256)',
                 'function oraclePrice() view returns (uint256)',
-                'function mint(uint256 _wad) external',  // ✅ Купівля токенів
-                'function burn(uint256 _value) external' // ✅ Продаж токенів
+                'function mint(uint256 _wad) external',
+                'function burn(uint256 _value) external'
+            ];
+            
+            const STAKING_ABI = [
+                'function stakeArub(uint256 _amount) external',
+                'function unstakeArub(uint256 _amount) external',
+                'function claimRewards(bool _compound) external',
+                'function getUserInfo(address _user) view returns (uint256 stakedAmount, uint256 pendingRewards, uint256 totalClaimed, uint256 lastStakeTime, uint256 currentAPY_)',
+                'function getPoolStats() view returns (uint256 totalStaked_, uint256 totalStakers_, uint256 totalRewardsDistributed_, uint256 currentAPY_, uint256 totalStakes_, uint256 totalUnstakes_, uint256 totalClaims_)',
+                'function getAPYTiers() view returns (uint256[] memory thresholds, uint256[] memory apys)',
+                'function getCurrentAPYTier() view returns (uint256 tier, uint256 threshold, uint256 apy, string memory description)',
+                'function totalStaked() view returns (uint256)',
+                'function currentAPY() view returns (uint256)',
+                'function minStakeAmount() view returns (uint256)'
             ];
             
             try {
                 usdtContract = new ethers.Contract(CONFIG.USDT_ADDRESS, USDT_ABI, signer);
                 tokenContract = new ethers.Contract(CONFIG.TOKEN_ADDRESS, TOKEN_ABI, signer);
-                console.log('✅ Contracts initialized');
+                stakingContract = new ethers.Contract(CONFIG.STAKING_ADDRESS, STAKING_ABI, signer);
+                console.log('✅ All contracts initialized');
             } catch (error) {
                 console.error('❌ Error initializing contracts:', error);
             }
@@ -1086,6 +1253,218 @@
             }
         }
         
+        async function updateStakingUI() {
+            if (!userAddress) return;
+            
+            console.log('🔵 Updating staking UI...');
+            
+            let usdtBalance = ethers.BigNumber.from(0);
+            let arubBalance = ethers.BigNumber.from(0);
+            let stakedAmount = ethers.BigNumber.from(0);
+            let pendingRewards = ethers.BigNumber.from(0);
+            let totalStaked = ethers.BigNumber.from(0);
+            let currentAPY = 0;
+            
+            try {
+                [usdtBalance, arubBalance] = await Promise.all([
+                    usdtContract.balanceOf(userAddress).catch(() => ethers.BigNumber.from(0)),
+                    tokenContract.balanceOf(userAddress).catch(() => ethers.BigNumber.from(0))
+                ]);
+                
+                if (stakingContract) {
+                    try {
+                        const userInfo = await stakingContract.getUserInfo(userAddress);
+                        stakedAmount = userInfo[0];
+                        pendingRewards = userInfo[1];
+                        
+                        totalStaked = await stakingContract.totalStaked();
+                        currentAPY = await stakingContract.currentAPY();
+                    } catch (error) {
+                        console.log('⚠️ Staking contract data not available');
+                    }
+                }
+                
+                console.log('✅ Staking data loaded');
+            } catch (error) {
+                console.log('⚠️ Could not load staking data');
+            }
+            
+            // Update stats
+            if (document.getElementById('totalStaked')) {
+                document.getElementById('totalStaked').textContent = 
+                    `$${ethers.utils.formatUnits(totalStaked, 6)}`;
+            }
+            
+            const stakingInterface = document.getElementById('stakingInterface');
+            stakingInterface.innerHTML = `
+                <!-- Dynamic APY Banner -->
+                <div style="background: linear-gradient(135deg, rgba(0,87,183,0.2), rgba(255,215,0,0.2)); border: 2px solid var(--ukraine-blue); border-radius: 20px; padding: 30px; margin-bottom: 40px;">
+                    <div style="display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 20px;">
+                        <div>
+                            <div style="font-size: 1.5em; font-weight: bold; margin-bottom: 10px;">📊 Динамічний APY</div>
+                            <div style="color: var(--gray);">Чим раніше застейкаєте - тим вищий APY!</div>
+                        </div>
+                        <div style="text-align: right;">
+                            <div style="font-size: 3em; font-weight: bold; background: linear-gradient(45deg, var(--ukraine-blue), var(--ukraine-yellow)); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">
+                                ${(currentAPY / 100).toFixed(0)}%
+                            </div>
+                            <div style="color: var(--ukraine-yellow);">Поточний APY</div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="staking-grid">
+                    <!-- Stake ARUB Card -->
+                    <div class="staking-card">
+                        <div class="card-header">
+                            <div class="card-icon">💎</div>
+                            <h3 class="card-title">Застейкати ARUB</h3>
+                        </div>
+                        
+                        <div class="input-group">
+                            <label class="input-label">Кількість ARUB</label>
+                            <div class="input-wrapper">
+                                <input type="number" 
+                                       class="input-field" 
+                                       id="stakeArubAmount" 
+                                       placeholder="0.00"
+                                       step="0.01"
+                                       min="0.1">
+                                <button class="max-btn" onclick="setMaxStakeArub()">MAX</button>
+                            </div>
+                        </div>
+                        
+                        <div class="info-row">
+                            <span class="info-label">Ваш баланс ARUB:</span>
+                            <span class="info-value">${ethers.utils.formatUnits(arubBalance, 6)} ARUB</span>
+                        </div>
+                        
+                        <div class="info-row">
+                            <span class="info-label">Поточний APY:</span>
+                            <span class="info-value" style="color: #10b981;">${(currentAPY / 100).toFixed(0)}%</span>
+                        </div>
+                        
+                        <div class="info-row">
+                            <span class="info-label">Мінімум для стейкінгу:</span>
+                            <span class="info-value">0.1 ARUB</span>
+                        </div>
+                        
+                        <div style="background: rgba(255,215,0,0.1); padding: 12px; border-radius: 10px; margin: 15px 0;">
+                            <p style="color: var(--gray); font-size: 0.85em; line-height: 1.5; margin: 0;">
+                                💎 Стейкайте ARUB для отримання винагород! Чим більше застейкано в пулі, тим нижчий APY для нових стейкерів.
+                            </p>
+                        </div>
+                        
+                        <button class="action-btn" onclick="stakeArubTokens()">
+                            💎 Застейкати ARUB
+                        </button>
+                    </div>
+                    
+                    <!-- Your Staking Info Card -->
+                    <div class="staking-card">
+                        <div class="card-header">
+                            <div class="card-icon">📊</div>
+                            <h3 class="card-title">Ваш стейкінг</h3>
+                        </div>
+                        
+                        <div style="text-align: center; padding: 20px 0;">
+                            <div style="font-size: 2.5em; font-weight: bold; background: linear-gradient(45deg, var(--ukraine-blue), var(--ukraine-yellow)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; margin-bottom: 10px;">
+                                ${ethers.utils.formatUnits(stakedAmount, 6)}
+                            </div>
+                            <div style="color: var(--gray); font-size: 1.1em; margin-bottom: 20px;">
+                                ARUB застейкано
+                            </div>
+                        </div>
+                        
+                        <div class="info-row">
+                            <span class="info-label">Винагороди:</span>
+                            <span class="info-value">${ethers.utils.formatUnits(pendingRewards, 6)} ARUB</span>
+                        </div>
+                        
+                        <div class="info-row">
+                            <span class="info-label">Ваш APY:</span>
+                            <span class="info-value" style="color: #10b981;">${(currentAPY / 100).toFixed(0)}%</span>
+                        </div>
+                        
+                        <div class="info-row">
+                            <span class="info-label">Баланс ARUB:</span>
+                            <span class="info-value">${ethers.utils.formatUnits(arubBalance, 6)} ARUB</span>
+                        </div>
+                        
+                        <button class="action-btn" onclick="claimRewards()" ${pendingRewards.eq(0) ? 'disabled' : ''}>
+                            💰 Забрати винагороди
+                        </button>
+                    </div>
+                    
+                    <!-- Unstake Card -->
+                    <div class="staking-card">
+                        <div class="card-header">
+                            <div class="card-icon">🔓</div>
+                            <h3 class="card-title">Зняти ARUB</h3>
+                        </div>
+                        
+                        <div class="input-group">
+                            <label class="input-label">Кількість ARUB</label>
+                            <div class="input-wrapper">
+                                <input type="number" 
+                                       class="input-field" 
+                                       id="unstakeArubAmount" 
+                                       placeholder="0.00"
+                                       step="0.01"
+                                       min="0">
+                                <button class="max-btn" onclick="setMaxUnstakeArub()">MAX</button>
+                            </div>
+                        </div>
+                        
+                        <div class="info-row">
+                            <span class="info-label">Застейкано:</span>
+                            <span class="info-value">${ethers.utils.formatUnits(stakedAmount, 6)} ARUB</span>
+                        </div>
+                        
+                        <div class="info-row">
+                            <span class="info-label">Доступні винагороди:</span>
+                            <span class="info-value">${ethers.utils.formatUnits(pendingRewards, 6)} ARUB</span>
+                        </div>
+                        
+                        <div style="background: rgba(0,87,183,0.1); padding: 12px; border-radius: 10px; margin: 15px 0;">
+                            <p style="color: var(--gray); font-size: 0.85em; line-height: 1.5; margin: 0;">
+                                💡 При знятті ARUB ви автоматично отримаєте всі накопичені винагороди. Без комісій та штрафів!
+                            </p>
+                        </div>
+                        
+                        <button class="action-btn" onclick="unstakeArubTokens()" ${stakedAmount.eq(0) ? 'disabled' : ''}>
+                            🔓 Зняти ARUB
+                        </button>
+                    </div>
+                </div>
+                
+                <!-- Pool Stats -->
+                <div style="margin-top: 40px; background: rgba(0,87,183,0.05); padding: 30px; border-radius: 20px; border: 2px solid rgba(0,87,183,0.2);">
+                    <h3 style="text-align: center; font-size: 1.8em; margin-bottom: 30px; color: var(--ukraine-yellow);">📊 Статистика пулу</h3>
+                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 20px;">
+                        <div style="text-align: center; padding: 20px; background: rgba(0,0,0,0.3); border-radius: 15px;">
+                            <div style="font-size: 2em; font-weight: bold; color: var(--ukraine-yellow); margin-bottom: 5px;">
+                                ${ethers.utils.formatUnits(totalStaked, 6)}
+                            </div>
+                            <div style="color: var(--gray);">Всього застейкано ARUB</div>
+                        </div>
+                        <div style="text-align: center; padding: 20px; background: rgba(0,0,0,0.3); border-radius: 15px;">
+                            <div style="font-size: 2em; font-weight: bold; color: var(--ukraine-yellow); margin-bottom: 5px;">
+                                ${(currentAPY / 100).toFixed(0)}%
+                            </div>
+                            <div style="color: var(--gray);">Поточний APY</div>
+                        </div>
+                        <div style="text-align: center; padding: 20px; background: rgba(0,0,0,0.3); border-radius: 15px;">
+                            <div style="font-size: 2em; font-weight: bold; color: var(--ukraine-yellow); margin-bottom: 5px;">
+                                24/7
+                            </div>
+                            <div style="color: var(--gray);">Нарахування винагород</div>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+        
         function calculateBuyAmount() {
             const buyAmount = parseFloat(document.getElementById('buyAmount')?.value || 0);
             if (buyAmount > 0) {
@@ -1239,6 +1618,243 @@
                 console.error('Faucet error:', error);
                 showNotification('❌ Помилка отримання USDT', 'error');
             }
+        }
+        
+        // Staking Functions
+        function setMaxStakeArub() {
+            if (!tokenContract || !userAddress) return;
+            tokenContract.balanceOf(userAddress).then(balance => {
+                document.getElementById('stakeArubAmount').value = ethers.utils.formatUnits(balance, 6);
+            });
+        }
+        
+        function setMaxUnstakeArub() {
+            if (!stakingContract || !userAddress) return;
+            stakingContract.getUserInfo(userAddress).then(userInfo => {
+                const stakedAmount = userInfo[0];
+                document.getElementById('unstakeArubAmount').value = ethers.utils.formatUnits(stakedAmount, 6);
+            });
+        }
+        
+        async function stakeArubTokens() {
+            const amount = document.getElementById('stakeArubAmount')?.value;
+            
+            if (!amount || parseFloat(amount) < 0.1) {
+                showNotification('❌ Мінімальна кількість для стейкінгу — 0.1 ARUB', 'error');
+                return;
+            }
+            
+            try {
+                const amountWei = ethers.utils.parseUnits(amount, 6);
+                
+                showNotification('🔄 Перевірка дозволу...', 'info');
+                
+                const allowance = await tokenContract.allowance(userAddress, CONFIG.STAKING_ADDRESS);
+                
+                if (allowance.lt(amountWei)) {
+                    showNotification('🔄 Схвалення ARUB для стейкінгу...', 'info');
+                    const approveTx = await tokenContract.approve(
+                        CONFIG.STAKING_ADDRESS,
+                        ethers.constants.MaxUint256
+                    );
+                    await approveTx.wait();
+                    showNotification('✅ ARUB схвалено!', 'success');
+                }
+                
+                showNotification('🔄 Стейкінг ARUB...', 'info');
+                const stakeTx = await stakingContract.stakeArub(amountWei);
+                await stakeTx.wait();
+                
+                showNotification('✅ ARUB успішно застейкано!', 'success');
+                
+                document.getElementById('stakeArubAmount').value = '';
+                await updateStakingUI();
+                await updateTradingUI();
+                
+            } catch (error) {
+                console.error('Staking error:', error);
+                showNotification(`❌ Помилка стейкінгу: ${error.message}`, 'error');
+            }
+        }
+        
+        async function unstakeArubTokens() {
+            const amount = document.getElementById('unstakeArubAmount')?.value;
+            
+            if (!amount || parseFloat(amount) <= 0) {
+                showNotification('❌ Введіть коректну суму', 'error');
+                return;
+            }
+            
+            try {
+                const amountWei = ethers.utils.parseUnits(amount, 6);
+                
+                showNotification('🔄 Зняття ARUB...', 'info');
+                const unstakeTx = await stakingContract.unstakeArub(amountWei);
+                await unstakeTx.wait();
+                
+                showNotification('✅ ARUB успішно знято! Винагороди автоматично отримано.', 'success');
+                
+                document.getElementById('unstakeArubAmount').value = '';
+                await updateStakingUI();
+                await updateTradingUI();
+                
+            } catch (error) {
+                console.error('Unstaking error:', error);
+                showNotification(`❌ Помилка зняття: ${error.message}`, 'error');
+            }
+        }
+        
+        async function claimRewards() {
+            try {
+                showNotification('🔄 Отримання винагород...', 'info');
+                const claimTx = await stakingContract.claimRewards(false);
+                await claimTx.wait();
+                
+                showNotification('✅ Винагороди успішно отримано!', 'success');
+                await updateStakingUI();
+                await updateTradingUI();
+                
+            } catch (error) {
+                console.error('Claim error:', error);
+                showNotification(`❌ Помилка отримання винагород: ${error.message}`, 'error');
+            }
+        }
+        
+        // Wallet Guide Functions
+        function copyTokenAddress() {
+            const address = CONFIG.TOKEN_ADDRESS;
+            navigator.clipboard.writeText(address).then(() => {
+                showNotification('✅ Адресу скопійовано!', 'success');
+            }).catch(() => {
+                showNotification('❌ Помилка копіювання', 'error');
+            });
+        }
+        
+        function showDetailedWalletGuide() {
+            const modal = document.createElement('div');
+            modal.className = 'wallet-modal';
+            modal.innerHTML = `
+                <div class="wallet-modal-content" style="max-width: 700px; max-height: 85vh; overflow-y: auto;">
+                    <h2 class="wallet-modal-title">Як додати ARUB токен до гаманця</h2>
+                    
+                    <div style="background: rgba(0,87,183,0.1); padding: 20px; border-radius: 12px; margin-bottom: 25px; border: 2px solid var(--ukraine-blue);">
+                        <h3 style="color: white; margin-bottom: 15px;">📋 Інформація про токен</h3>
+                        <div style="background: rgba(0,0,0,0.3); padding: 15px; border-radius: 8px;">
+                            <div style="margin-bottom: 10px;">
+                                <strong style="color: var(--ukraine-blue);">Адреса контракту:</strong><br>
+                                <span style="color: var(--ukraine-yellow); word-break: break-all; font-family: monospace;">${CONFIG.TOKEN_ADDRESS}</span>
+                                <button onclick="copyTokenAddress(); event.stopPropagation();" 
+                                        style="margin-left: 10px; padding: 5px 10px; background: var(--ukraine-blue); border: none; border-radius: 5px; color: white; cursor: pointer;">
+                                    📋 Копіювати
+                                </button>
+                            </div>
+                            <div style="margin-bottom: 10px;">
+                                <strong style="color: var(--ukraine-blue);">Символ токена:</strong> ARUB
+                            </div>
+                            <div style="margin-bottom: 10px;">
+                                <strong style="color: var(--ukraine-blue);">Decimals:</strong> 6
+                            </div>
+                            <div>
+                                <strong style="color: var(--ukraine-blue);">Мережа:</strong> Ethereum Sepolia Testnet
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <h4 style="color: white; margin-bottom: 15px;">Інструкції для різних гаманців:</h4>
+                    
+                    <div style="display: flex; flex-direction: column; gap: 15px;">
+                        <details style="background: var(--card-bg); padding: 15px; border-radius: 10px; border: 1px solid rgba(0,87,183,0.3);">
+                            <summary style="cursor: pointer; font-weight: 600; color: white; padding: 5px;">
+                                🦊 MetaMask
+                            </summary>
+                            <ol style="margin-top: 15px; padding-left: 20px; color: var(--gray); line-height: 2;">
+                                <li>Відкрийте MetaMask</li>
+                                <li>Перейдіть на вкладку "Assets" (Активи)</li>
+                                <li>Прокрутіть вниз і натисніть "Import tokens"</li>
+                                <li>Вставте адресу контракту: <code style="color: var(--ukraine-yellow);">${CONFIG.TOKEN_ADDRESS}</code></li>
+                                <li>Символ і decimals заповняться автоматично</li>
+                                <li>Натисніть "Add Custom Token" → "Import Tokens"</li>
+                            </ol>
+                        </details>
+                        
+                        <details style="background: var(--card-bg); padding: 15px; border-radius: 10px; border: 1px solid rgba(0,87,183,0.3);">
+                            <summary style="cursor: pointer; font-weight: 600; color: white; padding: 5px;">
+                                🛡️ Trust Wallet
+                            </summary>
+                            <ol style="margin-top: 15px; padding-left: 20px; color: var(--gray); line-height: 2;">
+                                <li>Відкрийте Trust Wallet</li>
+                                <li>Натисніть на іконку налаштувань (⚙️)</li>
+                                <li>Виберіть "Manage Crypto"</li>
+                                <li>Натисніть "+" у правому верхньому куті</li>
+                                <li>Виберіть "Ethereum" → "Add Custom Token"</li>
+                                <li>Вставте адресу, Symbol: ARUB, Decimals: 6</li>
+                                <li>Натисніть "Done"</li>
+                            </ol>
+                        </details>
+                        
+                        <details style="background: var(--card-bg); padding: 15px; border-radius: 10px; border: 1px solid rgba(0,87,183,0.3);">
+                            <summary style="cursor: pointer; font-weight: 600; color: white; padding: 5px;">
+                                💼 Coinbase Wallet
+                            </summary>
+                            <ol style="margin-top: 15px; padding-left: 20px; color: var(--gray); line-height: 2;">
+                                <li>Відкрийте Coinbase Wallet</li>
+                                <li>Перейдіть на вкладку "Assets"</li>
+                                <li>Натисніть на "+" або "Add Asset"</li>
+                                <li>Виберіть "Token" → "Custom Token"</li>
+                                <li>Вставте адресу контракту</li>
+                                <li>Переконайтеся, що мережа "Ethereum Sepolia"</li>
+                                <li>Натисніть "Add"</li>
+                            </ol>
+                        </details>
+                        
+                        <details style="background: var(--card-bg); padding: 15px; border-radius: 10px; border: 1px solid rgba(0,87,183,0.3);">
+                            <summary style="cursor: pointer; font-weight: 600; color: white; padding: 5px;">
+                                🐰 Rabby Wallet
+                            </summary>
+                            <ol style="margin-top: 15px; padding-left: 20px; color: var(--gray); line-height: 2;">
+                                <li>Відкрийте Rabby Wallet</li>
+                                <li>Перейдіть на вкладку "Assets"</li>
+                                <li>Натисніть "Add Token" внизу списку</li>
+                                <li>Вставте адресу контракту</li>
+                                <li>Rabby автоматично визначить токен</li>
+                                <li>Натисніть "Confirm"</li>
+                            </ol>
+                        </details>
+                        
+                        <details style="background: var(--card-bg); padding: 15px; border-radius: 10px; border: 1px solid rgba(0,87,183,0.3);">
+                            <summary style="cursor: pointer; font-weight: 600; color: white; padding: 5px;">
+                                💎 Інші гаманці (Rainbow, OKX, та інші)
+                            </summary>
+                            <p style="margin-top: 15px; color: var(--gray);">
+                                Для більшості гаманців процес схожий:
+                            </p>
+                            <ol style="margin-top: 10px; padding-left: 20px; color: var(--gray); line-height: 2;">
+                                <li>Знайдіть розділ "Tokens" або "Assets"</li>
+                                <li>Знайдіть кнопку "Add Token" або "Import Token"</li>
+                                <li>Виберіть "Custom Token" або "ERC-20"</li>
+                                <li>Вставте адресу контракту</li>
+                                <li>Вкажіть Symbol: ARUB та Decimals: 6</li>
+                                <li>Підтвердіть додавання</li>
+                            </ol>
+                        </details>
+                    </div>
+                    
+                    <div style="margin-top: 25px; text-align: center;">
+                        <button onclick="this.closest('.wallet-modal').remove()" 
+                                style="padding: 12px 30px; background: linear-gradient(45deg, var(--ukraine-blue), var(--ukraine-yellow)); border: none; border-radius: 12px; color: white; cursor: pointer; font-size: 1em; font-weight: 600;">
+                            Закрити
+                        </button>
+                    </div>
+                </div>
+            `;
+            
+            document.body.appendChild(modal);
+            
+            modal.addEventListener('click', (e) => {
+                if (e.target === modal) {
+                    modal.remove();
+                }
+            });
         }
         
         function showNotification(message, type = 'info') {
