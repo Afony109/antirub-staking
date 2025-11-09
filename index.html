@@ -3415,4 +3415,11 @@
                     tooltip.style.animation = 'slideUp 0.3s ease-out reverse';
                     setTimeout(() => tooltip.remove(), 300);
                 }
-            }, 800
+            }, 8000);
+            
+            // Mark as seen
+            localStorage.setItem("supportTooltipSeen", "true");
+        }
+    </script>
+</body>
+</html>
