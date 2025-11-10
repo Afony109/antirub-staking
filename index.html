@@ -1635,7 +1635,7 @@
                     </div>
                     <div>
                         <div style="color: var(--gray); font-size: 0.9em; margin-bottom: 5px;">Staking Contract:</div>
-                        <code style="color: var(--ukraine-yellow); font-size: 0.85em; word-break: break-all;">0x2e2f5c01Ce66ad0780519b12a6012a1977077665</code>
+                        <code style="color: var(--ukraine-yellow); font-size: 0.85em; word-break: break-all;">0x47B302F223ae94e9efcABc27DE19C0a2eC268Df3</code>
                     </div>
                     <div>
                         <div style="color: var(--gray); font-size: 0.9em; margin-bottom: 5px;">MockUSDT:</div>
@@ -1674,7 +1674,7 @@
         const CONFIG = {
             USDT_ADDRESS: '0x4e6175f449b04e20437b2A2AD8221884Bda38f39',
             TOKEN_ADDRESS: '0xe4A39E3D2C64C2D3a1d9c7C6B9eB63db55277b71',
-            STAKING_ADDRESS: '0x2e2f5c01Ce66ad0780519b12a6012a1977077665',
+            STAKING_ADDRESS: '0x47B302F223ae94e9efcABc27DE19C0a2eC268Df3',
             NETWORK: {
                 chainId: '0xaa36a7',
                 chainName: 'Sepolia Testnet',
@@ -3114,9 +3114,11 @@
         async function loadPublicStats() {
             try {
                 console.log('🔵 Loading public stats...');
+                console.log('📍 Staking contract address:', CONFIG.STAKING_ADDRESS);
                 
                 // Create read-only provider for Sepolia
                 const publicProvider = new ethers.providers.JsonRpcProvider('https://rpc.sepolia.org');
+                console.log('✅ Public provider created');
                 
                 // Initialize contracts with read-only provider
                 const STAKING_ABI = [
@@ -3130,28 +3132,40 @@
                     STAKING_ABI,
                     publicProvider
                 );
+                console.log('✅ Staking contract initialized');
                 
                 // Get total staked from contract
+                console.log('📡 Calling totalStaked()...');
                 const totalStaked = await publicStakingContract.totalStaked();
+                console.log('✅ Total staked (raw):', totalStaked.toString());
                 
                 // Calculate total staked in USD
                 const totalStakedInArub = parseFloat(ethers.utils.formatUnits(totalStaked, 6));
+                console.log('💰 Total staked in ARUB:', totalStakedInArub);
+                
                 const arubPriceInUsdt = currentRate || 81.22;
+                console.log('💵 ARUB price:', arubPriceInUsdt);
+                
                 const totalStakedValueInUsd = totalStakedInArub * arubPriceInUsdt;
+                console.log('💲 Total staked in USD:', totalStakedValueInUsd);
                 
                 // Update stats display
                 if (document.getElementById('totalStaked')) {
-                    document.getElementById('totalStaked').textContent = 
-                        `$${totalStakedValueInUsd.toLocaleString('en-US', { maximumFractionDigits: 0 })}`;
+                    const formattedValue = `$${totalStakedValueInUsd.toLocaleString('en-US', { maximumFractionDigits: 0 })}`;
+                    document.getElementById('totalStaked').textContent = formattedValue;
+                    console.log('✅ Stats updated:', formattedValue);
                 }
                 
-                console.log('✅ Public stats loaded:', {
-                    totalStaked: ethers.utils.formatUnits(totalStaked, 6),
-                    totalStakedUSD: totalStakedValueInUsd.toFixed(2)
-                });
+                console.log('✅ Public stats loaded successfully');
                 
             } catch (error) {
-                console.log('⚠️ Could not load public stats (contract may not be deployed yet)');
+                console.error('❌ Error loading public stats:', error);
+                console.error('Error details:', {
+                    message: error.message,
+                    code: error.code,
+                    reason: error.reason
+                });
+                
                 // Set default value if contract not available
                 if (document.getElementById('totalStaked')) {
                     document.getElementById('totalStaked').textContent = '$0';
