@@ -1831,7 +1831,9 @@
             ];
             
             const STAKING_ABI = [
+                'function stakeUsdt(uint256 _amount) external',
                 'function stakeArub(uint256 _amount) external',
+                'function unstakeUsdt(uint256 _amount) external',
                 'function unstakeArub(uint256 _amount) external',
                 'function claimRewards(bool _compound) external',
                 'function getUserInfo(address _user) view returns (uint256 stakedAmount, uint256 pendingRewards, uint256 totalClaimed, uint256 lastStakeTime, uint256 currentAPY_)',
@@ -2657,30 +2659,46 @@
                 return;
             }
             
+            if (!userAddress) {
+                showNotification('❌ Спочатку підключіть гаманець', 'error');
+                return;
+            }
+            
             try {
+                console.log('[BUY] Starting buy process...');
+                console.log('[BUY] Amount:', amount, 'USDT');
+                
                 const amountWei = ethers.utils.parseUnits(amount, 6);
+                console.log('[BUY] Amount in wei:', amountWei.toString());
                 
                 showNotification('🔄 Перевірка дозволу USDT...', 'info');
                 
                 const allowance = await usdtContract.allowance(userAddress, CONFIG.TOKEN_ADDRESS);
+                console.log('[BUY] Current allowance:', allowance.toString());
                 
                 if (allowance.lt(amountWei)) {
                     showNotification('🔄 Схвалення USDT для контракту токена...', 'info');
+                    console.log('[BUY] Approving USDT...');
+                    
                     const approveTx = await usdtContract.approve(
                         CONFIG.TOKEN_ADDRESS,
                         ethers.constants.MaxUint256
                     );
+                    console.log('[BUY] Approve TX:', approveTx.hash);
                     await approveTx.wait();
                     showNotification('✅ USDT схвалено!', 'success');
                 }
                 
                 showNotification('🔄 Купівля ARUB через mint()...', 'info');
+                console.log('[BUY] Calling mint()...');
                 
                 // ✅ ВИКОРИСТОВУЄМО ФУНКЦІЮ mint() для купівлі
                 const mintTx = await tokenContract.mint(amountWei);
+                console.log('[BUY] Mint TX:', mintTx.hash);
                 await mintTx.wait();
                 
                 showNotification('✅ ARUB успішно куплено!', 'success');
+                console.log('[BUY] Buy complete!');
                 
                 document.getElementById('buyAmount').value = '';
                 document.getElementById('buyReceiveAmount').textContent = '0';
@@ -2688,8 +2706,20 @@
                 await updateTradingUI();
                 
             } catch (error) {
-                console.error('Buy error:', error);
-                showNotification(`❌ Помилка купівлі: ${error.message}`, 'error');
+                console.error('[BUY] Error:', error);
+                let errorMsg = 'Невідома помилка';
+                
+                if (error.code === 4001) {
+                    errorMsg = 'Транзакцію відхилено користувачем';
+                } else if (error.code === 'INSUFFICIENT_FUNDS') {
+                    errorMsg = 'Недостатньо коштів для оплати gas';
+                } else if (error.reason) {
+                    errorMsg = error.reason;
+                } else if (error.message) {
+                    errorMsg = error.message;
+                }
+                
+                showNotification(`❌ Помилка купівлі: ${errorMsg}`, 'error');
             }
         }
         
@@ -2702,22 +2732,51 @@
                 return;
             }
             
+            if (!userAddress) {
+                showNotification('❌ Спочатку підключіть гаманець', 'error');
+                return;
+            }
+            
             try {
+                console.log('[SELL] Starting sell process...');
+                console.log('[SELL] Amount:', amount, 'ARUB');
+                
                 const amountWei = ethers.utils.parseUnits(amount, 6);
+                console.log('[SELL] Amount in wei:', amountWei.toString());
                 
                 showNotification('🔄 Продаж ARUB через burn()...', 'info');
+                console.log('[SELL] Calling burn()...');
                 
                 // ✅ ВИКОРИСТОВУЄМО ФУНКЦІЮ burn() для продажу
                 const burnTx = await tokenContract.burn(amountWei);
+                console.log('[SELL] Burn TX:', burnTx.hash);
                 await burnTx.wait();
                 
                 showNotification('✅ ARUB успішно продано!', 'success');
+                console.log('[SELL] Sell complete!');
                 
                 document.getElementById('sellAmount').value = '';
                 document.getElementById('sellReceiveAmount').textContent = '0';
                 document.getElementById('sellFeeAmount').textContent = '0 USDT';
                 await updateTradingUI();
                 
+            } catch (error) {
+                console.error('[SELL] Error:', error);
+                let errorMsg = 'Невідома помилка';
+                
+                if (error.code === 4001) {
+                    errorMsg = 'Транзакцію відхилено користувачем';
+                } else if (error.code === 'INSUFFICIENT_FUNDS') {
+                    errorMsg = 'Недостатньо коштів для оплати gas';
+                } else if (error.reason) {
+                    errorMsg = error.reason;
+                } else if (error.message) {
+                    errorMsg = error.message;
+                }
+                
+                showNotification(`❌ Помилка продажу: ${errorMsg}`, 'error');
+            }
+        }
             } catch (error) {
                 console.error('Sell error:', error);
                 showNotification(`❌ Помилка продажу: ${error.message}`, 'error');
@@ -2794,36 +2853,65 @@
                 return;
             }
             
+            if (!userAddress) {
+                showNotification('❌ Спочатку підключіть гаманець', 'error');
+                return;
+            }
+            
             try {
+                console.log('[STAKE-USDT] Starting stake process...');
+                console.log('[STAKE-USDT] Amount:', amount, 'USDT');
+                
                 const amountWei = ethers.utils.parseUnits(amount, 6);
+                console.log('[STAKE-USDT] Amount in wei:', amountWei.toString());
                 
                 showNotification('🔄 Перевірка дозволу USDT...', 'info');
                 
                 const allowance = await usdtContract.allowance(userAddress, CONFIG.STAKING_ADDRESS);
+                console.log('[STAKE-USDT] Current allowance:', allowance.toString());
                 
                 if (allowance.lt(amountWei)) {
                     showNotification('🔄 Схвалення USDT для стейкінгу...', 'info');
+                    console.log('[STAKE-USDT] Approving USDT...');
+                    
                     const approveTx = await usdtContract.approve(
                         CONFIG.STAKING_ADDRESS,
                         ethers.constants.MaxUint256
                     );
+                    console.log('[STAKE-USDT] Approve TX:', approveTx.hash);
                     await approveTx.wait();
                     showNotification('✅ USDT схвалено!', 'success');
                 }
                 
                 showNotification('🔄 Стейкінг USDT...', 'info');
-                const stakeTx = await stakingContract.stakeArub(amountWei);
+                console.log('[STAKE-USDT] Calling stakeUsdt()...');
+                
+                const stakeTx = await stakingContract.stakeUsdt(amountWei);
+                console.log('[STAKE-USDT] Stake TX:', stakeTx.hash);
                 await stakeTx.wait();
                 
                 showNotification('✅ USDT успішно застейкано!', 'success');
+                console.log('[STAKE-USDT] Stake complete!');
                 
                 document.getElementById('stakeUsdtAmount').value = '';
                 await updateStakingUI();
                 await updateTradingUI();
                 
             } catch (error) {
-                console.error('USDT staking error:', error);
-                showNotification(`❌ Помилка стейкінгу USDT: ${error.message}`, 'error');
+                console.error('[STAKE-USDT] Error:', error);
+                let errorMsg = 'Невідома помилка';
+                
+                if (error.code === 4001) {
+                    errorMsg = 'Транзакцію відхилено користувачем';
+                } else if (error.code === 'INSUFFICIENT_FUNDS') {
+                    errorMsg = 'Недостатньо коштів для оплати gas';
+                } else if (error.reason) {
+                    errorMsg = error.reason;
+                } else if (error.message) {
+                    errorMsg = error.message;
+                }
+                
+                showNotification(`❌ Помилка стейкінгу USDT: ${errorMsg}`, 'error');
             }
         }
         
@@ -2835,36 +2923,65 @@
                 return;
             }
             
+            if (!userAddress) {
+                showNotification('❌ Спочатку підключіть гаманець', 'error');
+                return;
+            }
+            
             try {
+                console.log('[STAKE-ARUB] Starting stake process...');
+                console.log('[STAKE-ARUB] Amount:', amount, 'ARUB');
+                
                 const amountWei = ethers.utils.parseUnits(amount, 6);
+                console.log('[STAKE-ARUB] Amount in wei:', amountWei.toString());
                 
                 showNotification('🔄 Перевірка дозволу ARUB...', 'info');
                 
                 const allowance = await tokenContract.allowance(userAddress, CONFIG.STAKING_ADDRESS);
+                console.log('[STAKE-ARUB] Current allowance:', allowance.toString());
                 
                 if (allowance.lt(amountWei)) {
                     showNotification('🔄 Схвалення ARUB для стейкінгу...', 'info');
+                    console.log('[STAKE-ARUB] Approving ARUB...');
+                    
                     const approveTx = await tokenContract.approve(
                         CONFIG.STAKING_ADDRESS,
                         ethers.constants.MaxUint256
                     );
+                    console.log('[STAKE-ARUB] Approve TX:', approveTx.hash);
                     await approveTx.wait();
                     showNotification('✅ ARUB схвалено!', 'success');
                 }
                 
                 showNotification('🔄 Стейкінг ARUB...', 'info');
+                console.log('[STAKE-ARUB] Calling stakeArub()...');
+                
                 const stakeTx = await stakingContract.stakeArub(amountWei);
+                console.log('[STAKE-ARUB] Stake TX:', stakeTx.hash);
                 await stakeTx.wait();
                 
                 showNotification('✅ ARUB успішно застейкано!', 'success');
+                console.log('[STAKE-ARUB] Stake complete!');
                 
                 document.getElementById('stakeArubAmount').value = '';
                 await updateStakingUI();
                 await updateTradingUI();
                 
             } catch (error) {
-                console.error('ARUB staking error:', error);
-                showNotification(`❌ Помилка стейкінгу ARUB: ${error.message}`, 'error');
+                console.error('[STAKE-ARUB] Error:', error);
+                let errorMsg = 'Невідома помилка';
+                
+                if (error.code === 4001) {
+                    errorMsg = 'Транзакцію відхилено користувачем';
+                } else if (error.code === 'INSUFFICIENT_FUNDS') {
+                    errorMsg = 'Недостатньо коштів для оплати gas';
+                } else if (error.reason) {
+                    errorMsg = error.reason;
+                } else if (error.message) {
+                    errorMsg = error.message;
+                }
+                
+                showNotification(`❌ Помилка стейкінгу ARUB: ${errorMsg}`, 'error');
             }
         }
         
@@ -2876,22 +2993,47 @@
                 return;
             }
             
+            if (!userAddress) {
+                showNotification('❌ Спочатку підключіть гаманець', 'error');
+                return;
+            }
+            
             try {
+                console.log('[UNSTAKE-USDT] Starting unstake process...');
+                console.log('[UNSTAKE-USDT] Amount:', amount, 'USDT');
+                
                 const amountWei = ethers.utils.parseUnits(amount, 6);
+                console.log('[UNSTAKE-USDT] Amount in wei:', amountWei.toString());
                 
                 showNotification('🔄 Зняття USDT...', 'info');
-                const unstakeTx = await stakingContract.unstakeArub(amountWei);
+                console.log('[UNSTAKE-USDT] Calling unstakeUsdt()...');
+                
+                const unstakeTx = await stakingContract.unstakeUsdt(amountWei);
+                console.log('[UNSTAKE-USDT] Unstake TX:', unstakeTx.hash);
                 await unstakeTx.wait();
                 
                 showNotification('✅ USDT успішно знято!', 'success');
+                console.log('[UNSTAKE-USDT] Unstake complete!');
                 
                 document.getElementById('unstakeUsdtAmount').value = '';
                 await updateStakingUI();
                 await updateTradingUI();
                 
             } catch (error) {
-                console.error('USDT unstaking error:', error);
-                showNotification(`❌ Помилка зняття USDT: ${error.message}`, 'error');
+                console.error('[UNSTAKE-USDT] Error:', error);
+                let errorMsg = 'Невідома помилка';
+                
+                if (error.code === 4001) {
+                    errorMsg = 'Транзакцію відхилено користувачем';
+                } else if (error.code === 'INSUFFICIENT_FUNDS') {
+                    errorMsg = 'Недостатньо коштів для оплати gas';
+                } else if (error.reason) {
+                    errorMsg = error.reason;
+                } else if (error.message) {
+                    errorMsg = error.message;
+                }
+                
+                showNotification(`❌ Помилка зняття USDT: ${errorMsg}`, 'error');
             }
         }
         
@@ -2903,22 +3045,47 @@
                 return;
             }
             
+            if (!userAddress) {
+                showNotification('❌ Спочатку підключіть гаманець', 'error');
+                return;
+            }
+            
             try {
+                console.log('[UNSTAKE-ARUB] Starting unstake process...');
+                console.log('[UNSTAKE-ARUB] Amount:', amount, 'ARUB');
+                
                 const amountWei = ethers.utils.parseUnits(amount, 6);
+                console.log('[UNSTAKE-ARUB] Amount in wei:', amountWei.toString());
                 
                 showNotification('🔄 Зняття ARUB...', 'info');
+                console.log('[UNSTAKE-ARUB] Calling unstakeArub()...');
+                
                 const unstakeTx = await stakingContract.unstakeArub(amountWei);
+                console.log('[UNSTAKE-ARUB] Unstake TX:', unstakeTx.hash);
                 await unstakeTx.wait();
                 
                 showNotification('✅ ARUB успішно знято! Винагороди автоматично отримано.', 'success');
+                console.log('[UNSTAKE-ARUB] Unstake complete!');
                 
                 document.getElementById('unstakeArubAmount').value = '';
                 await updateStakingUI();
                 await updateTradingUI();
                 
             } catch (error) {
-                console.error('ARUB unstaking error:', error);
-                showNotification(`❌ Помилка зняття ARUB: ${error.message}`, 'error');
+                console.error('[UNSTAKE-ARUB] Error:', error);
+                let errorMsg = 'Невідома помилка';
+                
+                if (error.code === 4001) {
+                    errorMsg = 'Транзакцію відхилено користувачем';
+                } else if (error.code === 'INSUFFICIENT_FUNDS') {
+                    errorMsg = 'Недостатньо коштів для оплати gas';
+                } else if (error.reason) {
+                    errorMsg = error.reason;
+                } else if (error.message) {
+                    errorMsg = error.message;
+                }
+                
+                showNotification(`❌ Помилка зняття ARUB: ${errorMsg}`, 'error');
             }
         }
         
