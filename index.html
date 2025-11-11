@@ -3110,104 +3110,123 @@
             console.log('✅ Initialization complete');
         });
         
-        // Load public statistics using Etherscan API (bypasses CORS)
+        // Load public statistics using public RPC (bypasses CORS and API limits)
         async function loadPublicStats() {
             try {
-                console.log('[STATS] Loading public stats via Etherscan API...');
+                console.log('[STATS] Loading public stats...');
                 console.log('[STATS] Staking contract address:', CONFIG.STAKING_ADDRESS);
                 
-                // Use Etherscan API V2 to call totalStaked()
+                // Use public RPC endpoints that allow CORS
+                const rpcEndpoints = [
+                    'https://eth-sepolia.public.blastapi.io',
+                    'https://ethereum-sepolia-rpc.publicnode.com',
+                    'https://rpc.sepolia.org',
+                    'https://sepolia.gateway.tenderly.co'
+                ];
+                
                 // Function signature for totalStaked(): 0x817b1cd2
-                const apiUrl = `https://api-sepolia.etherscan.io/v2/api?chainid=11155111&module=proxy&action=eth_call&to=${CONFIG.STAKING_ADDRESS}&data=0x817b1cd2&tag=latest`;
+                const callData = '0x817b1cd2';
                 
-                console.log('[STATS] Calling Etherscan API V2...');
-                console.log('[STATS] API URL:', apiUrl);
-                
-                const response = await fetch(apiUrl);
-                const data = await response.json();
-                
-                console.log('[STATS] API Response:', data);
-                
-                if (data.error) {
-                    throw new Error(data.error.message || 'Etherscan API error');
-                }
-                
-                // Check if API returned error status (V2 format)
-                if (data.status === '0' && data.message !== 'OK') {
-                    console.log('[STATS] API Error:', data.message, data.result);
-                    throw new Error(`Etherscan API: ${data.message}`);
-                }
-                
-                if (!data.result || data.result === '0x') {
-                    console.log('[STATS] Contract not found or function not available');
-                    if (document.getElementById('totalStaked')) {
-                        document.getElementById('totalStaked').textContent = '$0';
+                for (const rpcUrl of rpcEndpoints) {
+                    try {
+                        console.log('[STATS] Trying RPC:', rpcUrl);
+                        
+                        const response = await fetch(rpcUrl, {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json',
+                            },
+                            body: JSON.stringify({
+                                jsonrpc: '2.0',
+                                method: 'eth_call',
+                                params: [
+                                    {
+                                        to: CONFIG.STAKING_ADDRESS,
+                                        data: callData
+                                    },
+                                    'latest'
+                                ],
+                                id: 1
+                            })
+                        });
+                        
+                        if (!response.ok) {
+                            console.log('[STATS] RPC returned error status:', response.status);
+                            continue;
+                        }
+                        
+                        const data = await response.json();
+                        console.log('[STATS] RPC Response:', data);
+                        
+                        if (data.error) {
+                            console.log('[STATS] RPC error:', data.error);
+                            continue;
+                        }
+                        
+                        if (!data.result || data.result === '0x') {
+                            console.log('[STATS] Contract returned empty result');
+                            continue;
+                        }
+                        
+                        // Parse result
+                        let resultHex = data.result;
+                        if (resultHex.startsWith('0x')) {
+                            resultHex = resultHex.slice(2);
+                        }
+                        
+                        console.log('[STATS] Result hex:', resultHex);
+                        
+                        // Convert hex to decimal using BigInt
+                        const bigIntValue = BigInt('0x' + resultHex);
+                        const totalStakedRaw = Number(bigIntValue);
+                        
+                        console.log('[STATS] Total staked (raw):', totalStakedRaw);
+                        
+                        if (totalStakedRaw === 0) {
+                            console.log('[STATS] No tokens staked yet');
+                            if (document.getElementById('totalStaked')) {
+                                document.getElementById('totalStaked').textContent = '$0';
+                            }
+                            return;
+                        }
+                        
+                        // Calculate total staked in ARUB (6 decimals)
+                        const totalStakedInArub = totalStakedRaw / 1000000;
+                        console.log('[STATS] Total staked in ARUB:', totalStakedInArub);
+                        
+                        // Calculate USD value
+                        const arubPriceInUsdt = currentRate || 81.22;
+                        console.log('[STATS] ARUB price:', arubPriceInUsdt);
+                        
+                        const totalStakedValueInUsd = totalStakedInArub * arubPriceInUsdt;
+                        console.log('[STATS] Total staked in USD:', totalStakedValueInUsd);
+                        
+                        // Update stats display
+                        if (document.getElementById('totalStaked')) {
+                            const formattedValue = `$${totalStakedValueInUsd.toLocaleString('en-US', { maximumFractionDigits: 0 })}`;
+                            document.getElementById('totalStaked').textContent = formattedValue;
+                            console.log('[STATS] Stats updated:', formattedValue);
+                        }
+                        
+                        console.log('[STATS] Public stats loaded successfully');
+                        return; // Success! Stop trying other RPCs
+                        
+                    } catch (err) {
+                        console.log('[STATS] RPC failed:', rpcUrl, err.message);
+                        continue;
                     }
-                    return;
                 }
                 
-                console.log('Result (hex):', data.result);
-                
-                // Parse result - handle both formats
-                let resultHex = data.result;
-                if (typeof resultHex === 'string') {
-                    resultHex = resultHex.startsWith('0x') ? resultHex.slice(2) : resultHex;
-                }
-                console.log('Result without 0x:', resultHex);
-                
-                // Convert hex to decimal using BigInt for large numbers
-                let totalStakedRaw;
-                try {
-                    if (resultHex === '' || resultHex === null || resultHex === undefined) {
-                        throw new Error('Empty result');
-                    }
-                    // Use BigInt for parsing
-                    const bigIntValue = BigInt('0x' + resultHex);
-                    totalStakedRaw = Number(bigIntValue);
-                } catch (e) {
-                    console.error('Failed to parse hex:', e);
-                    totalStakedRaw = 0;
-                }
-                
-                console.log('Total staked (raw):', totalStakedRaw);
-                
-                // Check if parsing was successful
-                if (isNaN(totalStakedRaw) || totalStakedRaw === 0) {
-                    console.log('[STATS] Total staked is 0 or invalid');
-                    if (document.getElementById('totalStaked')) {
-                        document.getElementById('totalStaked').textContent = '$0';
-                    }
-                    return;
-                }
-                
-                // Calculate total staked in ARUB (6 decimals)
-                const totalStakedInArub = totalStakedRaw / 1000000;
-                console.log('[STATS] Total staked in ARUB:', totalStakedInArub);
-                
-                // Calculate USD value
-                const arubPriceInUsdt = currentRate || 81.22;
-                console.log('[STATS] ARUB price:', arubPriceInUsdt);
-                
-                const totalStakedValueInUsd = totalStakedInArub * arubPriceInUsdt;
-                console.log('[STATS] Total staked in USD:', totalStakedValueInUsd);
-                
-                // Update stats display
+                // If all RPCs failed
+                console.log('[STATS] All RPC endpoints failed');
                 if (document.getElementById('totalStaked')) {
-                    const formattedValue = `$${totalStakedValueInUsd.toLocaleString('en-US', { maximumFractionDigits: 0 })}`;
-                    document.getElementById('totalStaked').textContent = formattedValue;
-                    console.log('[STATS] Stats updated:', formattedValue);
+                    document.getElementById('totalStaked').textContent = '$0';
+                    document.getElementById('totalStaked').title = 'Не вдалось завантажити статистику';
                 }
-                
-                console.log('[STATS] Public stats loaded successfully');
                 
             } catch (error) {
-                console.error('[STATS] Error loading public stats:', error);
-                console.error('[STATS] Error details:', {
-                    message: error.message,
-                    stack: error.stack
-                });
+                console.error('[STATS] Error:', error.message);
                 
-                // Set default value if contract not available
                 if (document.getElementById('totalStaked')) {
                     document.getElementById('totalStaked').textContent = '$0';
                 }
