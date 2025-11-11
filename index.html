@@ -3110,39 +3110,42 @@
             console.log('✅ Initialization complete');
         });
         
-        // Load public statistics (without wallet connection)
+        // Load public statistics using Etherscan API (bypasses CORS)
         async function loadPublicStats() {
             try {
-                console.log('🔵 Loading public stats...');
+                console.log('🔵 Loading public stats via Etherscan API...');
                 console.log('📍 Staking contract address:', CONFIG.STAKING_ADDRESS);
                 
-                // Create read-only provider for Sepolia
-                const publicProvider = new ethers.providers.JsonRpcProvider('https://rpc.sepolia.org');
-                console.log('✅ Public provider created');
+                // Use Etherscan API to call totalStaked()
+                // Function signature for totalStaked(): 0x817b1cd2
+                const apiUrl = `https://api-sepolia.etherscan.io/api?module=proxy&action=eth_call&to=${CONFIG.STAKING_ADDRESS}&data=0x817b1cd2&tag=latest`;
                 
-                // Initialize contracts with read-only provider
-                const STAKING_ABI = [
-                    'function totalStaked() view returns (uint256)',
-                    'function currentAPY() view returns (uint256)',
-                    'function totalStakers() view returns (uint256)'
-                ];
+                console.log('📡 Calling Etherscan API...');
+                const response = await fetch(apiUrl);
+                const data = await response.json();
                 
-                const publicStakingContract = new ethers.Contract(
-                    CONFIG.STAKING_ADDRESS,
-                    STAKING_ABI,
-                    publicProvider
-                );
-                console.log('✅ Staking contract initialized');
+                if (data.error) {
+                    throw new Error(data.error.message || 'Etherscan API error');
+                }
                 
-                // Get total staked from contract
-                console.log('📡 Calling totalStaked()...');
-                const totalStaked = await publicStakingContract.totalStaked();
-                console.log('✅ Total staked (raw):', totalStaked.toString());
+                if (!data.result || data.result === '0x') {
+                    console.log('⚠️ Contract not found or function not available');
+                    if (document.getElementById('totalStaked')) {
+                        document.getElementById('totalStaked').textContent = '$0';
+                    }
+                    return;
+                }
                 
-                // Calculate total staked in USD
-                const totalStakedInArub = parseFloat(ethers.utils.formatUnits(totalStaked, 6));
+                // Parse result
+                const resultHex = data.result.replace('0x', '');
+                const totalStakedRaw = parseInt(resultHex, 16);
+                console.log('✅ Total staked (raw):', totalStakedRaw);
+                
+                // Calculate total staked in ARUB (6 decimals)
+                const totalStakedInArub = totalStakedRaw / 1000000;
                 console.log('💰 Total staked in ARUB:', totalStakedInArub);
                 
+                // Calculate USD value
                 const arubPriceInUsdt = currentRate || 81.22;
                 console.log('💵 ARUB price:', arubPriceInUsdt);
                 
