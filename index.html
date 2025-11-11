@@ -1096,9 +1096,42 @@
         </div>
         
         <div id="stakingInterface">
-            <div style="text-align: center; padding: 60px; color: var(--gray);">
+            <div style="text-align: center; padding: 60px; color: var(--gray); max-width: 800px; margin: 0 auto;">
                 <div style="font-size: 3em; margin-bottom: 20px;">🔒</div>
-                <p style="font-size: 1.3em;">Підключіть гаманець для доступу до стейкінгу</p>
+                <p style="font-size: 1.5em; color: white; margin-bottom: 20px;">Підключіть гаманець для доступу до стейкінгу</p>
+                
+                <div style="background: linear-gradient(135deg, rgba(0,87,183,0.2), rgba(255,215,0,0.2)); padding: 30px; border-radius: 20px; margin-top: 30px; text-align: left;">
+                    <h3 style="color: var(--ukraine-yellow); margin-bottom: 20px;">📊 Динамічні APY Tier системи:</h3>
+                    <div style="display: grid; gap: 15px;">
+                        <div style="display: flex; justify-content: space-between; align-items: center; padding: 15px; background: rgba(0,0,0,0.3); border-radius: 10px;">
+                            <span style="color: white;">💎 Tier 1: $0 - $9,999</span>
+                            <span style="color: #10b981; font-weight: bold; font-size: 1.2em;">8% APY</span>
+                        </div>
+                        <div style="display: flex; justify-content: space-between; align-items: center; padding: 15px; background: rgba(0,0,0,0.3); border-radius: 10px;">
+                            <span style="color: white;">💎 Tier 2: $10,000 - $49,999</span>
+                            <span style="color: #3b82f6; font-weight: bold; font-size: 1.2em;">12% APY</span>
+                        </div>
+                        <div style="display: flex; justify-content: space-between; align-items: center; padding: 15px; background: rgba(0,0,0,0.3); border-radius: 10px;">
+                            <span style="color: white;">💎 Tier 3: $50,000 - $99,999</span>
+                            <span style="color: #8b5cf6; font-weight: bold; font-size: 1.2em;">16% APY</span>
+                        </div>
+                        <div style="display: flex; justify-content: space-between; align-items: center; padding: 15px; background: rgba(0,0,0,0.3); border-radius: 10px;">
+                            <span style="color: white;">💎 Tier 4: $100,000+</span>
+                            <span style="color: var(--ukraine-yellow); font-weight: bold; font-size: 1.2em;">24% APY</span>
+                        </div>
+                    </div>
+                    
+                    <div style="margin-top: 25px; padding: 20px; background: rgba(255,215,0,0.1); border-radius: 15px; border: 2px solid rgba(255,215,0,0.3);">
+                        <p style="color: white; margin: 0; line-height: 1.6;">
+                            <strong>🎯 Як це працює:</strong><br>
+                            APY автоматично збільшується при зростанні загальної суми застейканих токенів. Ваша винагорода залежить від поточного тира!
+                        </p>
+                    </div>
+                </div>
+                
+                <button class="action-btn" onclick="document.getElementById('connectBtn').click()" style="margin-top: 30px; max-width: 400px;">
+                    🔓 Підключити гаманець зараз
+                </button>
             </div>
         </div>
     </section>
@@ -1600,6 +1633,7 @@
                 updateTradingUI();
                 updateFaucetUI();
                 updateStakingUI();
+                loadPublicStats(); // Update stats with connected wallet
                 
                 showNotification('✅ Гаманець успішно підключено!', 'success');
                 document.getElementById('connectBtn').textContent = 
@@ -3115,88 +3149,25 @@
             console.log('✅ Initialization complete');
         });
         
-        // Load public statistics using public RPC (bypasses CORS and API limits)
+        // Load public statistics using CORS proxy
         async function loadPublicStats() {
             try {
                 console.log('[STATS] Loading public stats...');
                 console.log('[STATS] Staking contract address:', CONFIG.STAKING_ADDRESS);
                 
-                // Use public RPC endpoints that allow CORS
-                const rpcEndpoints = [
-                    'https://eth-sepolia.public.blastapi.io',
-                    'https://ethereum-sepolia-rpc.publicnode.com',
-                    'https://rpc.sepolia.org',
-                    'https://sepolia.gateway.tenderly.co'
-                ];
+                // Use simple approach: try to get data via connected wallet if available,
+                // otherwise show placeholder that updates when wallet connects
                 
-                // Function signature for totalStaked(): 0x817b1cd2
-                const callData = '0x817b1cd2';
-                
-                for (const rpcUrl of rpcEndpoints) {
+                if (userAddress && stakingContract) {
                     try {
-                        console.log('[STATS] Trying RPC:', rpcUrl);
+                        console.log('[STATS] Using connected wallet to get stats...');
                         
-                        const response = await fetch(rpcUrl, {
-                            method: 'POST',
-                            headers: {
-                                'Content-Type': 'application/json',
-                            },
-                            body: JSON.stringify({
-                                jsonrpc: '2.0',
-                                method: 'eth_call',
-                                params: [
-                                    {
-                                        to: CONFIG.STAKING_ADDRESS,
-                                        data: callData
-                                    },
-                                    'latest'
-                                ],
-                                id: 1
-                            })
-                        });
-                        
-                        if (!response.ok) {
-                            console.log('[STATS] RPC returned error status:', response.status);
-                            continue;
-                        }
-                        
-                        const data = await response.json();
-                        console.log('[STATS] RPC Response:', data);
-                        
-                        if (data.error) {
-                            console.log('[STATS] RPC error:', data.error);
-                            continue;
-                        }
-                        
-                        if (!data.result || data.result === '0x') {
-                            console.log('[STATS] Contract returned empty result');
-                            continue;
-                        }
-                        
-                        // Parse result
-                        let resultHex = data.result;
-                        if (resultHex.startsWith('0x')) {
-                            resultHex = resultHex.slice(2);
-                        }
-                        
-                        console.log('[STATS] Result hex:', resultHex);
-                        
-                        // Convert hex to decimal using BigInt
-                        const bigIntValue = BigInt('0x' + resultHex);
-                        const totalStakedRaw = Number(bigIntValue);
-                        
-                        console.log('[STATS] Total staked (raw):', totalStakedRaw);
-                        
-                        if (totalStakedRaw === 0) {
-                            console.log('[STATS] No tokens staked yet');
-                            if (document.getElementById('totalStaked')) {
-                                document.getElementById('totalStaked').textContent = '$0';
-                            }
-                            return;
-                        }
+                        // Function signature for totalStaked(): 0x817b1cd2
+                        const totalStakedRaw = await stakingContract.totalStaked();
+                        console.log('[STATS] Total staked (raw):', totalStakedRaw.toString());
                         
                         // Calculate total staked in ARUB (6 decimals)
-                        const totalStakedInArub = totalStakedRaw / 1000000;
+                        const totalStakedInArub = parseFloat(ethers.utils.formatUnits(totalStakedRaw, 6));
                         console.log('[STATS] Total staked in ARUB:', totalStakedInArub);
                         
                         // Calculate USD value
@@ -3214,19 +3185,17 @@
                         }
                         
                         console.log('[STATS] Public stats loaded successfully');
-                        return; // Success! Stop trying other RPCs
-                        
+                        return;
                     } catch (err) {
-                        console.log('[STATS] RPC failed:', rpcUrl, err.message);
-                        continue;
+                        console.log('[STATS] Could not load via wallet:', err.message);
                     }
                 }
                 
-                // If all RPCs failed
-                console.log('[STATS] All RPC endpoints failed');
+                // If no wallet connected or error, show placeholder
+                console.log('[STATS] Wallet not connected - stats will update after connection');
                 if (document.getElementById('totalStaked')) {
                     document.getElementById('totalStaked').textContent = '$0';
-                    document.getElementById('totalStaked').title = 'Не вдалось завантажити статистику';
+                    document.getElementById('totalStaked').title = 'Підключіть гаманець для оновлення';
                 }
                 
             } catch (error) {
