@@ -1979,9 +1979,15 @@
         }
         
         async function updateStakingUI() {
-            if (!userAddress) return;
+            console.log('[STAKING-UI] Function called, userAddress:', userAddress);
             
-            console.log('🔵 Updating staking UI...');
+            if (!userAddress) {
+                console.log('[STAKING-UI] ❌ No user address, exiting');
+                return;
+            }
+            
+            console.log('[STAKING-UI] ✅ User address found, updating UI...');
+            console.log('[STAKING-UI] Staking contract:', stakingContract ? 'initialized' : 'NOT initialized');
             
             let usdtBalance = ethers.BigNumber.from(0);
             let arubBalance = ethers.BigNumber.from(0);
@@ -2016,12 +2022,10 @@
                         const [tier, threshold, apy, description] = await stakingContract.getCurrentAPYTier();
                         currentTierInfo = { tier, threshold, apy, description };
                         
-                        // Get next tier info
-                        const [nextThreshold, nextAPY, remainingToNextTier] = await stakingContract.getNextAPYTier();
-                        nextTierInfo = { nextThreshold, nextAPY, remainingToNextTier };
+                        console.log('[STAKING-UI] ✅ Staking data loaded successfully');
                         
                     } catch (error) {
-                        console.log('⚠️ Staking contract data not available');
+                        console.log('[STAKING-UI] ⚠️ Error loading staking contract data:', error.message);
                     }
                 }
                 
@@ -2064,9 +2068,9 @@
             }
             
             // Generate APY tiers HTML with USD values (fixed thresholds)
-            // Contract stores thresholds in ARUB, we convert to USD for display
-            // But the REAL tiers should be: $100k, $250k, $500k, $1M, $2M+
-            const tierThresholdsUSD = [100000, 250000, 500000, 1000000, 2000000]; // Fixed USD thresholds
+            // New tier system: higher APY for early users, decreases as cap grows
+            const tierThresholdsUSD = [200000, 400000, 800000, 1600000]; // Fixed USD thresholds
+            const tierAPYs = [2400, 2000, 1600, 1200, 800]; // APY values in basis points (24%, 20%, 16%, 12%, 8%)
             
             const tiersHTML = apyTiers.thresholds.map((threshold, index) => {
                 const apy = apyTiers.apys[index];
@@ -2075,7 +2079,7 @@
                 
                 let rangeText;
                 if (index === 0) {
-                    rangeText = `$0 - $${tierThresholdsUSD[index].toLocaleString()}`;
+                    rangeText = `До $${tierThresholdsUSD[index].toLocaleString()}`;
                 } else if (isMaxTier) {
                     rangeText = `$${tierThresholdsUSD[index - 1].toLocaleString()}+`;
                 } else {
@@ -2104,12 +2108,15 @@
                 `;
             }).join('');
             
-            // Calculate remaining to next tier in USD
+            // Calculate remaining to next tier in USD and next APY
             let remainingToNextTierUsd = 0;
+            let nextAPY = 0;
             if (currentTierInfo.tier.toNumber() < apyTiers.thresholds.length - 1) {
                 const nextTierIdx = currentTierInfo.tier.toNumber();
                 nextTierThresholdUsd = tierThresholdsUSD[nextTierIdx];
                 remainingToNextTierUsd = Math.max(0, nextTierThresholdUsd - totalStakedValueInUsd);
+                // Get next APY from array (next tier = current tier + 1)
+                nextAPY = tierAPYs[nextTierIdx + 1] || tierAPYs[tierAPYs.length - 1];
             }
             
             const totalStakedFormatted = totalStakedValueInUsd.toLocaleString('en-US', { maximumFractionDigits: 0 });
@@ -2119,7 +2126,16 @@
                 document.getElementById('totalStaked').textContent = `$${totalStakedFormatted}`;
             }
             
+            console.log('[STAKING-UI] 📝 Creating staking interface HTML...');
+            console.log('[STAKING-UI] Current tier:', currentTierInfo.tier.toNumber());
+            console.log('[STAKING-UI] Current APY:', (currentTierInfo.apy / 100).toFixed(0) + '%');
+            
             const stakingInterface = document.getElementById('stakingInterface');
+            if (!stakingInterface) {
+                console.error('[STAKING-UI] ❌ stakingInterface element not found!');
+                return;
+            }
+            
             stakingInterface.innerHTML = `
                 <!-- Dynamic APY Banner with Tiers -->
                 <div style="background: linear-gradient(135deg, rgba(0,87,183,0.2), rgba(255,215,0,0.2)); border: 2px solid var(--ukraine-blue); border-radius: 20px; padding: 40px; margin-bottom: 40px; position: relative; overflow: hidden;">
@@ -2166,7 +2182,7 @@
                                 <div style="margin-top: 15px; padding: 15px; background: rgba(255,215,0,0.1); border-left: 4px solid var(--ukraine-yellow); border-radius: 8px;">
                                     <div style="color: var(--gray); font-size: 0.9em; margin-bottom: 5px;">До наступного рівня:</div>
                                     <div style="font-size: 1.2em; color: var(--ukraine-yellow); font-weight: 600;">
-                                        $${remainingToNextTierUsd.toLocaleString('en-US', { maximumFractionDigits: 0 })} до ${(nextTierInfo.nextAPY / 100).toFixed(0)}% APY
+                                        $${remainingToNextTierUsd.toLocaleString('en-US', { maximumFractionDigits: 0 })} до ${(nextAPY / 100).toFixed(0)}% APY
                                     </div>
                                     <div style="color: var(--gray); font-size: 0.85em; margin-top: 8px;">
                                         💡 Застейкайте ще USDT або ARUB для досягнення наступного рівня
