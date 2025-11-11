@@ -3116,11 +3116,11 @@
                 console.log('[STATS] Loading public stats via Etherscan API...');
                 console.log('[STATS] Staking contract address:', CONFIG.STAKING_ADDRESS);
                 
-                // Use Etherscan API to call totalStaked()
+                // Use Etherscan API V2 to call totalStaked()
                 // Function signature for totalStaked(): 0x817b1cd2
-                const apiUrl = `https://api-sepolia.etherscan.io/api?module=proxy&action=eth_call&to=${CONFIG.STAKING_ADDRESS}&data=0x817b1cd2&tag=latest`;
+                const apiUrl = `https://api-sepolia.etherscan.io/v2/api?chainid=11155111&module=proxy&action=eth_call&to=${CONFIG.STAKING_ADDRESS}&data=0x817b1cd2&tag=latest`;
                 
-                console.log('[STATS] Calling Etherscan API...');
+                console.log('[STATS] Calling Etherscan API V2...');
                 console.log('[STATS] API URL:', apiUrl);
                 
                 const response = await fetch(apiUrl);
@@ -3130,6 +3130,12 @@
                 
                 if (data.error) {
                     throw new Error(data.error.message || 'Etherscan API error');
+                }
+                
+                // Check if API returned error status (V2 format)
+                if (data.status === '0' && data.message !== 'OK') {
+                    console.log('[STATS] API Error:', data.message, data.result);
+                    throw new Error(`Etherscan API: ${data.message}`);
                 }
                 
                 if (!data.result || data.result === '0x') {
