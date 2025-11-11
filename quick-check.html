@@ -60,12 +60,7 @@
 
     <script>
         const CONFIG = {
-            STAKING_ADDRESS: '0x47B302F223ae94e9efcABc27DE19C0a2eC268Df3',
-            RPC_URLS: [
-                'https://rpc.sepolia.org',
-                'https://ethereum-sepolia-rpc.publicnode.com',
-                'https://rpc2.sepolia.org'
-            ]
+            STAKING_ADDRESS: '0x47B302F223ae94e9efcABc27DE19C0a2eC268Df3'
         };
 
         function log(message, type = 'info') {
@@ -83,101 +78,76 @@
         }
 
         async function checkContract() {
-            log('🔵 Початок перевірки...', 'info');
+            log('🔵 Початок перевірки через Etherscan API...', 'info');
             
-            // Try each RPC
-            for (const rpcUrl of CONFIG.RPC_URLS) {
-                try {
-                    log(`📡 Спроба: ${rpcUrl}`, 'info');
-                    
-                    // Check if contract exists
-                    const codeResponse = await fetch(rpcUrl, {
-                        method: 'POST',
-                        headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify({
-                            jsonrpc: '2.0',
-                            method: 'eth_getCode',
-                            params: [CONFIG.STAKING_ADDRESS, 'latest'],
-                            id: 1
-                        })
-                    });
-                    
-                    const codeData = await codeResponse.json();
-                    
-                    if (codeData.error) {
-                        log(`❌ RPC помилка: ${codeData.error.message}`, 'error');
-                        continue;
-                    }
-                    
-                    const code = codeData.result;
-                    
-                    if (code === '0x' || code === '0x0') {
-                        log('❌ КОНТРАКТ НЕ ЗНАЙДЕНО!', 'error');
-                        log('⚠️ За адресою 0x47B302F... немає коду контракту', 'error');
-                        log('💡 Можливо контракт не задеплоєно або адреса неправильна', 'error');
-                        return;
-                    }
-                    
-                    log('✅ КОНТРАКТ ЗНАЙДЕНО!', 'success');
-                    log(`📝 Розмір коду: ${(code.length - 2) / 2} байт`, 'success');
-                    
-                    // Try to call totalStaked
-                    log('📡 Виклик функції totalStaked()...', 'info');
-                    
-                    // Function signature for totalStaked()
-                    const functionSig = '0x817b1cd2'; // totalStaked() selector
-                    
-                    const callResponse = await fetch(rpcUrl, {
-                        method: 'POST',
-                        headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify({
-                            jsonrpc: '2.0',
-                            method: 'eth_call',
-                            params: [{
-                                to: CONFIG.STAKING_ADDRESS,
-                                data: functionSig
-                            }, 'latest'],
-                            id: 2
-                        })
-                    });
-                    
-                    const callData = await callResponse.json();
-                    
-                    if (callData.error) {
-                        log(`⚠️ Помилка виклику: ${callData.error.message}`, 'error');
-                        log('💡 Можливо функція totalStaked() відсутня в контракті', 'error');
-                    } else {
-                        const result = callData.result;
-                        const valueHex = result.replace('0x', '');
-                        const valueDec = parseInt(valueHex, 16);
-                        
-                        log(`✅ totalStaked (raw): ${valueDec}`, 'success');
-                        
-                        // Convert from 6 decimals
-                        const valueFormatted = valueDec / 1000000;
-                        log(`✅ totalStaked: ${valueFormatted} токенів`, 'success');
-                        
-                        if (valueDec === 0) {
-                            log('⚠️ Поки що немає застейканих токенів (це нормально для нового контракту)', 'error');
-                        } else {
-                            const arubPrice = 81.22;
-                            const usdValue = valueFormatted * arubPrice;
-                            log(`💵 Вартість: $${usdValue.toLocaleString('en-US', { maximumFractionDigits: 2 })}`, 'success');
-                        }
-                    }
-                    
-                    // Show Etherscan link
-                    const etherscanLink = `https://sepolia.etherscan.io/address/${CONFIG.STAKING_ADDRESS}`;
-                    log(`🔗 <a href="${etherscanLink}" target="_blank">Детальніше на Etherscan →</a>`, 'info');
-                    
-                    return; // Success, stop trying other RPCs
-                    
-                } catch (error) {
-                    log(`❌ ${rpcUrl} недоступний: ${error.message}`, 'error');
+            try {
+                // Check if contract exists using Etherscan API
+                log('📡 Перевірка наявності контракту...', 'info');
+                
+                const codeUrl = `https://api-sepolia.etherscan.io/api?module=proxy&action=eth_getCode&address=${CONFIG.STAKING_ADDRESS}&tag=latest`;
+                const codeResponse = await fetch(codeUrl);
+                const codeData = await codeResponse.json();
+                
+                if (codeData.error) {
+                    log(`❌ API помилка: ${codeData.error.message}`, 'error');
+                    return;
                 }
+                
+                const code = codeData.result;
+                
+                if (code === '0x' || code === '0x0') {
+                    log('❌ КОНТРАКТ НЕ ЗНАЙДЕНО!', 'error');
+                    log('⚠️ За адресою 0x47B302F... немає коду контракту', 'error');
+                    log('💡 Можливо контракт не задеплоєно або адреса неправильна', 'error');
+                    
+                    const etherscanLink = `https://sepolia.etherscan.io/address/${CONFIG.STAKING_ADDRESS}`;
+                    log(`🔗 <a href="${etherscanLink}" target="_blank">Перевірити на Etherscan →</a>`, 'info');
+                    return;
+                }
+                
+                log('✅ КОНТРАКТ ЗНАЙДЕНО!', 'success');
+                log(`📝 Розмір коду: ${(code.length - 2) / 2} байт`, 'success');
+                
+                // Try to call totalStaked using Etherscan API
+                log('📡 Виклик функції totalStaked()...', 'info');
+                
+                // Function signature for totalStaked(): 0x817b1cd2
+                const callUrl = `https://api-sepolia.etherscan.io/api?module=proxy&action=eth_call&to=${CONFIG.STAKING_ADDRESS}&data=0x817b1cd2&tag=latest`;
+                
+                const callResponse = await fetch(callUrl);
+                const callData = await callResponse.json();
+                
+                if (callData.error) {
+                    log(`⚠️ Помилка виклику: ${callData.error.message}`, 'error');
+                    log('💡 Можливо функція totalStaked() відсутня в контракті', 'error');
+                } else {
+                    const result = callData.result;
+                    const valueHex = result.replace('0x', '');
+                    const valueDec = parseInt(valueHex, 16);
+                    
+                    log(`✅ totalStaked (raw): ${valueDec}`, 'success');
+                    
+                    // Convert from 6 decimals
+                    const valueFormatted = valueDec / 1000000;
+                    log(`✅ totalStaked: ${valueFormatted} токенів`, 'success');
+                    
+                    if (valueDec === 0) {
+                        log('⚠️ Поки що немає застейканих токенів (це нормально для нового контракту)', 'error');
+                    } else {
+                        const arubPrice = 81.22;
+                        const usdValue = valueFormatted * arubPrice;
+                        log(`💵 Вартість: $${usdValue.toLocaleString('en-US', { maximumFractionDigits: 2 })}`, 'success');
+                    }
+                }
+                
+                // Show Etherscan link
+                const etherscanLink = `https://sepolia.etherscan.io/address/${CONFIG.STAKING_ADDRESS}`;
+                log(`🔗 <a href="${etherscanLink}" target="_blank">Детальніше на Etherscan →</a>`, 'info');
+                
+            } catch (error) {
+                log(`❌ Помилка: ${error.message}`, 'error');
+                console.error('Full error:', error);
             }
-            
-            log('❌ Всі RPC недоступні. Перевірте інтернет з\'єднання', 'error');
         }
 
         window.addEventListener('DOMContentLoaded', () => {
