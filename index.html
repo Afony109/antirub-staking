@@ -1989,6 +1989,16 @@
             console.log('[STAKING-UI] ✅ User address found, updating UI...');
             console.log('[STAKING-UI] Staking contract:', stakingContract ? 'initialized' : 'NOT initialized');
             
+            // Helper function to safely convert BigNumber or number to regular number
+            const toNum = (value) => {
+                if (typeof value === 'number') return value;
+                if (value && typeof value.toNumber === 'function') return value.toNumber();
+                if (value && typeof value === 'object' && value._isBigNumber) {
+                    return parseInt(value.toString());
+                }
+                return parseInt(value) || 0;
+            };
+            
             let usdtBalance = ethers.BigNumber.from(0);
             let arubBalance = ethers.BigNumber.from(0);
             let stakedAmount = ethers.BigNumber.from(0);
@@ -2046,9 +2056,9 @@
             let currentTierThresholdUsd = 0;
             let nextTierThresholdUsd = 0;
             
-            if (currentTierInfo.tier.toNumber() < apyTiers.thresholds.length - 1) {
-                const prevTierThreshold = currentTierInfo.tier.toNumber() > 0 ? 
-                    apyTiers.thresholds[currentTierInfo.tier.toNumber() - 1] : 
+            if (toNum(currentTierInfo.tier) < apyTiers.thresholds.length - 1) {
+                const prevTierThreshold = toNum(currentTierInfo.tier) > 0 ? 
+                    apyTiers.thresholds[toNum(currentTierInfo.tier) - 1] : 
                     ethers.BigNumber.from(0);
                 
                 // Convert thresholds from ARUB to USD
@@ -2074,7 +2084,7 @@
             
             const tiersHTML = apyTiers.thresholds.map((threshold, index) => {
                 const apy = apyTiers.apys[index];
-                const isActive = index === currentTierInfo.tier.toNumber();
+                const isActive = index === toNum(currentTierInfo.tier);
                 const isMaxTier = index === apyTiers.thresholds.length - 1;
                 
                 let rangeText;
@@ -2111,8 +2121,8 @@
             // Calculate remaining to next tier in USD and next APY
             let remainingToNextTierUsd = 0;
             let nextAPY = 0;
-            if (currentTierInfo.tier.toNumber() < apyTiers.thresholds.length - 1) {
-                const nextTierIdx = currentTierInfo.tier.toNumber();
+            if (toNum(currentTierInfo.tier) < apyTiers.thresholds.length - 1) {
+                const nextTierIdx = toNum(currentTierInfo.tier);
                 nextTierThresholdUsd = tierThresholdsUSD[nextTierIdx];
                 remainingToNextTierUsd = Math.max(0, nextTierThresholdUsd - totalStakedValueInUsd);
                 // Get next APY from array (next tier = current tier + 1)
@@ -2127,8 +2137,8 @@
             }
             
             console.log('[STAKING-UI] 📝 Creating staking interface HTML...');
-            console.log('[STAKING-UI] Current tier:', currentTierInfo.tier.toNumber());
-            console.log('[STAKING-UI] Current APY:', (currentTierInfo.apy / 100).toFixed(0) + '%');
+            console.log('[STAKING-UI] Current tier:', toNum(currentTierInfo.tier));
+            console.log('[STAKING-UI] Current APY:', (toNum(currentTierInfo.apy) / 100).toFixed(0) + '%');
             
             const stakingInterface = document.getElementById('stakingInterface');
             if (!stakingInterface) {
