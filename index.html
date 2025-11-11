@@ -3113,60 +3113,92 @@
         // Load public statistics using Etherscan API (bypasses CORS)
         async function loadPublicStats() {
             try {
-                console.log('🔵 Loading public stats via Etherscan API...');
-                console.log('📍 Staking contract address:', CONFIG.STAKING_ADDRESS);
+                console.log('[STATS] Loading public stats via Etherscan API...');
+                console.log('[STATS] Staking contract address:', CONFIG.STAKING_ADDRESS);
                 
                 // Use Etherscan API to call totalStaked()
                 // Function signature for totalStaked(): 0x817b1cd2
                 const apiUrl = `https://api-sepolia.etherscan.io/api?module=proxy&action=eth_call&to=${CONFIG.STAKING_ADDRESS}&data=0x817b1cd2&tag=latest`;
                 
-                console.log('📡 Calling Etherscan API...');
+                console.log('[STATS] Calling Etherscan API...');
+                console.log('[STATS] API URL:', apiUrl);
+                
                 const response = await fetch(apiUrl);
                 const data = await response.json();
+                
+                console.log('[STATS] API Response:', data);
                 
                 if (data.error) {
                     throw new Error(data.error.message || 'Etherscan API error');
                 }
                 
                 if (!data.result || data.result === '0x') {
-                    console.log('⚠️ Contract not found or function not available');
+                    console.log('[STATS] Contract not found or function not available');
                     if (document.getElementById('totalStaked')) {
                         document.getElementById('totalStaked').textContent = '$0';
                     }
                     return;
                 }
                 
-                // Parse result
-                const resultHex = data.result.replace('0x', '');
-                const totalStakedRaw = parseInt(resultHex, 16);
-                console.log('✅ Total staked (raw):', totalStakedRaw);
+                console.log('Result (hex):', data.result);
+                
+                // Parse result - handle both formats
+                let resultHex = data.result;
+                if (typeof resultHex === 'string') {
+                    resultHex = resultHex.startsWith('0x') ? resultHex.slice(2) : resultHex;
+                }
+                console.log('Result without 0x:', resultHex);
+                
+                // Convert hex to decimal using BigInt for large numbers
+                let totalStakedRaw;
+                try {
+                    if (resultHex === '' || resultHex === null || resultHex === undefined) {
+                        throw new Error('Empty result');
+                    }
+                    // Use BigInt for parsing
+                    const bigIntValue = BigInt('0x' + resultHex);
+                    totalStakedRaw = Number(bigIntValue);
+                } catch (e) {
+                    console.error('Failed to parse hex:', e);
+                    totalStakedRaw = 0;
+                }
+                
+                console.log('Total staked (raw):', totalStakedRaw);
+                
+                // Check if parsing was successful
+                if (isNaN(totalStakedRaw) || totalStakedRaw === 0) {
+                    console.log('[STATS] Total staked is 0 or invalid');
+                    if (document.getElementById('totalStaked')) {
+                        document.getElementById('totalStaked').textContent = '$0';
+                    }
+                    return;
+                }
                 
                 // Calculate total staked in ARUB (6 decimals)
                 const totalStakedInArub = totalStakedRaw / 1000000;
-                console.log('💰 Total staked in ARUB:', totalStakedInArub);
+                console.log('[STATS] Total staked in ARUB:', totalStakedInArub);
                 
                 // Calculate USD value
                 const arubPriceInUsdt = currentRate || 81.22;
-                console.log('💵 ARUB price:', arubPriceInUsdt);
+                console.log('[STATS] ARUB price:', arubPriceInUsdt);
                 
                 const totalStakedValueInUsd = totalStakedInArub * arubPriceInUsdt;
-                console.log('💲 Total staked in USD:', totalStakedValueInUsd);
+                console.log('[STATS] Total staked in USD:', totalStakedValueInUsd);
                 
                 // Update stats display
                 if (document.getElementById('totalStaked')) {
                     const formattedValue = `$${totalStakedValueInUsd.toLocaleString('en-US', { maximumFractionDigits: 0 })}`;
                     document.getElementById('totalStaked').textContent = formattedValue;
-                    console.log('✅ Stats updated:', formattedValue);
+                    console.log('[STATS] Stats updated:', formattedValue);
                 }
                 
-                console.log('✅ Public stats loaded successfully');
+                console.log('[STATS] Public stats loaded successfully');
                 
             } catch (error) {
-                console.error('❌ Error loading public stats:', error);
-                console.error('Error details:', {
+                console.error('[STATS] Error loading public stats:', error);
+                console.error('[STATS] Error details:', {
                     message: error.message,
-                    code: error.code,
-                    reason: error.reason
+                    stack: error.stack
                 });
                 
                 // Set default value if contract not available
