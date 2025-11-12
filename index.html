@@ -1901,12 +1901,7 @@
                 'function getCurrentAPYTier() view returns (uint256 tier, uint256 threshold, uint256 apy, string memory description)',
                 'function totalStaked() view returns (uint256)',
                 'function currentAPY() view returns (uint256)',
-                'function minStakeAmount() view returns (uint256)',
-                // Дополнительные функции для раздельных пулов (если есть в контракте)
-                'function getUserUsdtStake(address _user) view returns (uint256)',
-                'function getUserArubStake(address _user) view returns (uint256)',
-                'function usdtStakes(address) view returns (uint256)',
-                'function arubStakes(address) view returns (uint256)'
+                'function minStakeAmount() view returns (uint256)'
             ];
             
             try {
@@ -2185,8 +2180,6 @@
             let usdtBalance = ethers.BigNumber.from(0);
             let arubBalance = ethers.BigNumber.from(0);
             let stakedAmount = ethers.BigNumber.from(0);
-            let stakedUsdtAmount = ethers.BigNumber.from(0);
-            let stakedArubAmount = ethers.BigNumber.from(0);
             let pendingRewards = ethers.BigNumber.from(0);
             let totalStaked = ethers.BigNumber.from(0);
             let currentAPY = 0;
@@ -2206,35 +2199,8 @@
                         stakedAmount = userInfo[0];
                         pendingRewards = userInfo[1];
                         
-                        // Пытаемся получить раздельную информацию о стейках USDT и ARUB
-                        try {
-                            // Метод 1: Проверяем функции getUserUsdtStake и getUserArubStake
-                            if (stakingContract.getUserUsdtStake && stakingContract.getUserArubStake) {
-                                stakedUsdtAmount = await stakingContract.getUserUsdtStake(userAddress).catch(() => ethers.BigNumber.from(0));
-                                stakedArubAmount = await stakingContract.getUserArubStake(userAddress).catch(() => ethers.BigNumber.from(0));
-                                console.log('[STAKING-UI] Method 1 - getUserUsdtStake/getUserArubStake');
-                                console.log('[STAKING-UI] USDT staked:', ethers.utils.formatUnits(stakedUsdtAmount, 6));
-                                console.log('[STAKING-UI] ARUB staked:', ethers.utils.formatUnits(stakedArubAmount, 6));
-                            }
-                            // Метод 2: Проверяем публичные mapping usdtStakes и arubStakes
-                            else if (stakingContract.usdtStakes && stakingContract.arubStakes) {
-                                stakedUsdtAmount = await stakingContract.usdtStakes(userAddress).catch(() => ethers.BigNumber.from(0));
-                                stakedArubAmount = await stakingContract.arubStakes(userAddress).catch(() => ethers.BigNumber.from(0));
-                                console.log('[STAKING-UI] Method 2 - usdtStakes/arubStakes mapping');
-                                console.log('[STAKING-UI] USDT staked:', ethers.utils.formatUnits(stakedUsdtAmount, 6));
-                                console.log('[STAKING-UI] ARUB staked:', ethers.utils.formatUnits(stakedArubAmount, 6));
-                            }
-                            // Fallback: используем общий stakedAmount
-                            else {
-                                console.log('[STAKING-UI] Using general stakedAmount for both pools');
-                                stakedUsdtAmount = stakedAmount;
-                                stakedArubAmount = stakedAmount;
-                            }
-                        } catch (separateError) {
-                            console.log('[STAKING-UI] ⚠️ Could not get separate pool info:', separateError.message);
-                            stakedUsdtAmount = stakedAmount;
-                            stakedArubAmount = stakedAmount;
-                        }
+                        console.log('[STAKING-UI] Staked amount (total):', ethers.utils.formatUnits(stakedAmount, 6));
+                        console.log('[STAKING-UI] Pending rewards:', ethers.utils.formatUnits(pendingRewards, 6));
                         
                         totalStaked = await stakingContract.totalStaked();
                         currentAPY = await stakingContract.currentAPY();
@@ -2623,8 +2589,8 @@
                         </div>
                         
                         <div class="info-row">
-                            <span class="info-label">Застейкано USDT:</span>
-                            <span class="info-value" style="color: #00ff7f; font-weight: 700;">${ethers.utils.formatUnits(stakedUsdtAmount, 6)} USDT</span>
+                            <span class="info-label">Застейкано токенів:</span>
+                            <span class="info-value" style="color: #00ff7f; font-weight: 700;">${ethers.utils.formatUnits(stakedAmount, 6)}</span>
                         </div>
                         
                         <div class="info-row">
@@ -2634,7 +2600,7 @@
                         
                         <div style="background: rgba(255,165,0,0.15); border: 2px solid rgba(255,165,0,0.4); padding: 12px; border-radius: 10px; margin: 15px 0;">
                             <p style="color: #ffa500; font-size: 0.9em; line-height: 1.5; margin: 0; font-weight: 600;">
-                                ⚠️ ВАЖЛИВО: Ви можете знімати лише ті токени, які ви застейкали! USDT та ARUB мають окремі пули стейкінгу.
+                                ⚠️ ВАЖЛИВО: Застейкані токени показані загалом. Ви можете знімати лише ті токени, які ви застейкали в цей пул (USDT)!
                             </p>
                         </div>
                         
@@ -2644,7 +2610,7 @@
                             </p>
                         </div>
                         
-                        <button class="action-btn" onclick="unstakeUsdtTokens()" ${stakedUsdtAmount.eq(0) ? 'disabled style="opacity: 0.5; cursor: not-allowed;"' : ''}>
+                        <button class="action-btn" onclick="unstakeUsdtTokens()">
                             💸 Зняти USDT
                         </button>
                     </div>
@@ -2670,8 +2636,8 @@
                         </div>
                         
                         <div class="info-row">
-                            <span class="info-label">Застейкано ARUB:</span>
-                            <span class="info-value" style="color: var(--ukraine-yellow); font-weight: 700;">${ethers.utils.formatUnits(stakedArubAmount, 6)} ARUB</span>
+                            <span class="info-label">Застейкано токенів:</span>
+                            <span class="info-value" style="color: var(--ukraine-yellow); font-weight: 700;">${ethers.utils.formatUnits(stakedAmount, 6)}</span>
                         </div>
                         
                         <div class="info-row">
@@ -2681,7 +2647,7 @@
                         
                         <div style="background: rgba(255,165,0,0.15); border: 2px solid rgba(255,165,0,0.4); padding: 12px; border-radius: 10px; margin: 15px 0;">
                             <p style="color: #ffa500; font-size: 0.9em; line-height: 1.5; margin: 0; font-weight: 600;">
-                                ⚠️ ВАЖЛИВО: Ви можете знімати лише ті токени, які ви застейкали! USDT та ARUB мають окремі пули стейкінгу.
+                                ⚠️ ВАЖЛИВО: Застейкані токени показані загалом. Ви можете знімати лише ті токени, які ви застейкали в цей пул (ARUB)!
                             </p>
                         </div>
                         
@@ -2691,7 +2657,7 @@
                             </p>
                         </div>
                         
-                        <button class="action-btn" onclick="unstakeArubTokens()" ${stakedArubAmount.eq(0) ? 'disabled style="opacity: 0.5; cursor: not-allowed;"' : ''}>
+                        <button class="action-btn" onclick="unstakeArubTokens()">
                             🔓 Зняти ARUB
                         </button>
                     </div>
@@ -2981,60 +2947,24 @@
             });
         }
         
-        async function setMaxUnstakeUsdt() {
+        function setMaxUnstakeUsdt() {
             if (!stakingContract || !userAddress) return;
-            
-            try {
-                let stakedUsdtAmount = ethers.BigNumber.from(0);
-                
-                // Пытаемся получить раздельную информацию о стейке USDT
-                try {
-                    if (stakingContract.getUserUsdtStake) {
-                        stakedUsdtAmount = await stakingContract.getUserUsdtStake(userAddress);
-                    } else if (stakingContract.usdtStakes) {
-                        stakedUsdtAmount = await stakingContract.usdtStakes(userAddress);
-                    } else {
-                        const userInfo = await stakingContract.getUserInfo(userAddress);
-                        stakedUsdtAmount = userInfo[0];
-                    }
-                } catch (error) {
-                    console.error('[setMaxUnstakeUsdt] Error:', error);
-                    const userInfo = await stakingContract.getUserInfo(userAddress);
-                    stakedUsdtAmount = userInfo[0];
-                }
-                
-                document.getElementById('unstakeUsdtAmount').value = ethers.utils.formatUnits(stakedUsdtAmount, 6);
-            } catch (error) {
-                console.error('[setMaxUnstakeUsdt] Failed to get staked amount:', error);
-            }
+            stakingContract.getUserInfo(userAddress).then(userInfo => {
+                const stakedAmount = userInfo[0];
+                document.getElementById('unstakeUsdtAmount').value = ethers.utils.formatUnits(stakedAmount, 6);
+            }).catch(error => {
+                console.error('[setMaxUnstakeUsdt] Error:', error);
+            });
         }
         
-        async function setMaxUnstakeArub() {
+        function setMaxUnstakeArub() {
             if (!stakingContract || !userAddress) return;
-            
-            try {
-                let stakedArubAmount = ethers.BigNumber.from(0);
-                
-                // Пытаемся получить раздельную информацию о стейке ARUB
-                try {
-                    if (stakingContract.getUserArubStake) {
-                        stakedArubAmount = await stakingContract.getUserArubStake(userAddress);
-                    } else if (stakingContract.arubStakes) {
-                        stakedArubAmount = await stakingContract.arubStakes(userAddress);
-                    } else {
-                        const userInfo = await stakingContract.getUserInfo(userAddress);
-                        stakedArubAmount = userInfo[0];
-                    }
-                } catch (error) {
-                    console.error('[setMaxUnstakeArub] Error:', error);
-                    const userInfo = await stakingContract.getUserInfo(userAddress);
-                    stakedArubAmount = userInfo[0];
-                }
-                
-                document.getElementById('unstakeArubAmount').value = ethers.utils.formatUnits(stakedArubAmount, 6);
-            } catch (error) {
-                console.error('[setMaxUnstakeArub] Failed to get staked amount:', error);
-            }
+            stakingContract.getUserInfo(userAddress).then(userInfo => {
+                const stakedAmount = userInfo[0];
+                document.getElementById('unstakeArubAmount').value = ethers.utils.formatUnits(stakedAmount, 6);
+            }).catch(error => {
+                console.error('[setMaxUnstakeArub] Error:', error);
+            });
         }
         
         async function stakeUsdtTokens() {
