@@ -1659,7 +1659,16 @@
             console.log('✅ Discovered provider:', providerDetail.info.name);
         });
         
+        // Запрашиваем провайдеры
         window.dispatchEvent(new Event('eip6963:requestProvider'));
+        
+        // Даем время для обнаружения кошельков
+        setTimeout(() => {
+            console.log(`✅ Wallet discovery complete. Found ${discoveredProviders.size} wallet(s)`);
+            discoveredProviders.forEach((provider, uuid) => {
+                console.log(`  - ${provider.info.name}`);
+            });
+        }, 100);
         
         async function fetchUsdtRubRate() {
             try {
@@ -1682,22 +1691,14 @@
         async function connectWallet() {
             try {
                 console.log('🚀 Connecting wallet...');
-                let selectedProvider = null;
                 
-                if (discoveredProviders.size > 0) {
-                    if (discoveredProviders.size === 1) {
-                        selectedProvider = Array.from(discoveredProviders.values())[0].provider;
-                    } else {
-                        selectedProvider = await showWalletSelector();
-                    }
-                } else if (window.ethereum) {
-                    selectedProvider = window.ethereum;
-                } else {
-                    showNotification('❌ Крипто-гаманець не знайдено', 'error');
+                // Всегда показываем выбор кошельков
+                const selectedProvider = await showWalletSelector();
+                
+                if (!selectedProvider) {
+                    console.log('⚠️ Wallet selection cancelled');
                     return;
                 }
-                
-                if (!selectedProvider) return;
                 
                 provider = new ethers.providers.Web3Provider(selectedProvider);
                 
@@ -1733,31 +1734,80 @@
             return new Promise((resolve) => {
                 const modal = document.createElement('div');
                 modal.className = 'wallet-modal';
+                
+                // Собираем список всех доступных кошельков
+                const walletOptions = [];
+                
+                // Добавляем все обнаруженные провайдеры через EIP-6963
+                if (discoveredProviders.size > 0) {
+                    Array.from(discoveredProviders.values()).forEach(providerDetail => {
+                        walletOptions.push({
+                            uuid: providerDetail.info.uuid,
+                            name: providerDetail.info.name,
+                            icon: providerDetail.info.icon,
+                            provider: providerDetail.provider
+                        });
+                    });
+                }
+                
+                // Добавляем window.ethereum как fallback (если он не был добавлен через EIP-6963)
+                if (window.ethereum && walletOptions.length === 0) {
+                    walletOptions.push({
+                        uuid: 'window-ethereum',
+                        name: 'Browser Wallet',
+                        icon: null,
+                        provider: window.ethereum
+                    });
+                }
+                
+                // Если нет доступных кошельков
+                if (walletOptions.length === 0) {
+                    showNotification('❌ Крипто-гаманець не знайдено. Встановіть MetaMask, Trust Wallet або інший Web3 гаманець', 'error');
+                    resolve(null);
+                    return;
+                }
+                
                 modal.innerHTML = `
                     <div class="wallet-modal-content">
-                        <h2 class="wallet-modal-title">Виберіть гаманець</h2>
-                        ${Array.from(discoveredProviders.values()).map(providerDetail => `
-                            <div class="wallet-option" data-uuid="${providerDetail.info.uuid}">
-                                <div class="wallet-icon">${providerDetail.info.icon ? 
-                                    `<img src="${providerDetail.info.icon}" width="32" height="32" alt="${providerDetail.info.name}">` : 
+                        <h2 class="wallet-modal-title">Виберіть гаманець 🔐</h2>
+                        <p style="text-align: center; color: #888; margin-bottom: 20px; font-size: 0.9em;">
+                            Виберіть гаманець для підключення до платформи
+                        </p>
+                        ${walletOptions.map(wallet => `
+                            <div class="wallet-option" data-uuid="${wallet.uuid}">
+                                <div class="wallet-icon">${wallet.icon ? 
+                                    `<img src="${wallet.icon}" width="40" height="40" alt="${wallet.name}" style="border-radius: 8px;">` : 
                                     '🔐'}</div>
-                                <div class="wallet-name">${providerDetail.info.name}</div>
+                                <div class="wallet-name">${wallet.name}</div>
+                                <div style="margin-left: auto; color: var(--accent); font-size: 1.2em;">→</div>
                             </div>
                         `).join('')}
+                        <button class="wallet-cancel-btn" style="margin-top: 20px; width: 100%; padding: 12px; background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.2); border-radius: 12px; color: white; cursor: pointer; font-size: 1em;">
+                            Скасувати
+                        </button>
                     </div>
                 `;
                 
                 document.body.appendChild(modal);
                 
+                // Обработка выбора кошелька
                 modal.querySelectorAll('.wallet-option').forEach(option => {
                     option.addEventListener('click', () => {
                         const uuid = option.dataset.uuid;
-                        const selectedProvider = discoveredProviders.get(uuid).provider;
+                        const selectedWallet = walletOptions.find(w => w.uuid === uuid);
+                        console.log('✅ Selected wallet:', selectedWallet.name);
                         modal.remove();
-                        resolve(selectedProvider);
+                        resolve(selectedWallet.provider);
                     });
                 });
                 
+                // Кнопка отмены
+                modal.querySelector('.wallet-cancel-btn').addEventListener('click', () => {
+                    modal.remove();
+                    resolve(null);
+                });
+                
+                // Закрытие по клику вне модального окна
                 modal.addEventListener('click', (e) => {
                     if (e.target === modal) {
                         modal.remove();
