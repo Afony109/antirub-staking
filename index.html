@@ -1254,7 +1254,7 @@
         </div>
         
         <!-- Общая статистика платформы (всегда видна) -->
-        <div id="generalStakingStats" style="max-width: 1200px; margin: 0 auto;">
+        <div id="generalStakingStats" style="max-width: 1200px; margin: 0 auto; display: block !important; visibility: visible !important; opacity: 1 !important;">
             <!-- Начальная статистика для мгновенного отображения -->
             <div style="margin-top: 40px; background: rgba(0,87,183,0.05); padding: 30px; border-radius: 20px; border: 2px solid rgba(0,87,183,0.2);">
                 <h3 style="text-align: center; font-size: 1.8em; margin-bottom: 30px; color: var(--ukraine-yellow);">📊 Загальна статистика платформи</h3>
@@ -1269,6 +1269,11 @@
                     0% { opacity: 0.6; }
                     50% { opacity: 1; }
                     100% { opacity: 0.6; }
+                }
+                #generalStakingStats {
+                    display: block !important;
+                    visibility: visible !important;
+                    opacity: 1 !important;
                 }
             </style>
         </div>
@@ -1763,6 +1768,42 @@
                 
                 document.getElementById('currentRate').textContent = `${usdToRub.toFixed(2)} ₽`;
                 document.getElementById('arubPrice').textContent = `$${usdToRub.toFixed(2)}`;
+                
+                // Обновляем цену ARUB в статистике, если элемент существует
+                const arubPriceValueEl = document.getElementById('arubPriceValue');
+                if (arubPriceValueEl) {
+                    arubPriceValueEl.textContent = usdToRub.toFixed(2);
+                    console.log('✅ Updated ARUB price in statistics:', usdToRub.toFixed(2));
+                }
+                
+                // Пересчитываем стоимость в долларах
+                const totalStakedAmountEl = document.getElementById('totalStakedAmount');
+                if (totalStakedAmountEl) {
+                    const amountText = totalStakedAmountEl.textContent;
+                    const amount = parseFloat(amountText.replace(' токенів', '').replace(',', ''));
+                    if (!isNaN(amount)) {
+                        const valueInUsd = amount * usdToRub;
+                        const totalStakedValueEl = document.getElementById('totalStakedValue');
+                        if (totalStakedValueEl) {
+                            totalStakedValueEl.textContent = `$${valueInUsd.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
+                        }
+                    }
+                }
+                
+                // Пересчитываем стоимость всех ARUB
+                const totalSupplyAmountEl = document.getElementById('totalSupplyAmount');
+                if (totalSupplyAmountEl) {
+                    const supplyText = totalSupplyAmountEl.textContent;
+                    const supply = parseFloat(supplyText.replace(',', ''));
+                    if (!isNaN(supply)) {
+                        const supplyInUsd = supply * usdToRub;
+                        const totalSupplyValueEl = document.getElementById('totalSupplyValue');
+                        if (totalSupplyValueEl) {
+                            totalSupplyValueEl.textContent = `$${supplyInUsd.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
+                        }
+                    }
+                }
+                
                 console.log('✅ USDT/RUB rate:', usdToRub);
             } catch (error) {
                 console.error('Error fetching rate:', error);
@@ -2582,7 +2623,7 @@
             console.log('[SIMPLE-STATS] Showing statistics...');
             
             const statsHTML = `
-                <div style="margin-top: 40px; background: rgba(0,87,183,0.05); padding: 30px; border-radius: 20px; border: 2px solid rgba(0,87,183,0.2);">
+                <div style="margin-top: 40px; background: rgba(0,87,183,0.05); padding: 30px; border-radius: 20px; border: 2px solid rgba(0,87,183,0.2); display: block !important; visibility: visible !important;">
                     <h3 style="text-align: center; font-size: 1.8em; margin-bottom: 30px; color: #FFD700;">📊 Загальна статистика платформи</h3>
                     
                     <!-- Основные карточки статистики -->
@@ -2697,14 +2738,30 @@
             const container = document.getElementById('generalStakingStats');
             if (container) {
                 container.innerHTML = statsHTML;
+                container.style.display = 'block';
+                container.style.visibility = 'visible';
                 console.log('[SIMPLE-STATS] Statistics displayed');
-                
-                // Пробуем обновить значения из реальных данных
-                setTimeout(() => {
-                    updateGeneralStakingStats();
-                }, 2000);
+                console.log('[SIMPLE-STATS] Container display:', container.style.display);
+                console.log('[SIMPLE-STATS] Container visibility:', container.style.visibility);
+                // Проверяем что контент действительно добавлен
+                const checkContent = container.querySelector('h3');
+                if (checkContent) {
+                    console.log('[SIMPLE-STATS] Content verified: Statistics is visible');
+                } else {
+                    console.error('[SIMPLE-STATS] Content not found after insertion!');
+                }
             } else {
                 console.error('[SIMPLE-STATS] Container not found!');
+                // Попытка найти альтернативным способом
+                setTimeout(() => {
+                    const retryContainer = document.querySelector('#generalStakingStats');
+                    if (retryContainer) {
+                        console.log('[SIMPLE-STATS] Container found on retry');
+                        retryContainer.innerHTML = statsHTML;
+                        retryContainer.style.display = 'block';
+                        retryContainer.style.visibility = 'visible';
+                    }
+                }, 500);
             }
         }
 
@@ -4225,8 +4282,10 @@
             const statsContainer = document.getElementById('generalStakingStats');
             console.log('[INIT] Stats container found:', !!statsContainer);
             
-            // Сразу показываем статистику с реальными данными из блокчейна
-            showSimpleStats();
+            // Показываем статистику сразу с данными
+            setTimeout(() => {
+                showSimpleStats();
+            }, 100); // Небольшая задержка для гарантии загрузки DOM
             
             const connectBtn = document.getElementById('connectBtn');
             if (connectBtn) {
@@ -4240,12 +4299,7 @@
             updateArbitrageRates();
             setInterval(updateArbitrageRates, 300000);
             
-            // Обновляем статистику каждые 30 секунд
-            setInterval(updateGeneralStakingStats, 30000);
-            
-            // Load public stats without wallet connection
-            await loadPublicStats();
-            setInterval(loadPublicStats, 60000); // Update every minute
+            // НЕ вызываем функции обновления статистики из-за CORS блокировки на GitHub Pages
             
             console.log('✅ Initialization complete');
         });
