@@ -444,12 +444,13 @@
             left: 0;
             width: 100%;
             height: 100%;
-            background: rgba(0,0,0,0.9);
+            background: rgba(0,0,0,0.95);
             display: flex;
             align-items: center;
             justify-content: center;
-            z-index: 3000;
+            z-index: 9999;
             padding: 20px;
+            backdrop-filter: blur(10px);
         }
         
         .wallet-modal-content {
@@ -462,6 +463,18 @@
             overflow-y: auto;
             border: 2px solid var(--ukraine-blue);
             box-shadow: 0 20px 60px rgba(0,87,183,0.4);
+            animation: modalFadeIn 0.3s ease-out;
+        }
+        
+        @keyframes modalFadeIn {
+            from {
+                opacity: 0;
+                transform: scale(0.9) translateY(-20px);
+            }
+            to {
+                opacity: 1;
+                transform: scale(1) translateY(0);
+            }
         }
         
         .wallet-modal-title {
@@ -1650,6 +1663,7 @@
         let stakingContract = null;
         let tokenContract = null;
         let currentRate = null;
+        let selectedWalletProvider = null; // Для хранения выбранного провайдера кошелька
         
         const discoveredProviders = new Map();
         
@@ -1692,6 +1706,14 @@
             try {
                 console.log('🚀 Connecting wallet...');
                 
+                // Запрашиваем кошельки еще раз перед подключением
+                window.dispatchEvent(new Event('eip6963:requestProvider'));
+                
+                // Даем время на обнаружение кошельков (500мс)
+                await new Promise(resolve => setTimeout(resolve, 500));
+                
+                console.log(`📊 Found ${discoveredProviders.size} wallet provider(s)`);
+                
                 // Всегда показываем выбор кошельков
                 const selectedProvider = await showWalletSelector();
                 
@@ -1699,6 +1721,10 @@
                     console.log('⚠️ Wallet selection cancelled');
                     return;
                 }
+                
+                // Сохраняем выбранный провайдер для использования в других функциях
+                selectedWalletProvider = selectedProvider;
+                console.log('💾 Selected wallet provider saved globally');
                 
                 provider = new ethers.providers.Web3Provider(selectedProvider);
                 
@@ -1732,6 +1758,8 @@
         
         async function showWalletSelector() {
             return new Promise((resolve) => {
+                console.log('🔍 Opening wallet selector...');
+                
                 const modal = document.createElement('div');
                 modal.className = 'wallet-modal';
                 
@@ -1740,7 +1768,9 @@
                 
                 // Добавляем все обнаруженные провайдеры через EIP-6963
                 if (discoveredProviders.size > 0) {
+                    console.log(`✅ Found ${discoveredProviders.size} providers via EIP-6963`);
                     Array.from(discoveredProviders.values()).forEach(providerDetail => {
+                        console.log(`  - ${providerDetail.info.name}`);
                         walletOptions.push({
                             uuid: providerDetail.info.uuid,
                             name: providerDetail.info.name,
@@ -1748,10 +1778,13 @@
                             provider: providerDetail.provider
                         });
                     });
+                } else {
+                    console.log('⚠️ No providers found via EIP-6963');
                 }
                 
                 // Добавляем window.ethereum как fallback (если он не был добавлен через EIP-6963)
                 if (window.ethereum && walletOptions.length === 0) {
+                    console.log('✅ Using window.ethereum as fallback');
                     walletOptions.push({
                         uuid: 'window-ethereum',
                         name: 'Browser Wallet',
@@ -1762,10 +1795,13 @@
                 
                 // Если нет доступных кошельков
                 if (walletOptions.length === 0) {
+                    console.error('❌ No wallet providers available');
                     showNotification('❌ Крипто-гаманець не знайдено. Встановіть MetaMask, Trust Wallet або інший Web3 гаманець', 'error');
                     resolve(null);
                     return;
                 }
+                
+                console.log(`📋 Showing wallet selector with ${walletOptions.length} option(s)`);
                 
                 modal.innerHTML = `
                     <div class="wallet-modal-content">
@@ -1789,13 +1825,23 @@
                 `;
                 
                 document.body.appendChild(modal);
+                console.log('✅ Wallet selector modal added to DOM');
+                
+                // Проверка что модальное окно видимо
+                setTimeout(() => {
+                    const isVisible = modal.offsetParent !== null;
+                    console.log('Modal visibility check:', isVisible ? '✅ VISIBLE' : '❌ NOT VISIBLE');
+                    if (!isVisible) {
+                        console.error('⚠️ Modal is in DOM but not visible! Check CSS styles.');
+                    }
+                }, 50);
                 
                 // Обработка выбора кошелька
                 modal.querySelectorAll('.wallet-option').forEach(option => {
                     option.addEventListener('click', () => {
                         const uuid = option.dataset.uuid;
                         const selectedWallet = walletOptions.find(w => w.uuid === uuid);
-                        console.log('✅ Selected wallet:', selectedWallet.name);
+                        console.log('✅ User selected wallet:', selectedWallet.name);
                         modal.remove();
                         resolve(selectedWallet.provider);
                     });
@@ -1803,6 +1849,7 @@
                 
                 // Кнопка отмены
                 modal.querySelector('.wallet-cancel-btn').addEventListener('click', () => {
+                    console.log('⚠️ User cancelled wallet selection');
                     modal.remove();
                     resolve(null);
                 });
@@ -1810,6 +1857,7 @@
                 // Закрытие по клику вне модального окна
                 modal.addEventListener('click', (e) => {
                     if (e.target === modal) {
+                        console.log('⚠️ User closed modal by clicking outside');
                         modal.remove();
                         resolve(null);
                     }
@@ -3294,15 +3342,19 @@
         
         // Add ARUB token to MetaMask
         async function addArubToMetaMask() {
-            if (!window.ethereum) {
-                showNotification('❌ MetaMask не знайдено! Встановіть MetaMask.', 'error');
+            // Используем выбранный провайдер или fallback на window.ethereum
+            const walletProvider = selectedWalletProvider || window.ethereum;
+            
+            if (!walletProvider) {
+                showNotification('❌ Гаманець не підключено! Спочатку підключіть гаманець.', 'error');
                 return;
             }
             
             try {
-                console.log('[ADD-TOKEN] Adding ARUB to MetaMask...');
+                console.log('[ADD-TOKEN] Adding ARUB to wallet...');
+                console.log('[ADD-TOKEN] Token address:', CONFIG.TOKEN_ADDRESS);
                 
-                const wasAdded = await window.ethereum.request({
+                const wasAdded = await walletProvider.request({
                     method: 'wallet_watchAsset',
                     params: {
                         type: 'ERC20',
@@ -3317,28 +3369,32 @@
                 
                 if (wasAdded) {
                     console.log('[ADD-TOKEN] ✅ ARUB token added successfully');
-                    showNotification('✅ ARUB успішно додано до MetaMask!', 'success');
+                    showNotification('✅ ARUB успішно додано до гаманця!', 'success');
                 } else {
                     console.log('[ADD-TOKEN] ⚠️ User rejected adding ARUB');
                     showNotification('⚠️ Додавання токену відхилено', 'warning');
                 }
             } catch (error) {
                 console.error('[ADD-TOKEN] Error adding ARUB:', error);
-                showNotification('❌ Помилка додавання ARUB. Спробуйте вручну.', 'error');
+                showNotification('❌ Помилка додавання ARUB: ' + error.message, 'error');
             }
         }
         
-        // Add USDT token to MetaMask
+        // Add USDT token to wallet
         async function addUsdtToMetaMask() {
-            if (!window.ethereum) {
-                showNotification('❌ MetaMask не знайдено! Встановіть MetaMask.', 'error');
+            // Используем выбранный провайдер или fallback на window.ethereum
+            const walletProvider = selectedWalletProvider || window.ethereum;
+            
+            if (!walletProvider) {
+                showNotification('❌ Гаманець не підключено! Спочатку підключіть гаманець.', 'error');
                 return;
             }
             
             try {
-                console.log('[ADD-TOKEN] Adding USDT to MetaMask...');
+                console.log('[ADD-TOKEN] Adding USDT to wallet...');
+                console.log('[ADD-TOKEN] Token address:', CONFIG.USDT_ADDRESS);
                 
-                const wasAdded = await window.ethereum.request({
+                const wasAdded = await walletProvider.request({
                     method: 'wallet_watchAsset',
                     params: {
                         type: 'ERC20',
@@ -3353,14 +3409,14 @@
                 
                 if (wasAdded) {
                     console.log('[ADD-TOKEN] ✅ USDT token added successfully');
-                    showNotification('✅ MockUSDT успішно додано до MetaMask!', 'success');
+                    showNotification('✅ MockUSDT успішно додано до гаманця!', 'success');
                 } else {
                     console.log('[ADD-TOKEN] ⚠️ User rejected adding USDT');
                     showNotification('⚠️ Додавання токену відхилено', 'warning');
                 }
             } catch (error) {
                 console.error('[ADD-TOKEN] Error adding USDT:', error);
-                showNotification('❌ Помилка додавання USDT. Спробуйте вручну.', 'error');
+                showNotification('❌ Помилка додавання USDT: ' + error.message, 'error');
             }
         }
         
