@@ -3342,15 +3342,30 @@
         
         // Add ARUB token to MetaMask
         async function addArubToMetaMask() {
-            // Используем выбранный провайдер или fallback на window.ethereum
-            const walletProvider = selectedWalletProvider || window.ethereum;
-            
-            if (!walletProvider) {
-                showNotification('❌ Гаманець не підключено! Спочатку підключіть гаманець.', 'error');
-                return;
-            }
-            
             try {
+                let walletProvider = selectedWalletProvider;
+                
+                // Если кошелек еще не выбран, показываем модальное окно выбора
+                if (!walletProvider) {
+                    console.log('[ADD-TOKEN] Wallet not connected, showing wallet selector...');
+                    
+                    // Запрашиваем кошельки
+                    window.dispatchEvent(new Event('eip6963:requestProvider'));
+                    await new Promise(resolve => setTimeout(resolve, 500));
+                    
+                    // Показываем модальное окно выбора кошелька
+                    walletProvider = await showWalletSelector();
+                    
+                    if (!walletProvider) {
+                        console.log('[ADD-TOKEN] Wallet selection cancelled');
+                        return;
+                    }
+                    
+                    // Сохраняем выбранный провайдер
+                    selectedWalletProvider = walletProvider;
+                    console.log('[ADD-TOKEN] Wallet provider selected and saved');
+                }
+                
                 console.log('[ADD-TOKEN] Adding ARUB to wallet...');
                 console.log('[ADD-TOKEN] Token address:', CONFIG.TOKEN_ADDRESS);
                 
@@ -3382,15 +3397,30 @@
         
         // Add USDT token to wallet
         async function addUsdtToMetaMask() {
-            // Используем выбранный провайдер или fallback на window.ethereum
-            const walletProvider = selectedWalletProvider || window.ethereum;
-            
-            if (!walletProvider) {
-                showNotification('❌ Гаманець не підключено! Спочатку підключіть гаманець.', 'error');
-                return;
-            }
-            
             try {
+                let walletProvider = selectedWalletProvider;
+                
+                // Если кошелек еще не выбран, показываем модальное окно выбора
+                if (!walletProvider) {
+                    console.log('[ADD-TOKEN] Wallet not connected, showing wallet selector...');
+                    
+                    // Запрашиваем кошельки
+                    window.dispatchEvent(new Event('eip6963:requestProvider'));
+                    await new Promise(resolve => setTimeout(resolve, 500));
+                    
+                    // Показываем модальное окно выбора кошелька
+                    walletProvider = await showWalletSelector();
+                    
+                    if (!walletProvider) {
+                        console.log('[ADD-TOKEN] Wallet selection cancelled');
+                        return;
+                    }
+                    
+                    // Сохраняем выбранный провайдер
+                    selectedWalletProvider = walletProvider;
+                    console.log('[ADD-TOKEN] Wallet provider selected and saved');
+                }
+                
                 console.log('[ADD-TOKEN] Adding USDT to wallet...');
                 console.log('[ADD-TOKEN] Token address:', CONFIG.USDT_ADDRESS);
                 
