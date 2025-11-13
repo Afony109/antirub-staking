@@ -1,8 +1,8 @@
 <!DOCTYPE html>
 <html lang="uk">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
     <title>ANTI RUB - Статистика</title>
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
@@ -74,7 +74,7 @@
             font-size: 14px; 
             margin: 20px 0;
             padding: 10px;
-            background: rgba(0,255,0,0.1);
+            background: rgba(0,255,0,0.06);
             border-radius: 8px;
         }
         .footer {
@@ -132,147 +132,219 @@
     </div>
 
     <script>
-        const CONTRACTS = {
-            ARUB: '0x98fFc1A4Ff6eAD8EebFd02cDA54852Bb69744788',
-            STAKING: '0xd98F611370262f7494eee27f55bc9a8922a9a66d'
+    // ---------- КОНФІГ ----------
+    const CONTRACTS = {
+        ARUB: '0x98fFc1A4Ff6eAD8EebFd02cDA54852Bb69744788',      // замініть, якщо потрібно
+        STAKING: '0xd98F611370262f7494eee27f55bc9a8922a9a66d'    // замініть, якщо потрібно
+    };
+
+    // Список публічних Sepolia RPC (без ключа)
+    const RPC_ENDPOINTS = [
+        'https://ethereum-sepolia-rpc.publicnode.com',
+        'https://rpc.sepolia.org',
+        'https://rpc2.sepolia.org',
+        'https://ethereum-sepolia.publicnode.com',
+        'https://sepolia.gateway.tenderly.co'
+    ];
+
+    // Дефолтний курс USD->RUB (використовується, якщо API недоступний)
+    let rate = 81.22;
+
+    // Кеш для робочого RPC, щоб не опитувати весь список кожного разу
+    let workingRPC = null;
+
+    // Якщо контракт використовує іншу кількість десяткових місць (decimals),
+    // змініть тут. Більшість ERC20 = 18, але у вашому коді була 6 — перевірте контракт.
+    const TOKEN_DECIMALS = 6; // залишив 6, якщо ваш токен 18 — поставте 18
+
+    // ---------- УТИЛІТИ ----------
+    function hexToBigInt(hex) {
+        if (!hex || hex === '0x' || hex === '0x0') return 0n;
+        try {
+            return BigInt(hex);
+        } catch (e) {
+            // Якщо непередбачене значення — повернемо 0
+            return 0n;
+        }
+    }
+
+    // Форматування bigint -> рядок з десятковою частиною
+    function formatTokenString(valueBigInt, decimals = TOKEN_DECIMALS, fractionDigits = 2) {
+        const s = valueBigInt.toString().padStart(decimals + 1, '0'); // гарантуємо достатню довжину
+        const intPart = s.slice(0, -decimals);
+        const fracRaw = s.slice(-decimals);
+        let frac = fracRaw.slice(0, fractionDigits);
+        // обріжемо зайві нулі справа
+        frac = frac.replace(/0+$/, '');
+        const intFormatted = Number(intPart).toLocaleString('en-US');
+        return frac ? `${intFormatted}.${frac}` : `${intFormatted}`;
+    }
+
+    // Конвертуємо в число для USD обчислень (процедурно, з втратою точності при дуже великих числах)
+    function bigIntToFloat(valueBigInt, decimals = TOKEN_DECIMALS) {
+        return Number(valueBigInt.toString()) / Math.pow(10, decimals);
+    }
+
+    // Неблокуючий fetch з таймаутом
+    async function fetchWithTimeout(url, options = {}, timeoutMs = 8000) {
+        const controller = new AbortController();
+        const id = setTimeout(() => controller.abort(), timeoutMs);
+        try {
+            const res = await fetch(url, { signal: controller.signal, ...options });
+            clearTimeout(id);
+            return res;
+        } catch (e) {
+            clearTimeout(id);
+            throw e;
+        }
+    }
+
+    // Виклик eth_call з fallback та кешуванням робочого RPC
+    async function callContractWithFallback(address, data) {
+        const errors = [];
+
+        const tryRpc = async (rpcUrl) => {
+            try {
+                // невеликий payload для eth_call
+                const payload = {
+                    jsonrpc: '2.0',
+                    method: 'eth_call',
+                    params: [{ to: address, data: data }, 'latest'],
+                    id: 1
+                };
+                const res = await fetchWithTimeout(rpcUrl, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(payload)
+                }, 9000); // 9s
+                if (!res.ok) throw new Error(`HTTP ${res.status}`);
+                const json = await res.json();
+                if (json.error) throw new Error(json.error.message || JSON.stringify(json.error));
+                if (json.result === undefined || json.result === null) throw new Error('No result');
+                // Успіх — кешуємо rpc і повертаємо
+                workingRPC = rpcUrl;
+                return json.result;
+            } catch (e) {
+                errors.push(`${rpcUrl}: ${e.message}`);
+                // продовжимо
+                return null;
+            }
         };
 
-        // Публічні RPC БЕЗ ключа
-        const RPC_ENDPOINTS = [
-            'https://ethereum-sepolia-rpc.publicnode.com',
-            'https://rpc.sepolia.org',
-            'https://rpc2.sepolia.org',
-            'https://ethereum-sepolia.publicnode.com',
-            'https://sepolia.gateway.tenderly.co'
-        ];
+        // Спробуємо cached RPC першим
+        if (workingRPC) {
+            const r = await tryRpc(workingRPC);
+            if (r) return r;
+            // якщо cached не працює — обнуляємо щоб пробувати інші
+            workingRPC = null;
+        }
 
-        let rate = 81.22;
-        let workingRPC = null;
+        for (const rpcUrl of RPC_ENDPOINTS) {
+            const r = await tryRpc(rpcUrl);
+            if (r) return r;
+        }
 
-        async function callContractWithFallback(address, data) {
-            const errors = [];
-            
-            for (const rpcUrl of RPC_ENDPOINTS) {
-                try {
-                    console.log(`Trying: ${rpcUrl}`);
-                    
-                    const payload = {
-                        jsonrpc: '2.0',
-                        method: 'eth_call',
-                        params: [{to: address, data: data}, 'latest'],
-                        id: 1
-                    };
-                    
-                    const response = await fetch(rpcUrl, {
-                        method: 'POST',
-                        headers: {'Content-Type': 'application/json'},
-                        body: JSON.stringify(payload)
-                    });
-                    
-                    if (!response.ok) {
-                        throw new Error(`HTTP ${response.status}`);
-                    }
-                    
-                    const result = await response.json();
-                    
-                    if (result.error) {
-                        throw new Error(result.error.message || JSON.stringify(result.error));
-                    }
-                    
-                    if (result.result) {
-                        console.log(`✅ ${rpcUrl}`);
-                        workingRPC = rpcUrl;
-                        return result.result;
-                    }
-                    
-                    throw new Error('No result');
-                } catch (error) {
-                    console.log(`❌ ${rpcUrl}:`, error.message);
-                    errors.push(`${rpcUrl}: ${error.message}`);
-                }
+        // Якщо всі провалилися — кинути помилку з детективом
+        throw new Error('All RPC endpoints failed: ' + errors.join(' | '));
+    }
+
+    // Отримати курс USD -> RUB (на прикладі exchangerate, але з резервом)
+    async function getRate() {
+        try {
+            // Пробуємо надіслати запит до загальнодоступного API
+            // Може бути CORS-обмеження — тому обернений try/catch
+            const res = await fetchWithTimeout('https://api.exchangerate-api.com/v4/latest/USD', {}, 7000);
+            if (!res.ok) throw new Error('HTTP ' + res.status);
+            const data = await res.json();
+            if (data && data.rates && data.rates.RUB) {
+                rate = data.rates.RUB;
+                console.log('💱 USDT/RUB:', rate);
+                return;
             }
-            
-            throw new Error(`All RPC failed`);
+            // Якщо структура не та — використовуємо дефолт
+            console.warn('Rate API returned unexpected structure, using default rate');
+        } catch (e) {
+            console.warn('⚠️ Could not fetch rate, using default:', e.message);
         }
+        // rate залишається дефолтним
+    }
 
-        function hexToNumber(hex) {
-            if (!hex || hex === '0x' || hex === '0x0') return 0;
-            return parseInt(hex, 16);
-        }
+    // ---------- Основна логіка ----------
+    async function loadStats() {
+        try {
+            document.getElementById('loading').style.display = 'block';
+            document.getElementById('stats').style.display = 'none';
+            document.getElementById('dataSource').style.display = 'none';
 
-        function formatTokens(value) {
-            return value / 1000000;
-        }
+            document.getElementById('loadingText').textContent = 'Отримання курсу...';
+            await getRate();
 
-        async function getRate() {
+            // 1) totalStaked() — метод підпис 0x817b1cd2 (як в оригіналі)
+            document.getElementById('loadingText').textContent = 'Читання totalStaked()...';
+            const totalStakedHex = await callContractWithFallback(CONTRACTS.STAKING, '0x817b1cd2');
+            const totalStakedBI = hexToBigInt(totalStakedHex);
+
+            // 2) totalSupply()
+            document.getElementById('loadingText').textContent = 'Читання totalSupply()...';
+            const totalSupplyHex = await callContractWithFallback(CONTRACTS.ARUB, '0x18160ddd');
+            const totalSupplyBI = hexToBigInt(totalSupplyHex);
+
+            // 3) (опційно) currentAPY() — якщо контракт не реалізує або викликає помилку, використовуємо дефолт
+            let apyValue = 24; // дефолт
             try {
-                const res = await fetch('https://api.exchangerate-api.com/v4/latest/USD');
-                const data = await res.json();
-                if (data.rates && data.rates.RUB) {
-                    rate = data.rates.RUB;
-                    console.log('💱 USDT/RUB:', rate);
-                }
+                document.getElementById('loadingText').textContent = 'Читання currentAPY()...';
+                // якщо ваш контракт має метод currentAPY() — вставте правильний сигнатурний хеш тут
+                // приклад: const apyHex = await callContractWithFallback(CONTRACTS.STAKING, '0x...signature...');
+                // const apyBI = hexToBigInt(apyHex);
+                // apyValue = Number(apyBI); 
+                // Але якщо цього методу немає — пропускаємо.
             } catch (e) {
-                console.log('⚠️ Default rate: 81.22');
+                console.warn('APY read failed, using default', e);
             }
+
+            // Форматування для UI
+            const totalStakedStr = formatTokenString(totalStakedBI, TOKEN_DECIMALS, 2);
+            const totalSupplyStr = formatTokenString(totalSupplyBI, TOKEN_DECIMALS, 0);
+
+            const totalStakedFloat = bigIntToFloat(totalStakedBI, TOKEN_DECIMALS);
+            const totalSupplyFloat = bigIntToFloat(totalSupplyBI, TOKEN_DECIMALS);
+
+            const totalStakedUsd = totalStakedFloat * rate;
+            const totalSupplyUsd = totalSupplyFloat * rate;
+
+            // Вивід у DOM
+            document.getElementById('totalStaked').textContent =
+                '$' + totalStakedUsd.toLocaleString('en-US', { maximumFractionDigits: 0 });
+            document.getElementById('totalStakedTokens').textContent =
+                totalStakedStr + ' токенів';
+
+            document.getElementById('supply').textContent =
+                totalSupplyStr;
+            document.getElementById('supplyUsd').textContent =
+                '$' + totalSupplyUsd.toLocaleString('en-US', { maximumFractionDigits: 0 });
+
+            document.getElementById('apy').textContent = apyValue + '%';
+            // Ціна 1 ARUB в USD — тут ми використовуємо rate (USD->RUB) як резервну логіку.
+            // Якщо у вас є реальна ціна ARUB у USDT — потрібно підключити оракул/DEX API.
+            document.getElementById('price').textContent = rate.toFixed(2);
+
+            document.getElementById('loading').style.display = 'none';
+            document.getElementById('stats').style.display = 'grid';
+            document.getElementById('dataSource').style.display = 'block';
+        } catch (error) {
+            console.error('❌ Error loading stats:', error);
+            // Покажемо зрозуміле повідомлення користувачеві
+            document.getElementById('loadingText').textContent =
+                '❌ Помилка: ' + (error.message || 'невідома помилка');
+            // залишаємо спіннер видимим, тому що setInterval повторить спробу
         }
+    }
 
-        async function loadStats() {
-            try {
-                document.getElementById('loading').style.display = 'block';
-                document.getElementById('stats').style.display = 'none';
-
-                console.log('🚀 ANTI RUB Stats');
-                
-                document.getElementById('loadingText').textContent = 'Отримання курсу...';
-                await getRate();
-
-                document.getElementById('loadingText').textContent = 'Читання totalStaked()...';
-                const totalStakedHex = await callContractWithFallback(CONTRACTS.STAKING, '0x817b1cd2');
-                const totalStakedRaw = hexToNumber(totalStakedHex);
-
-                document.getElementById('loadingText').textContent = 'Читання totalSupply()...';
-                const totalSupplyHex = await callContractWithFallback(CONTRACTS.ARUB, '0x18160ddd');
-                const totalSupplyRaw = hexToNumber(totalSupplyHex);
-
-                // currentAPY() викликає помилку, використовуємо дефолтне значення
-                const apyValue = 24; // 24% APY за замовчуванням
-
-                const totalStakedTokens = formatTokens(totalStakedRaw);
-                const totalStakedUsd = totalStakedTokens * rate;
-                const totalSupplyTokens = formatTokens(totalSupplyRaw);
-                const totalSupplyUsd = totalSupplyTokens * rate;
-
-                console.log('💰 Staked:', totalStakedTokens, 'ARUB');
-                console.log('🚀 Supply:', totalSupplyTokens, 'ARUB');
-                console.log('📈 APY:', apyValue + '% (default)');
-
-                document.getElementById('totalStaked').textContent = 
-                    '$' + totalStakedUsd.toLocaleString('en-US', { maximumFractionDigits: 0 });
-                document.getElementById('totalStakedTokens').textContent = 
-                    totalStakedTokens.toLocaleString('en-US', { maximumFractionDigits: 2 }) + ' токенів';
-                document.getElementById('supply').textContent = 
-                    totalSupplyTokens.toLocaleString('en-US', { maximumFractionDigits: 0 });
-                document.getElementById('supplyUsd').textContent = 
-                    '$' + totalSupplyUsd.toLocaleString('en-US', { maximumFractionDigits: 0 });
-                document.getElementById('apy').textContent = apyValue + '%';
-                document.getElementById('price').textContent = rate.toFixed(2);
-
-                document.getElementById('loading').style.display = 'none';
-                document.getElementById('stats').style.display = 'grid';
-                document.getElementById('dataSource').style.display = 'block';
-
-                console.log('✅ Done!');
-            } catch (error) {
-                console.error('❌ Error:', error);
-                document.getElementById('loadingText').textContent = '❌ Помилка: ' + error.message;
-            }
-        }
-
-        window.addEventListener('DOMContentLoaded', () => {
-            loadStats();
-            setInterval(loadStats, 30000);
-        });
+    // Старт і автооновлення кожні 30 секунд
+    window.addEventListener('DOMContentLoaded', () => {
+        loadStats();
+        setInterval(loadStats, 30000);
+    });
     </script>
 </body>
 </html>
