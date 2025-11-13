@@ -2344,31 +2344,195 @@
         }
         
         // Функция для получения общей статистики (работает без подключения кошелька)
-        async function updateGeneralStakingStats() {
-            console.log('[GENERAL-STATS] Updating general staking statistics...');
-            
+        // ✅ ПРАВИЛЬНАЯ функция для загрузки статистики БЕЗ подключения кошелька
+async function updateGeneralStakingStats() {
+    console.log('[GENERAL-STATS] Updating general staking statistics...');
+    
+    try {
+        // ✅ КРИТИЧНО: Создаем публичный провайдер БЕЗ кошелька
+        let publicProvider = null;
+        
+        // Пробуем список публичных RPC
+        const rpcUrls = [
+            'https://rpc.sepolia.org',
+            'https://ethereum-sepolia-rpc.publicnode.com',
+            'https://sepolia.drpc.org',
+            'https://rpc2.sepolia.org',
+            'https://eth-sepolia.public.blastapi.io'
+        ];
+        
+        // Находим рабочий RPC
+        for (const rpcUrl of rpcUrls) {
             try {
-                let publicProvider = null;
+                console.log('[GENERAL-STATS] Trying RPC:', rpcUrl);
+                const testProvider = new ethers.providers.JsonRpcProvider(rpcUrl);
                 
-                // Сначала пробуем использовать window.ethereum если доступен
-                if (window.ethereum) {
-                    try {
-                        console.log('[GENERAL-STATS] Trying to use window.ethereum provider...');
-                        publicProvider = new ethers.providers.Web3Provider(window.ethereum);
-                        
-                        // Проверяем сеть
-                        const network = await publicProvider.getNetwork();
-                        if (network.chainId !== 11155111) { // Sepolia chainId
-                            console.log('[GENERAL-STATS] Wrong network, switching to public RPC');
-                            publicProvider = null;
-                        } else {
-                            console.log('[GENERAL-STATS] Using window.ethereum provider');
-                        }
-                    } catch (error) {
-                        console.log('[GENERAL-STATS] window.ethereum failed:', error.message);
-                        publicProvider = null;
-                    }
-                }
+                // Проверяем с таймаутом
+                const blockPromise = testProvider.getBlockNumber();
+                const timeoutPromise = new Promise((_, reject) => 
+                    setTimeout(() => reject(new Error('Timeout')), 5000)
+                );
+                await Promise.race([blockPromise, timeoutPromise]);
+                
+                publicProvider = testProvider;
+                console.log('[GENERAL-STATS] ✅ RPC connected:', rpcUrl);
+                break;
+            } catch (error) {
+                console.log('[GENERAL-STATS] ❌ RPC failed:', rpcUrl);
+                continue;
+            }
+        }
+        
+        if (!publicProvider) {
+            throw new Error('All RPC endpoints failed');
+        }
+        
+        // ✅ Минимальный ABI для чтения данных
+        const STAKING_ABI_MINIMAL = [
+            'function totalStaked() view returns (uint256)',
+            'function currentAPY() view returns (uint256)'
+        ];
+        
+        const TOKEN_ABI_MINIMAL = [
+            'function totalSupply() view returns (uint256)',
+            'function decimals() view returns (uint8)'
+        ];
+        
+        // ✅ Создаём read-only контракты (БЕЗ signer)
+        const readOnlyStakingContract = new ethers.Contract(
+            '0x47B302F223ae94e9efcABc27DE19C0a2eC268Df3', // Staking contract
+            STAKING_ABI_MINIMAL,
+            publicProvider
+        );
+        
+        const readOnlyTokenContract = new ethers.Contract(
+            '0xe4A39E3D2C64C2D3a1d9c7C6B9eB63db55277b71', // ARUB token
+            TOKEN_ABI_MINIMAL,
+            publicProvider
+        );
+        
+        console.log('[GENERAL-STATS] Reading contract data...');
+        
+        // ✅ Читаем данные из контрактов (БЕЗ кошелька!)
+        let totalStaked = ethers.BigNumber.from(0);
+        let currentAPY = 2400; // 24% по умолчанию
+        let totalSupply = ethers.BigNumber.from(0);
+        
+        try {
+            totalStaked = await readOnlyStakingContract.totalStaked();
+            console.log('[GENERAL-STATS] ✅ Total staked:', totalStaked.toString());
+        } catch (error) {
+            console.log('[GENERAL-STATS] ⚠️ Failed to get totalStaked');
+        }
+        
+        try {
+            const apyResult = await readOnlyStakingContract.currentAPY();
+            currentAPY = parseInt(apyResult.toString());
+            console.log('[GENERAL-STATS] ✅ Current APY:', currentAPY);
+        } catch (error) {
+            console.log('[GENERAL-STATS] ⚠️ Failed to get currentAPY, using default 24%');
+        }
+        
+        try {
+            totalSupply = await readOnlyTokenContract.totalSupply();
+            console.log('[GENERAL-STATS] ✅ Total supply:', totalSupply.toString());
+        } catch (error) {
+            console.log('[GENERAL-STATS] ⚠️ Failed to get totalSupply');
+        }
+        
+        // Получаем текущий курс ARUB
+        const arubPriceInUsdt = currentRate || 81.22;
+        
+        // Форматируем данные
+        const totalStakedFormatted = parseFloat(ethers.utils.formatUnits(totalStaked, 6));
+        const totalStakedInUsd = totalStakedFormatted * arubPriceInUsdt;
+        
+        const totalSupplyFormatted = parseFloat(ethers.utils.formatUnits(totalSupply, 6));
+        const totalSupplyInUsd = totalSupplyFormatted * arubPriceInUsdt;
+        
+        const apyInPercent = currentAPY / 100;
+        
+        console.log('[GENERAL-STATS] Formatted data:');
+        console.log('  - Total staked:', totalStakedFormatted, 'tokens');
+        console.log('  - Total staked USD:', totalStakedInUsd.toFixed(2));
+        console.log('  - Total supply:', totalSupplyFormatted, 'tokens');
+        console.log('  - APY:', apyInPercent + '%');
+        
+        // ✅ ОБНОВЛЯЕМ DOM элементы
+        // Главная карточка
+        const totalStakedEl = document.getElementById('totalStaked');
+        if (totalStakedEl) {
+            totalStakedEl.textContent = `$${totalStakedInUsd.toLocaleString('en-US', { maximumFractionDigits: 0 })}`;
+            console.log('[GENERAL-STATS] ✅ Updated totalStaked display');
+        }
+        
+        // Детализация стейкинга
+        if (document.getElementById('stakedTokensAmount')) {
+            document.getElementById('stakedTokensAmount').textContent = 
+                totalStakedFormatted.toLocaleString('en-US', { maximumFractionDigits: 2 }) + ' токенів';
+        }
+        
+        if (document.getElementById('stakedAsUsdt')) {
+            document.getElementById('stakedAsUsdt').textContent = 
+                `$${totalStakedFormatted.toLocaleString('en-US', { maximumFractionDigits: 0 })}`;
+        }
+        
+        if (document.getElementById('stakedAsArub')) {
+            document.getElementById('stakedAsArub').textContent = 
+                `$${totalStakedInUsd.toLocaleString('en-US', { maximumFractionDigits: 0 })}`;
+        }
+        
+        // Общая статистика платформы
+        if (document.getElementById('totalStakedValue')) {
+            document.getElementById('totalStakedValue').textContent = 
+                `$${totalStakedInUsd.toLocaleString('en-US', { maximumFractionDigits: 2 })}`;
+        }
+        
+        if (document.getElementById('totalStakedAmount')) {
+            document.getElementById('totalStakedAmount').textContent = 
+                `${totalStakedFormatted.toLocaleString('en-US', { maximumFractionDigits: 2 })} токенів`;
+        }
+        
+        if (document.getElementById('currentAPYValue')) {
+            document.getElementById('currentAPYValue').textContent = `${apyInPercent}%`;
+        }
+        
+        if (document.getElementById('totalSupplyAmount')) {
+            document.getElementById('totalSupplyAmount').textContent = 
+                totalSupplyFormatted.toLocaleString('en-US', { maximumFractionDigits: 2 });
+        }
+        
+        if (document.getElementById('totalSupplyValue')) {
+            document.getElementById('totalSupplyValue').textContent = 
+                `$${totalSupplyInUsd.toLocaleString('en-US', { maximumFractionDigits: 2 })}`;
+        }
+        
+        if (document.getElementById('arubPriceValue')) {
+            document.getElementById('arubPriceValue').textContent = 
+                arubPriceInUsdt.toFixed(2);
+        }
+        
+        console.log('[GENERAL-STATS] ✅ Statistics updated successfully WITHOUT wallet!');
+        
+    } catch (error) {
+        console.error('[GENERAL-STATS] ❌ Error:', error);
+        
+        // Показываем демо-данные при ошибке
+        console.log('[GENERAL-STATS] Showing demo data as fallback');
+        const demoArubPrice = currentRate || 81.22;
+        
+        if (document.getElementById('totalStaked')) {
+            document.getElementById('totalStaked').textContent = '$100,234';
+        }
+        if (document.getElementById('currentAPYValue')) {
+            document.getElementById('currentAPYValue').textContent = '24%';
+        }
+        if (document.getElementById('arubPriceValue')) {
+            document.getElementById('arubPriceValue').textContent = demoArubPrice.toFixed(2);
+        }
+    }
+}
+
                 
                 // Если window.ethereum не работает, используем публичные RPC
                 if (!publicProvider) {
