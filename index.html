@@ -137,53 +137,67 @@
             STAKING: '0xd98F611370262f7494eee27f55bc9a8922a9a66d'
         };
 
-        let rate = 81.22;
+        // Публічні RPC БЕЗ ключа
+        const RPC_ENDPOINTS = [
+            'https://ethereum-sepolia-rpc.publicnode.com',
+            'https://rpc.sepolia.org',
+            'https://rpc2.sepolia.org',
+            'https://ethereum-sepolia.publicnode.com',
+            'https://sepolia.gateway.tenderly.co'
+        ];
 
-        // Прямий виклик через публічний RPC
-        async function callContractDirect(address, data) {
-            const rpcUrl = 'https://rpc.ankr.com/eth_sepolia';
+        let rate = 81.22;
+        let workingRPC = null;
+
+        async function callContractWithFallback(address, data) {
+            const errors = [];
             
-            const payload = {
-                jsonrpc: '2.0',
-                method: 'eth_call',
-                params: [
-                    {
-                        to: address,
-                        data: data
-                    },
-                    'latest'
-                ],
-                id: 1
-            };
-            
-            console.log('RPC Call:', payload);
-            
-            const response = await fetch(rpcUrl, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify(payload)
-            });
-            
-            const result = await response.json();
-            console.log('RPC Response:', result);
-            
-            if (result.result) {
-                return result.result;
+            for (const rpcUrl of RPC_ENDPOINTS) {
+                try {
+                    console.log(`Trying: ${rpcUrl}`);
+                    
+                    const payload = {
+                        jsonrpc: '2.0',
+                        method: 'eth_call',
+                        params: [{to: address, data: data}, 'latest'],
+                        id: 1
+                    };
+                    
+                    const response = await fetch(rpcUrl, {
+                        method: 'POST',
+                        headers: {'Content-Type': 'application/json'},
+                        body: JSON.stringify(payload)
+                    });
+                    
+                    if (!response.ok) {
+                        throw new Error(`HTTP ${response.status}`);
+                    }
+                    
+                    const result = await response.json();
+                    
+                    if (result.error) {
+                        throw new Error(result.error.message || JSON.stringify(result.error));
+                    }
+                    
+                    if (result.result) {
+                        console.log(`✅ ${rpcUrl}`);
+                        workingRPC = rpcUrl;
+                        return result.result;
+                    }
+                    
+                    throw new Error('No result');
+                } catch (error) {
+                    console.log(`❌ ${rpcUrl}:`, error.message);
+                    errors.push(`${rpcUrl}: ${error.message}`);
+                }
             }
             
-            throw new Error(result.error ? result.error.message : 'Unknown error');
+            throw new Error(`All RPC failed`);
         }
 
         function hexToNumber(hex) {
             if (!hex || hex === '0x' || hex === '0x0') return 0;
-            try {
-                return parseInt(hex, 16);
-            } catch (e) {
-                console.error('Failed to parse hex:', hex);
-                return 0;
-            }
+            return parseInt(hex, 16);
         }
 
         function formatTokens(value) {
@@ -207,53 +221,42 @@
             try {
                 document.getElementById('loading').style.display = 'block';
                 document.getElementById('stats').style.display = 'none';
-                document.getElementById('dataSource').style.display = 'none';
 
-                console.log('🚀 Starting with direct RPC...');
-                console.log('📍 ARUB:', CONTRACTS.ARUB);
-                console.log('📍 STAKING:', CONTRACTS.STAKING);
+                console.log('🚀 ANTI RUB Stats');
                 
-                document.getElementById('loadingText').textContent = 'Отримання курсу валют...';
+                document.getElementById('loadingText').textContent = 'Отримання курсу...';
                 await getRate();
 
                 document.getElementById('loadingText').textContent = 'Читання totalStaked()...';
-                const totalStakedHex = await callContractDirect(CONTRACTS.STAKING, '0x817b1cd2');
+                const totalStakedHex = await callContractWithFallback(CONTRACTS.STAKING, '0x817b1cd2');
                 const totalStakedRaw = hexToNumber(totalStakedHex);
-                console.log('💰 totalStaked:', totalStakedRaw);
 
                 document.getElementById('loadingText').textContent = 'Читання totalSupply()...';
-                const totalSupplyHex = await callContractDirect(CONTRACTS.ARUB, '0x18160ddd');
+                const totalSupplyHex = await callContractWithFallback(CONTRACTS.ARUB, '0x18160ddd');
                 const totalSupplyRaw = hexToNumber(totalSupplyHex);
-                console.log('🚀 totalSupply:', totalSupplyRaw);
 
                 document.getElementById('loadingText').textContent = 'Читання currentAPY()...';
-                const apyHex = await callContractDirect(CONTRACTS.STAKING, '0xc5ab3ba6');
+                const apyHex = await callContractWithFallback(CONTRACTS.STAKING, '0xc5ab3ba6');
                 const apyRaw = hexToNumber(apyHex);
-                console.log('📈 currentAPY:', apyRaw);
 
                 const totalStakedTokens = formatTokens(totalStakedRaw);
                 const totalStakedUsd = totalStakedTokens * rate;
-                
                 const totalSupplyTokens = formatTokens(totalSupplyRaw);
                 const totalSupplyUsd = totalSupplyTokens * rate;
-                
                 const apyValue = apyRaw / 100;
 
-                console.log('📊 Formatted:');
-                console.log('  Total Staked:', totalStakedTokens, 'ARUB ($' + totalStakedUsd.toFixed(2) + ')');
-                console.log('  Total Supply:', totalSupplyTokens, 'ARUB ($' + totalSupplyUsd.toFixed(2) + ')');
-                console.log('  APY:', apyValue + '%');
+                console.log('💰 Staked:', totalStakedTokens, 'ARUB');
+                console.log('🚀 Supply:', totalSupplyTokens, 'ARUB');
+                console.log('📈 APY:', apyValue + '%');
 
                 document.getElementById('totalStaked').textContent = 
                     '$' + totalStakedUsd.toLocaleString('en-US', { maximumFractionDigits: 0 });
                 document.getElementById('totalStakedTokens').textContent = 
                     totalStakedTokens.toLocaleString('en-US', { maximumFractionDigits: 2 }) + ' токенів';
-                
                 document.getElementById('supply').textContent = 
                     totalSupplyTokens.toLocaleString('en-US', { maximumFractionDigits: 0 });
                 document.getElementById('supplyUsd').textContent = 
                     '$' + totalSupplyUsd.toLocaleString('en-US', { maximumFractionDigits: 0 });
-                
                 document.getElementById('apy').textContent = apyValue + '%';
                 document.getElementById('price').textContent = rate.toFixed(2);
 
@@ -261,15 +264,14 @@
                 document.getElementById('stats').style.display = 'grid';
                 document.getElementById('dataSource').style.display = 'block';
 
-                console.log('✅ Статистика завантажена!');
+                console.log('✅ Done!');
             } catch (error) {
-                console.error('❌ Помилка:', error);
+                console.error('❌ Error:', error);
                 document.getElementById('loadingText').textContent = '❌ Помилка: ' + error.message;
             }
         }
 
         window.addEventListener('DOMContentLoaded', () => {
-            console.log('🚀 ANTI RUB Stats with direct RPC');
             loadStats();
             setInterval(loadStats, 30000);
         });
