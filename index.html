@@ -132,9 +132,6 @@
     </div>
 
     <script>
-        // ✅ Використовуємо v2 API
-        const API_BASE = 'https://api-sepolia.etherscan.io/v2/api';
-        const ETHERSCAN_KEY = '8RRYGRNGET898XK9PHYBT6KIUZSZK9WPF9';
         const CONTRACTS = {
             ARUB: '0x98fFc1A4Ff6eAD8EebFd02cDA54852Bb69744788',
             STAKING: '0xd98F611370262f7494eee27f55bc9a8922a9a66d'
@@ -142,25 +139,43 @@
 
         let rate = 81.22;
 
-        // Виклик контракту через Etherscan v2 API
-        async function callContract(address, data) {
-            // Використовуємо v2 API endpoint
-            const url = `${API_BASE}?chainid=11155111&module=proxy&action=eth_call&to=${address}&data=${data}&tag=latest&apikey=${ETHERSCAN_KEY}`;
+        // Прямий виклик через публічний RPC
+        async function callContractDirect(address, data) {
+            const rpcUrl = 'https://rpc.ankr.com/eth_sepolia';
             
-            console.log('Calling:', url);
+            const payload = {
+                jsonrpc: '2.0',
+                method: 'eth_call',
+                params: [
+                    {
+                        to: address,
+                        data: data
+                    },
+                    'latest'
+                ],
+                id: 1
+            };
             
-            const response = await fetch(url);
+            console.log('RPC Call:', payload);
+            
+            const response = await fetch(rpcUrl, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(payload)
+            });
+            
             const result = await response.json();
-            
-            console.log('Response:', result);
+            console.log('RPC Response:', result);
             
             if (result.result) {
                 return result.result;
             }
-            return '0x0';
+            
+            throw new Error(result.error ? result.error.message : 'Unknown error');
         }
 
-        // Конвертація hex в число
         function hexToNumber(hex) {
             if (!hex || hex === '0x' || hex === '0x0') return 0;
             try {
@@ -171,12 +186,10 @@
             }
         }
 
-        // Форматування токенів (6 decimals)
         function formatTokens(value) {
             return value / 1000000;
         }
 
-        // Отримання курсу
         async function getRate() {
             try {
                 const res = await fetch('https://api.exchangerate-api.com/v4/latest/USD');
@@ -196,37 +209,28 @@
                 document.getElementById('stats').style.display = 'none';
                 document.getElementById('dataSource').style.display = 'none';
 
-                console.log('🚀 Starting with v2 API...');
+                console.log('🚀 Starting with direct RPC...');
                 console.log('📍 ARUB:', CONTRACTS.ARUB);
                 console.log('📍 STAKING:', CONTRACTS.STAKING);
                 
-                // Отримуємо курс
                 document.getElementById('loadingText').textContent = 'Отримання курсу валют...';
                 await getRate();
 
-                // Викликаємо функції контрактів
                 document.getElementById('loadingText').textContent = 'Читання totalStaked()...';
-                
-                // totalStaked() - function selector: 0x817b1cd2
-                const totalStakedHex = await callContract(CONTRACTS.STAKING, '0x817b1cd2');
+                const totalStakedHex = await callContractDirect(CONTRACTS.STAKING, '0x817b1cd2');
                 const totalStakedRaw = hexToNumber(totalStakedHex);
                 console.log('💰 totalStaked:', totalStakedRaw);
 
                 document.getElementById('loadingText').textContent = 'Читання totalSupply()...';
-                
-                // totalSupply() - function selector: 0x18160ddd
-                const totalSupplyHex = await callContract(CONTRACTS.ARUB, '0x18160ddd');
+                const totalSupplyHex = await callContractDirect(CONTRACTS.ARUB, '0x18160ddd');
                 const totalSupplyRaw = hexToNumber(totalSupplyHex);
                 console.log('🚀 totalSupply:', totalSupplyRaw);
 
                 document.getElementById('loadingText').textContent = 'Читання currentAPY()...';
-                
-                // currentAPY() - function selector: 0xc5ab3ba6
-                const apyHex = await callContract(CONTRACTS.STAKING, '0xc5ab3ba6');
+                const apyHex = await callContractDirect(CONTRACTS.STAKING, '0xc5ab3ba6');
                 const apyRaw = hexToNumber(apyHex);
                 console.log('📈 currentAPY:', apyRaw);
 
-                // Форматування
                 const totalStakedTokens = formatTokens(totalStakedRaw);
                 const totalStakedUsd = totalStakedTokens * rate;
                 
@@ -240,7 +244,6 @@
                 console.log('  Total Supply:', totalSupplyTokens, 'ARUB ($' + totalSupplyUsd.toFixed(2) + ')');
                 console.log('  APY:', apyValue + '%');
 
-                // Оновлення UI
                 document.getElementById('totalStaked').textContent = 
                     '$' + totalStakedUsd.toLocaleString('en-US', { maximumFractionDigits: 0 });
                 document.getElementById('totalStakedTokens').textContent = 
@@ -254,7 +257,6 @@
                 document.getElementById('apy').textContent = apyValue + '%';
                 document.getElementById('price').textContent = rate.toFixed(2);
 
-                // Показуємо
                 document.getElementById('loading').style.display = 'none';
                 document.getElementById('stats').style.display = 'grid';
                 document.getElementById('dataSource').style.display = 'block';
@@ -266,9 +268,8 @@
             }
         }
 
-        // Запуск
         window.addEventListener('DOMContentLoaded', () => {
-            console.log('🚀 ANTI RUB Stats with v2 API');
+            console.log('🚀 ANTI RUB Stats with direct RPC');
             loadStats();
             setInterval(loadStats, 30000);
         });
