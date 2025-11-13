@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ANTI RUB - Статистика платформи</title>
+    <title>ANTI RUB - Статистика</title>
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
         body {
@@ -23,151 +23,66 @@
         }
         .header h1 { font-size: 48px; margin-bottom: 10px; text-shadow: 2px 2px 4px rgba(0,0,0,0.3); }
         .header p { font-size: 18px; }
-        
-        .etherscan-links {
+        .stats-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
             gap: 20px;
-            margin: 40px 0;
+            margin-bottom: 30px;
         }
-        
-        .link-card {
-            background: rgba(76,175,80,0.1);
-            border: 2px solid rgba(76,175,80,0.3);
+        .stat-card {
+            background: rgba(255,255,255,0.1);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255,255,255,0.2);
             border-radius: 15px;
             padding: 25px;
-            text-align: center;
-            transition: all 0.3s;
-            cursor: pointer;
+            transition: transform 0.3s;
         }
-        
-        .link-card:hover {
-            transform: translateY(-5px);
-            border-color: #4CAF50;
-            box-shadow: 0 10px 30px rgba(76,175,80,0.3);
-        }
-        
-        .link-card h3 {
-            color: #4CAF50;
-            margin-bottom: 15px;
-            font-size: 20px;
-        }
-        
-        .link-card p {
+        .stat-card:hover { transform: translateY(-5px); }
+        .stat-label {
+            font-size: 13px;
             color: rgba(255,255,255,0.7);
-            font-size: 14px;
-            margin-bottom: 15px;
-            line-height: 1.6;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 8px;
         }
-        
-        .link-card a {
-            display: inline-block;
-            padding: 12px 24px;
-            background: linear-gradient(90deg, #4CAF50, #45a049);
-            color: white;
-            text-decoration: none;
-            border-radius: 8px;
-            font-weight: 600;
-            transition: transform 0.2s;
-        }
-        
-        .link-card a:hover {
-            transform: scale(1.05);
-        }
-        
-        .contract-address {
-            background: rgba(0,0,0,0.3);
-            padding: 10px;
-            border-radius: 6px;
-            font-family: monospace;
-            font-size: 12px;
-            word-break: break-all;
-            margin: 10px 0;
-        }
-        
-        .info-box {
-            background: rgba(255,255,255,0.05);
-            border-radius: 15px;
-            padding: 30px;
-            margin: 30px 0;
-        }
-        
-        .info-box h2 {
-            color: #ffd700;
-            margin-bottom: 20px;
-            font-size: 24px;
-        }
-        
-        .info-box p {
-            line-height: 1.8;
-            margin-bottom: 15px;
-            color: rgba(255,255,255,0.8);
-        }
-        
-        .info-box ul {
-            list-style: none;
-            padding-left: 0;
-        }
-        
-        .info-box li {
-            padding: 10px 0;
-            border-bottom: 1px solid rgba(255,255,255,0.1);
-        }
-        
-        .info-box li:last-child {
-            border-bottom: none;
-        }
-        
-        .info-box strong {
-            color: #ffd700;
-        }
-        
-        .price-card {
-            background: linear-gradient(135deg, rgba(255,215,0,0.1), rgba(255,215,0,0.05));
-            border: 2px solid rgba(255,215,0,0.3);
-            border-radius: 15px;
-            padding: 30px;
-            text-align: center;
-            margin: 30px 0;
-        }
-        
-        .price-card h2 {
-            color: #ffd700;
-            margin-bottom: 15px;
-        }
-        
-        .price-value {
-            font-size: 48px;
+        .stat-value {
+            font-size: 32px;
             font-weight: bold;
             color: #ffd700;
-            margin: 20px 0;
+            margin-bottom: 5px;
         }
-        
-        .price-subtext {
-            color: rgba(255,255,255,0.6);
+        .stat-subvalue { font-size: 13px; color: rgba(255,255,255,0.6); }
+        .loading {
+            text-align: center;
+            padding: 40px;
             font-size: 14px;
+            color: rgba(255,255,255,0.7);
         }
-        
+        .spinner {
+            width: 40px;
+            height: 40px;
+            border: 4px solid rgba(255,255,255,0.3);
+            border-top-color: #ffd700;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 20px;
+        }
+        @keyframes spin { to { transform: rotate(360deg); } }
+        .info { 
+            text-align: center; 
+            color: rgba(255,255,255,0.6); 
+            font-size: 14px; 
+            margin: 20px 0;
+            padding: 10px;
+            background: rgba(0,255,0,0.1);
+            border-radius: 8px;
+        }
         .footer {
             text-align: center;
-            margin-top: 60px;
+            margin-top: 40px;
             padding: 20px;
             color: rgba(255,255,255,0.5);
             font-size: 14px;
-        }
-        
-        .warning {
-            background: rgba(255,165,0,0.2);
-            border: 2px solid #ffa500;
-            border-radius: 12px;
-            padding: 20px;
-            margin: 30px 0;
-            text-align: center;
-        }
-        
-        .warning h3 {
-            color: #ffa500;
-            margin-bottom: 10px;
         }
     </style>
 </head>
@@ -175,131 +90,170 @@
     <div class="container">
         <div class="header">
             <h1>🚀 ANTI RUB</h1>
-            <p>Статистика платформи стейкінгу на Sepolia Testnet</p>
+            <p>Статистика платформи стейкінгу</p>
         </div>
 
-        <div class="warning">
-            <h3>📊 Перегляд статистики на Etherscan</h3>
-            <p>Використовуйте посилання нижче для перегляду актуальних даних безпосередньо з блокчейну</p>
+        <div id="loading" class="loading">
+            <div class="spinner"></div>
+            <p id="loadingText">Завантаження даних з блокчейну...</p>
         </div>
 
-        <div class="price-card">
-            <h2>💵 Поточний курс ARUB</h2>
-            <div class="price-value" id="price">81.16</div>
-            <div class="price-subtext">USDT за токен (курс рубля)</div>
-            <p style="margin-top: 15px; font-size: 13px; color: rgba(255,255,255,0.6);">
-                Курс оновлюється автоматично
-            </p>
-        </div>
-
-        <div class="etherscan-links">
-            <div class="link-card">
-                <h3>📄 ARUB Token Contract</h3>
-                <p>Перегляньте токеноміку, total supply, holders та всі транзакції ARUB токену</p>
-                <div class="contract-address">0xe4A39E3D2C64C2D3a1d9c7C6B9eB63db55277b71</div>
-                <a href="https://sepolia.etherscan.io/address/0xe4A39E3D2C64C2D3a1d9c7C6B9eB63db55277b71" target="_blank">
-                    Відкрити на Etherscan →
-                </a>
+        <div id="stats" class="stats-grid" style="display: none;">
+            <div class="stat-card">
+                <div class="stat-label">💰 Всього застейкано</div>
+                <div class="stat-value" id="totalStaked">—</div>
+                <div class="stat-subvalue" id="totalStakedTokens">—</div>
             </div>
-
-            <div class="link-card">
-                <h3>💰 Staking Contract</h3>
-                <p>Подивіться загальну суму стейкінгу, APY, та всі операції зі стейкінгом</p>
-                <div class="contract-address">0x47B302F223ae94e9efcABc27DE19C0a2eC268Df3</div>
-                <a href="https://sepolia.etherscan.io/address/0x47B302F223ae94e9efcABc27DE19C0a2eC268Df3#readContract" target="_blank">
-                    Відкрити на Etherscan →
-                </a>
+            <div class="stat-card">
+                <div class="stat-label">📈 Поточний APY</div>
+                <div class="stat-value" id="apy">—</div>
+                <div class="stat-subvalue">Річний відсоток</div>
             </div>
-
-            <div class="link-card">
-                <h3>💵 Mock USDT Contract</h3>
-                <p>Тестовий USDT для Sepolia Testnet з функцією faucet</p>
-                <div class="contract-address">0x4e6175f449b04e20437b2A2AD8221884Bda38f39</div>
-                <a href="https://sepolia.etherscan.io/address/0x4e6175f449b04e20437b2A2AD8221884Bda38f39" target="_blank">
-                    Відкрити на Etherscan →
-                </a>
+            <div class="stat-card">
+                <div class="stat-label">🚀 Випущено ARUB</div>
+                <div class="stat-value" id="supply">—</div>
+                <div class="stat-subvalue" id="supplyUsd">—</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-label">💵 Ціна 1 ARUB</div>
+                <div class="stat-value" id="price">—</div>
+                <div class="stat-subvalue">USDT</div>
             </div>
         </div>
 
-        <div class="info-box">
-            <h2>📖 Як переглянути реальні дані на Etherscan</h2>
-            <ul>
-                <li><strong>Total Staked:</strong> Відкрийте Staking Contract → Read Contract → знайдіть функцію <code>totalStaked()</code> → натисніть Query</li>
-                <li><strong>Current APY:</strong> У тому ж контракті знайдіть функцію <code>currentAPY()</code> (значення в базових пунктах, поділіть на 100 для %)</li>
-                <li><strong>Total Supply:</strong> Відкрийте ARUB Token Contract → Read Contract → <code>totalSupply()</code></li>
-                <li><strong>Your Balance:</strong> У будь-якому контракті → Read Contract → <code>balanceOf()</code> → введіть свою адресу</li>
-            </ul>
-        </div>
-
-        <div class="info-box">
-            <h2>💡 Про платформу ANTI RUB</h2>
-            <p><strong>Концепція:</strong> ARUB - це токен який інверсно прив'язаний до курсу російського рубля.</p>
-            <p><strong>Принцип роботи:</strong></p>
-            <ul>
-                <li>Коли USDT/RUB = 81.16 → 1 ARUB = 81.16 USDT</li>
-                <li>Коли рубль слабшає → ARUB дорожчає 📈</li>
-                <li>Коли рубль зміцнюється → ARUB дешевшає 📉</li>
-            </ul>
-            <p style="margin-top: 20px;"><strong>Стейкінг:</strong></p>
-            <ul>
-                <li>Застейкайте ARUB або USDT токени</li>
-                <li>Отримуйте до 24% річних (APY залежить від загальної суми в стейкінгу)</li>
-                <li>Виводьте винагороду в будь-який час</li>
-            </ul>
-        </div>
-
-        <div class="info-box">
-            <h2>🔧 Технічна інформація</h2>
-            <ul>
-                <li><strong>Мережа:</strong> Ethereum Sepolia Testnet</li>
-                <li><strong>Chain ID:</strong> 11155111</li>
-                <li><strong>ARUB Decimals:</strong> 6</li>
-                <li><strong>Стейкінг тіри:</strong>
-                    <ul style="margin-top: 10px; padding-left: 20px;">
-                        <li>Якщо загальна сума &lt; $50,000 → APY 8%</li>
-                        <li>Якщо $50,000 - $100,000 → APY 12%</li>
-                        <li>Якщо $100,000 - $250,000 → APY 16%</li>
-                        <li>Якщо $250,000 - $500,000 → APY 20%</li>
-                        <li>Якщо &gt; $500,000 → APY 24%</li>
-                    </ul>
-                </li>
-            </ul>
+        <div class="info" id="dataSource" style="display: none;">
+            ✅ Дані завантажені з Sepolia Testnet через Etherscan API
         </div>
 
         <div class="footer">
-            <p><strong>ANTI RUB</strong> - DeFi платформа підтримки України 🇺🇦</p>
-            <p>Sepolia Testnet | Всі контракти верифіковані на Etherscan</p>
-            <p style="margin-top: 15px; font-size: 12px; opacity: 0.6;">
-                Це тестова мережа. Використовуйте тільки тестові токени.<br>
-                Не відправляйте реальні ETH або токени на ці адреси.
-            </p>
+            <p>ANTI RUB - DeFi підтримка України 🇺🇦</p>
+            <p>Sepolia Testnet | Автооновлення кожні 30 секунд</p>
         </div>
     </div>
 
     <script>
-        // Отримання реального курсу USDT/RUB
-        async function updateRate() {
+        const API = 'https://api-sepolia.etherscan.io/api';
+        const CONTRACTS = {
+            ARUB: '0xe4A39E3D2C64C2D3a1d9c7C6B9eB63db55277b71',
+            STAKING: '0x47B302F223ae94e9efcABc27DE19C0a2eC268Df3'
+        };
+
+        let rate = 81.22;
+
+        // Виклик контракту через Etherscan API
+        async function callContract(address, data) {
+            const url = `${API}?module=proxy&action=eth_call&to=${address}&data=${data}&tag=latest`;
+            const response = await fetch(url);
+            const result = await response.json();
+            
+            if (result.status === '1' && result.result) {
+                return result.result;
+            }
+            return '0x0';
+        }
+
+        // Конвертація hex в число
+        function hexToNumber(hex) {
+            return parseInt(hex, 16);
+        }
+
+        // Форматування токенів (6 decimals)
+        function formatTokens(value) {
+            return value / 1000000;
+        }
+
+        // Отримання курсу
+        async function getRate() {
             try {
                 const res = await fetch('https://api.exchangerate-api.com/v4/latest/USD');
                 const data = await res.json();
                 if (data.rates && data.rates.RUB) {
-                    const rate = data.rates.RUB;
-                    document.getElementById('price').textContent = rate.toFixed(2);
+                    rate = data.rates.RUB;
                     console.log('💱 USDT/RUB:', rate);
                 }
             } catch (e) {
-                console.log('⚠️ Using default rate');
+                console.log('⚠️ Default rate: 81.22');
             }
         }
 
+        async function loadStats() {
+            try {
+                document.getElementById('loading').style.display = 'block';
+                document.getElementById('stats').style.display = 'none';
+                document.getElementById('dataSource').style.display = 'none';
+
+                console.log('🚀 Starting...');
+                
+                // Отримуємо курс
+                document.getElementById('loadingText').textContent = 'Отримання курсу валют...';
+                await getRate();
+
+                // Викликаємо функції контрактів
+                document.getElementById('loadingText').textContent = 'Читання totalStaked()...';
+                
+                // totalStaked() - function selector: 0x817b1cd2
+                const totalStakedHex = await callContract(CONTRACTS.STAKING, '0x817b1cd2');
+                const totalStakedRaw = hexToNumber(totalStakedHex);
+                console.log('📊 totalStaked (raw):', totalStakedRaw);
+
+                document.getElementById('loadingText').textContent = 'Читання totalSupply()...';
+                
+                // totalSupply() - function selector: 0x18160ddd
+                const totalSupplyHex = await callContract(CONTRACTS.ARUB, '0x18160ddd');
+                const totalSupplyRaw = hexToNumber(totalSupplyHex);
+                console.log('📊 totalSupply (raw):', totalSupplyRaw);
+
+                document.getElementById('loadingText').textContent = 'Читання currentAPY()...';
+                
+                // currentAPY() - function selector: 0xc5ab3ba6
+                const apyHex = await callContract(CONTRACTS.STAKING, '0xc5ab3ba6');
+                const apyRaw = hexToNumber(apyHex);
+                console.log('📊 currentAPY (raw):', apyRaw);
+
+                // Форматування
+                const totalStakedTokens = formatTokens(totalStakedRaw);
+                const totalStakedUsd = totalStakedTokens * rate;
+                
+                const totalSupplyTokens = formatTokens(totalSupplyRaw);
+                const totalSupplyUsd = totalSupplyTokens * rate;
+                
+                const apyValue = apyRaw / 100;
+
+                console.log('💰 Total Staked:', totalStakedTokens, 'ARUB ($' + totalStakedUsd.toFixed(2) + ')');
+                console.log('🚀 Total Supply:', totalSupplyTokens, 'ARUB ($' + totalSupplyUsd.toFixed(2) + ')');
+                console.log('📈 APY:', apyValue + '%');
+
+                // Оновлення UI
+                document.getElementById('totalStaked').textContent = 
+                    '$' + totalStakedUsd.toLocaleString('en-US', { maximumFractionDigits: 0 });
+                document.getElementById('totalStakedTokens').textContent = 
+                    totalStakedTokens.toLocaleString('en-US', { maximumFractionDigits: 2 }) + ' токенів';
+                
+                document.getElementById('supply').textContent = 
+                    totalSupplyTokens.toLocaleString('en-US', { maximumFractionDigits: 0 });
+                document.getElementById('supplyUsd').textContent = 
+                    '$' + totalSupplyUsd.toLocaleString('en-US', { maximumFractionDigits: 0 });
+                
+                document.getElementById('apy').textContent = apyValue + '%';
+                document.getElementById('price').textContent = rate.toFixed(2);
+
+                // Показуємо
+                document.getElementById('loading').style.display = 'none';
+                document.getElementById('stats').style.display = 'grid';
+                document.getElementById('dataSource').style.display = 'block';
+
+                console.log('✅ Статистика завантажена успішно!');
+            } catch (error) {
+                console.error('❌ Помилка:', error);
+                document.getElementById('loadingText').textContent = '❌ Помилка: ' + error.message;
+            }
+        }
+
+        // Запуск
         window.addEventListener('DOMContentLoaded', () => {
-            console.log('🚀 ANTI RUB Stats Page');
-            console.log('📍 View real data on Etherscan:');
-            console.log('  - ARUB Token: https://sepolia.etherscan.io/address/0xe4A39E3D2C64C2D3a1d9c7C6B9eB63db55277b71');
-            console.log('  - Staking: https://sepolia.etherscan.io/address/0x47B302F223ae94e9efcABc27DE19C0a2eC268Df3#readContract');
-            
-            updateRate();
-            setInterval(updateRate, 60000);
+            console.log('🚀 ANTI RUB Stats');
+            loadStats();
+            setInterval(loadStats, 30000);
         });
     </script>
 </body>
