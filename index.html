@@ -4354,7 +4354,9 @@
         window.addEventListener('DOMContentLoaded', async () => {
             console.log('✅ DOM loaded');
             
-            // Статистика уже встроена в HTML, не нужна динамическая загрузка
+            // ✅ Загрузка общей статистики БЕЗ подключения кошелька
+            console.log('🔄 Loading public statistics...');
+            await updateGeneralStakingStats();
             
             const connectBtn = document.getElementById('connectBtn');
             if (connectBtn) {
@@ -4367,6 +4369,9 @@
             // Update arbitrage section rates
             updateArbitrageRates();
             setInterval(updateArbitrageRates, 300000);
+            
+            // Обновляем общую статистику каждые 30 секунд
+            setInterval(updateGeneralStakingStats, 30000);
             
             console.log('✅ Initialization complete');
         });
