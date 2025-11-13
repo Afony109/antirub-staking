@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>ANTI RUB - Статистика</title>
+    <script src="https://cdn.jsdelivr.net/npm/ethers@5.7.2/dist/ethers.umd.min.js"></script>
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
         body {
@@ -55,7 +56,7 @@
         .loading {
             text-align: center;
             padding: 40px;
-            font-size: 16px;
+            font-size: 14px;
             color: rgba(255,255,255,0.7);
         }
         .spinner {
@@ -84,17 +85,16 @@
             color: rgba(255,255,255,0.5);
             font-size: 14px;
         }
-        .links {
-            text-align: center;
-            margin: 20px 0;
-        }
-        .link {
-            color: #4CAF50;
-            text-decoration: none;
-            margin: 0 10px;
+        .debug {
+            background: rgba(0,0,0,0.3);
+            padding: 10px;
+            border-radius: 8px;
             font-size: 12px;
+            font-family: monospace;
+            margin: 20px 0;
+            max-height: 200px;
+            overflow-y: auto;
         }
-        .link:hover { text-decoration: underline; }
     </style>
 </head>
 <body>
@@ -106,7 +106,7 @@
 
         <div id="loading" class="loading">
             <div class="spinner"></div>
-            <p id="loadingText">Завантаження даних з блокчейну...</p>
+            <p id="loadingText">Завантаження...</p>
         </div>
 
         <div id="stats" class="stats-grid" style="display: none;">
@@ -117,7 +117,7 @@
             </div>
             <div class="stat-card">
                 <div class="stat-label">📈 Поточний APY</div>
-                <div class="stat-value" id="apy">24%</div>
+                <div class="stat-value" id="apy">—</div>
                 <div class="stat-subvalue">Річний відсоток</div>
             </div>
             <div class="stat-card">
@@ -132,18 +132,11 @@
             </div>
         </div>
 
-        <div class="info" id="dataSource" style="display: none;">
-            ✅ Дані отримані з Sepolia Testnet
-        </div>
-
-        <div class="links">
-            <a class="link" href="https://sepolia.etherscan.io/address/0xe4A39E3D2C64C2D3a1d9c7C6B9eB63db55277b71" target="_blank">ARUB Contract</a>
-            <a class="link" href="https://sepolia.etherscan.io/address/0x47B302F223ae94e9efcABc27DE19C0a2eC268Df3" target="_blank">Staking Contract</a>
-        </div>
+        <div id="debugInfo" class="debug" style="display: none;"></div>
 
         <div class="footer">
             <p>ANTI RUB - DeFi підтримка України 🇺🇦</p>
-            <p>Sepolia Testnet | Оновлення кожні 30 секунд</p>
+            <p>Sepolia Testnet | Автооновлення кожні 30 секунд</p>
         </div>
     </div>
 
@@ -153,129 +146,169 @@
             STAKING: '0x47B302F223ae94e9efcABc27DE19C0a2eC268Df3'
         };
 
+        const RPC_URL = 'https://rpc.ankr.com/eth_sepolia';
         let rate = 81.22;
+        let debugLog = [];
 
-        // Отримання курсу USDT/RUB
+        function addDebug(msg) {
+            debugLog.push(msg);
+            console.log(msg);
+            document.getElementById('debugInfo').textContent = debugLog.join('\n');
+        }
+
+        async function getABI(address) {
+            try {
+                const url = `https://api-sepolia.etherscan.io/api?module=contract&action=getabi&address=${address}`;
+                addDebug(`Fetching ABI for ${address}...`);
+                
+                const res = await fetch(url);
+                const data = await res.json();
+                
+                if (data.status === '1' && data.result) {
+                    addDebug(`✅ ABI retrieved (${data.result.length} chars)`);
+                    return JSON.parse(data.result);
+                } else {
+                    addDebug(`⚠️ ABI not found: ${data.result}`);
+                    return null;
+                }
+            } catch (error) {
+                addDebug(`❌ Error getting ABI: ${error.message}`);
+                return null;
+            }
+        }
+
         async function getRate() {
             try {
                 const res = await fetch('https://api.exchangerate-api.com/v4/latest/USD');
                 const data = await res.json();
                 if (data.rates && data.rates.RUB) {
                     rate = data.rates.RUB;
-                    console.log(`💱 USDT/RUB: ${rate}`);
+                    addDebug(`💱 USDT/RUB: ${rate}`);
                 }
             } catch (e) {
-                console.log('⚠️ Курс за замовчуванням: 81.22');
+                addDebug('⚠️ Using default rate: 81.22');
             }
-        }
-
-        // Читання смарт-контракту через Etherscan API
-        async function readContract(contractAddress, functionName) {
-            const apiUrl = 'https://api-sepolia.etherscan.io/api';
-            
-            // Визначаємо сигнатуру функції
-            const functionSignatures = {
-                'totalStaked': '0x817b1cd2',      // keccak256("totalStaked()")
-                'currentAPY': '0xc5ab3ba6',       // keccak256("currentAPY()")
-                'totalSupply': '0x18160ddd'       // keccak256("totalSupply()")
-            };
-
-            const signature = functionSignatures[functionName];
-            if (!signature) {
-                throw new Error(`Unknown function: ${functionName}`);
-            }
-
-            try {
-                // Викликаємо eth_call через Etherscan API
-                const url = `${apiUrl}?module=proxy&action=eth_call&to=${contractAddress}&data=${signature}&tag=latest`;
-                
-                console.log(`📞 Calling ${functionName} on ${contractAddress}...`);
-                
-                const response = await fetch(url);
-                const data = await response.json();
-
-                if (data.status === '1' && data.result) {
-                    // Конвертуємо hex в число
-                    const value = parseInt(data.result, 16);
-                    console.log(`✅ ${functionName}: ${value}`);
-                    return value;
-                } else {
-                    console.log(`⚠️ ${functionName} повернув 0`);
-                    return 0;
-                }
-            } catch (error) {
-                console.error(`❌ Помилка виклику ${functionName}:`, error);
-                return 0;
-            }
-        }
-
-        // Конвертація з wei в токени (6 decimals для ARUB)
-        function formatTokens(value, decimals = 6) {
-            return value / Math.pow(10, decimals);
         }
 
         async function loadStats() {
             try {
-                document.getElementById('loadingText').textContent = 'Отримання курсу валют...';
+                debugLog = [];
+                document.getElementById('debugInfo').style.display = 'block';
+                document.getElementById('loading').style.display = 'block';
+                document.getElementById('stats').style.display = 'none';
+
+                addDebug('🚀 Starting...');
+                
+                document.getElementById('loadingText').textContent = 'Отримання курсу...';
                 await getRate();
 
-                document.getElementById('loadingText').textContent = 'Читання totalStaked з блокчейну...';
-                const totalStakedRaw = await readContract(CONTRACTS.STAKING, 'totalStaked');
+                document.getElementById('loadingText').textContent = 'Підключення до RPC...';
+                addDebug(`🔗 Connecting to ${RPC_URL}...`);
                 
-                document.getElementById('loadingText').textContent = 'Читання totalSupply з блокчейну...';
-                const totalSupplyRaw = await readContract(CONTRACTS.ARUB, 'totalSupply');
-                
-                document.getElementById('loadingText').textContent = 'Читання currentAPY з блокчейну...';
-                const currentAPYRaw = await readContract(CONTRACTS.STAKING, 'currentAPY');
+                const provider = new ethers.providers.JsonRpcProvider(RPC_URL);
+                const blockNumber = await provider.getBlockNumber();
+                addDebug(`✅ Connected! Block: ${blockNumber}`);
 
-                // Форматування даних
-                const totalStakedTokens = formatTokens(totalStakedRaw, 6);
+                // Отримуємо ABI контрактів
+                document.getElementById('loadingText').textContent = 'Отримання ABI контрактів...';
+                
+                const stakingABI = await getABI(CONTRACTS.STAKING);
+                const tokenABI = await getABI(CONTRACTS.ARUB);
+
+                if (!stakingABI || !tokenABI) {
+                    throw new Error('Не вдалося отримати ABI контрактів');
+                }
+
+                // Створюємо контракти з реальними ABI
+                const stakingContract = new ethers.Contract(CONTRACTS.STAKING, stakingABI, provider);
+                const tokenContract = new ethers.Contract(CONTRACTS.ARUB, tokenABI, provider);
+
+                addDebug('📄 Contracts initialized');
+
+                // Перевіряємо які функції доступні
+                document.getElementById('loadingText').textContent = 'Читання функцій контракту...';
+                
+                addDebug('\nStaking contract functions:');
+                stakingABI.filter(item => item.type === 'function' && item.stateMutability === 'view')
+                    .forEach(fn => addDebug(`  - ${fn.name}`));
+
+                addDebug('\nToken contract functions:');
+                tokenABI.filter(item => item.type === 'function' && item.stateMutability === 'view')
+                    .forEach(fn => addDebug(`  - ${fn.name}`));
+
+                // Читаємо дані
+                document.getElementById('loadingText').textContent = 'Читання даних з блокчейну...';
+                
+                let totalStaked = ethers.BigNumber.from(0);
+                let currentAPY = 2400;
+                let totalSupply = ethers.BigNumber.from(0);
+
+                // Пробуємо різні варіанти назв функцій
+                try {
+                    if (typeof stakingContract.totalStaked === 'function') {
+                        totalStaked = await stakingContract.totalStaked();
+                        addDebug(`✅ totalStaked: ${totalStaked.toString()}`);
+                    }
+                } catch (e) {
+                    addDebug(`⚠️ totalStaked failed: ${e.message}`);
+                }
+
+                try {
+                    if (typeof stakingContract.currentAPY === 'function') {
+                        const apy = await stakingContract.currentAPY();
+                        currentAPY = parseInt(apy.toString());
+                        addDebug(`✅ currentAPY: ${currentAPY}`);
+                    }
+                } catch (e) {
+                    addDebug(`⚠️ currentAPY failed: ${e.message}`);
+                }
+
+                try {
+                    if (typeof tokenContract.totalSupply === 'function') {
+                        totalSupply = await tokenContract.totalSupply();
+                        addDebug(`✅ totalSupply: ${totalSupply.toString()}`);
+                    }
+                } catch (e) {
+                    addDebug(`⚠️ totalSupply failed: ${e.message}`);
+                }
+
+                // Форматування
+                const totalStakedTokens = parseFloat(ethers.utils.formatUnits(totalStaked, 6));
                 const totalStakedUsd = totalStakedTokens * rate;
-                
-                const totalSupplyTokens = formatTokens(totalSupplyRaw, 6);
+                const apyValue = currentAPY / 100;
+                const totalSupplyTokens = parseFloat(ethers.utils.formatUnits(totalSupply, 6));
                 const totalSupplyUsd = totalSupplyTokens * rate;
-                
-                const apyValue = currentAPYRaw / 100;
 
-                console.log('📊 Дані:');
-                console.log('  Total Staked:', totalStakedTokens, 'ARUB ($' + totalStakedUsd.toFixed(0) + ')');
-                console.log('  Total Supply:', totalSupplyTokens, 'ARUB ($' + totalSupplyUsd.toFixed(0) + ')');
-                console.log('  APY:', apyValue + '%');
+                addDebug(`\n📊 Formatted data:`);
+                addDebug(`  Staked: ${totalStakedTokens} ARUB ($${totalStakedUsd.toFixed(2)})`);
+                addDebug(`  Supply: ${totalSupplyTokens} ARUB ($${totalSupplyUsd.toFixed(2)})`);
+                addDebug(`  APY: ${apyValue}%`);
 
                 // Оновлення UI
                 document.getElementById('totalStaked').textContent = 
                     '$' + totalStakedUsd.toLocaleString('en-US', { maximumFractionDigits: 0 });
                 document.getElementById('totalStakedTokens').textContent = 
                     totalStakedTokens.toLocaleString('en-US', { maximumFractionDigits: 2 }) + ' токенів';
-                
+                document.getElementById('apy').textContent = apyValue + '%';
                 document.getElementById('supply').textContent = 
                     totalSupplyTokens.toLocaleString('en-US', { maximumFractionDigits: 0 });
                 document.getElementById('supplyUsd').textContent = 
                     '$' + totalSupplyUsd.toLocaleString('en-US', { maximumFractionDigits: 0 });
-                
-                document.getElementById('apy').textContent = apyValue + '%';
-                
                 document.getElementById('price').textContent = rate.toFixed(2);
 
-                // Показуємо статистику
                 document.getElementById('loading').style.display = 'none';
                 document.getElementById('stats').style.display = 'grid';
-                document.getElementById('dataSource').style.display = 'block';
 
-                console.log('✅ Статистика завантажена успішно!');
+                addDebug('\n✅ Статистика завантажена успішно!');
             } catch (error) {
-                console.error('❌ Помилка завантаження:', error);
-                document.getElementById('loadingText').textContent = 
-                    '❌ Помилка: ' + error.message;
+                addDebug(`\n❌ ERROR: ${error.message}`);
+                document.getElementById('loadingText').textContent = '❌ Помилка: ' + error.message;
             }
         }
 
-        // Запуск при завантаженні
         window.addEventListener('DOMContentLoaded', () => {
             console.log('🚀 ANTI RUB Stats - Starting...');
             loadStats();
-            
-            // Автооновлення кожні 30 секунд
             setInterval(loadStats, 30000);
         });
     </script>
