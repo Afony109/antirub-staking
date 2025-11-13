@@ -122,7 +122,7 @@
         </div>
 
         <div class="info" id="dataSource" style="display: none;">
-            ✅ Дані завантажені з Sepolia Testnet через Etherscan API
+            ✅ Дані завантажені з Sepolia Testnet
         </div>
 
         <div class="footer">
@@ -132,17 +132,20 @@
     </div>
 
     <script>
+        // ✅ ПРАВИЛЬНІ адреси контрактів
         const API = 'https://api-sepolia.etherscan.io/api';
+        const ETHERSCAN_KEY = '8RRYGRNGET898XK9PHYBT6KIUZSZK9WPF9';
         const CONTRACTS = {
-            ARUB: '0xe4A39E3D2C64C2D3a1d9c7C6B9eB63db55277b71',
-            STAKING: '0x47B302F223ae94e9efcABc27DE19C0a2eC268Df3'
+            ARUB: '0x98fFc1A4Ff6eAD8EebFd02cDA54852Bb69744788',
+            STAKING: '0xd98F611370262f7494eee27f55bc9a8922a9a66d',
+            MOCK_USDT: '0x30E0Cb1EFa2b8D022FC10628A9bDa7f657e85012'
         };
 
         let rate = 81.22;
 
         // Виклик контракту через Etherscan API
         async function callContract(address, data) {
-            const url = `${API}?module=proxy&action=eth_call&to=${address}&data=${data}&tag=latest`;
+            const url = `${API}?module=proxy&action=eth_call&to=${address}&data=${data}&tag=latest&apikey=${ETHERSCAN_KEY}`;
             const response = await fetch(url);
             const result = await response.json();
             
@@ -182,33 +185,35 @@
                 document.getElementById('stats').style.display = 'none';
                 document.getElementById('dataSource').style.display = 'none';
 
-                console.log('🚀 Starting...');
+                console.log('🚀 Starting with CORRECT addresses...');
+                console.log('📍 ARUB:', CONTRACTS.ARUB);
+                console.log('📍 STAKING:', CONTRACTS.STAKING);
                 
                 // Отримуємо курс
                 document.getElementById('loadingText').textContent = 'Отримання курсу валют...';
                 await getRate();
 
-                // Викликаємо функції контрактів
+                // Викликаємо функції контрактів з ПРАВИЛЬНИХ адрес
                 document.getElementById('loadingText').textContent = 'Читання totalStaked()...';
                 
                 // totalStaked() - function selector: 0x817b1cd2
                 const totalStakedHex = await callContract(CONTRACTS.STAKING, '0x817b1cd2');
                 const totalStakedRaw = hexToNumber(totalStakedHex);
-                console.log('📊 totalStaked (raw):', totalStakedRaw);
+                console.log('💰 totalStaked (raw):', totalStakedRaw);
 
                 document.getElementById('loadingText').textContent = 'Читання totalSupply()...';
                 
                 // totalSupply() - function selector: 0x18160ddd
                 const totalSupplyHex = await callContract(CONTRACTS.ARUB, '0x18160ddd');
                 const totalSupplyRaw = hexToNumber(totalSupplyHex);
-                console.log('📊 totalSupply (raw):', totalSupplyRaw);
+                console.log('🚀 totalSupply (raw):', totalSupplyRaw);
 
                 document.getElementById('loadingText').textContent = 'Читання currentAPY()...';
                 
                 // currentAPY() - function selector: 0xc5ab3ba6
                 const apyHex = await callContract(CONTRACTS.STAKING, '0xc5ab3ba6');
                 const apyRaw = hexToNumber(apyHex);
-                console.log('📊 currentAPY (raw):', apyRaw);
+                console.log('📈 currentAPY (raw):', apyRaw);
 
                 // Форматування
                 const totalStakedTokens = formatTokens(totalStakedRaw);
@@ -219,9 +224,10 @@
                 
                 const apyValue = apyRaw / 100;
 
-                console.log('💰 Total Staked:', totalStakedTokens, 'ARUB ($' + totalStakedUsd.toFixed(2) + ')');
-                console.log('🚀 Total Supply:', totalSupplyTokens, 'ARUB ($' + totalSupplyUsd.toFixed(2) + ')');
-                console.log('📈 APY:', apyValue + '%');
+                console.log('📊 Formatted:');
+                console.log('  Total Staked:', totalStakedTokens, 'ARUB ($' + totalStakedUsd.toFixed(2) + ')');
+                console.log('  Total Supply:', totalSupplyTokens, 'ARUB ($' + totalSupplyUsd.toFixed(2) + ')');
+                console.log('  APY:', apyValue + '%');
 
                 // Оновлення UI
                 document.getElementById('totalStaked').textContent = 
@@ -251,7 +257,7 @@
 
         // Запуск
         window.addEventListener('DOMContentLoaded', () => {
-            console.log('🚀 ANTI RUB Stats');
+            console.log('🚀 ANTI RUB Stats with CORRECT contract addresses');
             loadStats();
             setInterval(loadStats, 30000);
         });
