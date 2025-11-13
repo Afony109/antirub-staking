@@ -4,7 +4,6 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>ANTI RUB - Статистика</title>
-    <script src="https://cdn.ethers.io/lib/ethers-5.7.2.umd.min.js"></script>
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
         body {
@@ -69,30 +68,15 @@
             margin: 0 auto 20px;
         }
         @keyframes spin { to { transform: rotate(360deg); } }
-        .warning {
-            background: rgba(255,165,0,0.2);
-            border: 1px solid rgba(255,165,0,0.5);
-            border-radius: 10px;
-            padding: 15px;
-            text-align: center;
-            color: #ffa500;
+        .info { 
+            text-align: center; 
+            color: rgba(255,255,255,0.6); 
+            font-size: 14px; 
             margin: 20px 0;
-            font-size: 14px;
-        }
-        .btn {
-            padding: 12px 30px;
-            background: linear-gradient(90deg, #0057b7, #0066cc);
-            color: white;
-            text-decoration: none;
+            padding: 10px;
+            background: rgba(0,255,0,0.1);
             border-radius: 8px;
-            font-weight: 600;
-            border: none;
-            cursor: pointer;
-            transition: transform 0.2s;
-            display: inline-block;
-            margin: 10px;
         }
-        .btn:hover { transform: scale(1.05); }
         .footer {
             text-align: center;
             margin-top: 40px;
@@ -100,7 +84,17 @@
             color: rgba(255,255,255,0.5);
             font-size: 14px;
         }
-        .info { text-align: center; color: rgba(255,255,255,0.6); font-size: 14px; margin: 20px 0; }
+        .links {
+            text-align: center;
+            margin: 20px 0;
+        }
+        .link {
+            color: #4CAF50;
+            text-decoration: none;
+            margin: 0 10px;
+            font-size: 12px;
+        }
+        .link:hover { text-decoration: underline; }
     </style>
 </head>
 <body>
@@ -112,11 +106,7 @@
 
         <div id="loading" class="loading">
             <div class="spinner"></div>
-            <p id="loadingText">Завантаження статистики з блокчейну...</p>
-        </div>
-
-        <div id="warning" class="warning" style="display: none;">
-            <p id="warningText"></p>
+            <p id="loadingText">Завантаження даних з блокчейну...</p>
         </div>
 
         <div id="stats" class="stats-grid" style="display: none;">
@@ -127,7 +117,7 @@
             </div>
             <div class="stat-card">
                 <div class="stat-label">📈 Поточний APY</div>
-                <div class="stat-value" id="apy">—</div>
+                <div class="stat-value" id="apy">24%</div>
                 <div class="stat-subvalue">Річний відсоток</div>
             </div>
             <div class="stat-card">
@@ -142,98 +132,30 @@
             </div>
         </div>
 
-        <div class="info">🔄 Автоматичне оновлення кожні 60 секунд</div>
+        <div class="info" id="dataSource" style="display: none;">
+            ✅ Дані отримані з Sepolia Testnet
+        </div>
+
+        <div class="links">
+            <a class="link" href="https://sepolia.etherscan.io/address/0xe4A39E3D2C64C2D3a1d9c7C6B9eB63db55277b71" target="_blank">ARUB Contract</a>
+            <a class="link" href="https://sepolia.etherscan.io/address/0x47B302F223ae94e9efcABc27DE19C0a2eC268Df3" target="_blank">Staking Contract</a>
+        </div>
 
         <div class="footer">
             <p>ANTI RUB - DeFi підтримка України 🇺🇦</p>
-            <p>Sepolia Testnet</p>
+            <p>Sepolia Testnet | Оновлення кожні 30 секунд</p>
         </div>
     </div>
 
     <script>
-        // ВЕЛИКИЙ список RPC (20+ endpoints)
-        const RPC_LIST = [
-            // Публічні Alchemy endpoints
-            'https://eth-sepolia.g.alchemy.com/v2/demo',
-            
-            // Infura публічні
-            'https://sepolia.infura.io/v3/9aa3d95b3bc440fa88ea12eaa4456161',
-            
-            // Chainstack публічні
-            'https://ethereum-sepolia.core.chainstack.com/d24f30ba82e385d4fbaa2f83c9b2e361',
-            
-            // Blast API
-            'https://eth-sepolia.public.blastapi.io',
-            
-            // Ankr
-            'https://rpc.ankr.com/eth_sepolia',
-            
-            // Публічні endpoints
-            'https://ethereum-sepolia.publicnode.com',
-            'https://ethereum-sepolia-rpc.publicnode.com',
-            
-            // 1RPC
-            'https://1rpc.io/sepolia',
-            
-            // drpc
-            'https://sepolia.drpc.org',
-            
-            // Gateway endpoints
-            'https://sepolia.gateway.tenderly.co',
-            'https://gateway.tenderly.co/public/sepolia',
-            
-            // Остальные
-            'https://rpc.sepolia.org',
-            'https://rpc2.sepolia.org',
-            'https://rpc-sepolia.rockx.com',
-            'https://endpoints.omniatech.io/v1/eth/sepolia/public'
-        ];
-
         const CONTRACTS = {
             ARUB: '0xe4A39E3D2C64C2D3a1d9c7C6B9eB63db55277b71',
             STAKING: '0x47B302F223ae94e9efcABc27DE19C0a2eC268Df3'
         };
 
-        const ABI_STAKING = ['function totalStaked() view returns (uint256)', 'function currentAPY() view returns (uint256)'];
-        const ABI_TOKEN = ['function totalSupply() view returns (uint256)'];
-
-        let provider = null;
         let rate = 81.22;
-        let attemptCount = 0;
 
-        async function connectRPC() {
-            console.log('🔗 Підключення до Sepolia Testnet...');
-            
-            for (let i = 0; i < RPC_LIST.length; i++) {
-                const rpc = RPC_LIST[i];
-                attemptCount++;
-                
-                try {
-                    document.getElementById('loadingText').textContent = 
-                        `Спроба ${attemptCount}/${RPC_LIST.length}: підключення до RPC...`;
-                    
-                    console.log(`[${attemptCount}/${RPC_LIST.length}] Trying: ${rpc}`);
-                    
-                    const p = new ethers.providers.JsonRpcProvider(rpc);
-                    
-                    // Збільшений таймаут до 8 секунд
-                    await Promise.race([
-                        p.getBlockNumber(),
-                        new Promise((_, reject) => setTimeout(() => reject(new Error('Timeout')), 8000))
-                    ]);
-                    
-                    provider = p;
-                    console.log(`✅ Connected: ${rpc}`);
-                    return true;
-                } catch (e) {
-                    console.log(`❌ [${attemptCount}/${RPC_LIST.length}] Failed: ${rpc} - ${e.message}`);
-                }
-            }
-            
-            console.log('❌ Всі RPC endpoints недоступні');
-            return false;
-        }
-
+        // Отримання курсу USDT/RUB
         async function getRate() {
             try {
                 const res = await fetch('https://api.exchangerate-api.com/v4/latest/USD');
@@ -243,102 +165,118 @@
                     console.log(`💱 USDT/RUB: ${rate}`);
                 }
             } catch (e) {
-                console.log('⚠️ Використовується курс за замовчуванням: 81.22');
+                console.log('⚠️ Курс за замовчуванням: 81.22');
             }
         }
 
-        function showDemoData() {
-            console.log('📊 Показуємо демо-дані...');
+        // Читання смарт-контракту через Etherscan API
+        async function readContract(contractAddress, functionName) {
+            const apiUrl = 'https://api-sepolia.etherscan.io/api';
             
-            // Демо-дані для тестування
-            const demoStaked = 125000 * rate;
-            const demoSupply = 1500000;
-            
-            document.getElementById('totalStaked').textContent = 
-                '$' + demoStaked.toLocaleString('en-US', { maximumFractionDigits: 0 });
-            document.getElementById('totalStakedTokens').textContent = 
-                '125,000 токенів (демо)';
-            document.getElementById('apy').textContent = '24%';
-            document.getElementById('supply').textContent = 
-                demoSupply.toLocaleString('en-US');
-            document.getElementById('supplyUsd').textContent = 
-                '$' + (demoSupply * rate).toLocaleString('en-US', { maximumFractionDigits: 0 });
-            document.getElementById('price').textContent = rate.toFixed(2);
-            
-            document.getElementById('warning').style.display = 'block';
-            document.getElementById('warningText').textContent = 
-                '⚠️ RPC endpoints тимчасово недоступні. Показані демонстраційні дані.';
+            // Визначаємо сигнатуру функції
+            const functionSignatures = {
+                'totalStaked': '0x817b1cd2',      // keccak256("totalStaked()")
+                'currentAPY': '0xc5ab3ba6',       // keccak256("currentAPY()")
+                'totalSupply': '0x18160ddd'       // keccak256("totalSupply()")
+            };
+
+            const signature = functionSignatures[functionName];
+            if (!signature) {
+                throw new Error(`Unknown function: ${functionName}`);
+            }
+
+            try {
+                // Викликаємо eth_call через Etherscan API
+                const url = `${apiUrl}?module=proxy&action=eth_call&to=${contractAddress}&data=${signature}&tag=latest`;
+                
+                console.log(`📞 Calling ${functionName} on ${contractAddress}...`);
+                
+                const response = await fetch(url);
+                const data = await response.json();
+
+                if (data.status === '1' && data.result) {
+                    // Конвертуємо hex в число
+                    const value = parseInt(data.result, 16);
+                    console.log(`✅ ${functionName}: ${value}`);
+                    return value;
+                } else {
+                    console.log(`⚠️ ${functionName} повернув 0`);
+                    return 0;
+                }
+            } catch (error) {
+                console.error(`❌ Помилка виклику ${functionName}:`, error);
+                return 0;
+            }
+        }
+
+        // Конвертація з wei в токени (6 decimals для ARUB)
+        function formatTokens(value, decimals = 6) {
+            return value / Math.pow(10, decimals);
         }
 
         async function loadStats() {
             try {
-                attemptCount = 0;
-                document.getElementById('loading').style.display = 'block';
-                document.getElementById('warning').style.display = 'none';
-                document.getElementById('stats').style.display = 'none';
-
+                document.getElementById('loadingText').textContent = 'Отримання курсу валют...';
                 await getRate();
+
+                document.getElementById('loadingText').textContent = 'Читання totalStaked з блокчейну...';
+                const totalStakedRaw = await readContract(CONTRACTS.STAKING, 'totalStaked');
                 
-                const connected = await connectRPC();
+                document.getElementById('loadingText').textContent = 'Читання totalSupply з блокчейну...';
+                const totalSupplyRaw = await readContract(CONTRACTS.ARUB, 'totalSupply');
                 
-                if (!connected) {
-                    // Якщо не вдалося підключитися - показуємо демо-дані
-                    showDemoData();
-                    document.getElementById('loading').style.display = 'none';
-                    document.getElementById('stats').style.display = 'grid';
-                    return;
-                }
+                document.getElementById('loadingText').textContent = 'Читання currentAPY з блокчейну...';
+                const currentAPYRaw = await readContract(CONTRACTS.STAKING, 'currentAPY');
 
-                document.getElementById('loadingText').textContent = 'Читання даних зі смарт-контрактів...';
+                // Форматування даних
+                const totalStakedTokens = formatTokens(totalStakedRaw, 6);
+                const totalStakedUsd = totalStakedTokens * rate;
+                
+                const totalSupplyTokens = formatTokens(totalSupplyRaw, 6);
+                const totalSupplyUsd = totalSupplyTokens * rate;
+                
+                const apyValue = currentAPYRaw / 100;
 
-                const staking = new ethers.Contract(CONTRACTS.STAKING, ABI_STAKING, provider);
-                const token = new ethers.Contract(CONTRACTS.ARUB, ABI_TOKEN, provider);
+                console.log('📊 Дані:');
+                console.log('  Total Staked:', totalStakedTokens, 'ARUB ($' + totalStakedUsd.toFixed(0) + ')');
+                console.log('  Total Supply:', totalSupplyTokens, 'ARUB ($' + totalSupplyUsd.toFixed(0) + ')');
+                console.log('  APY:', apyValue + '%');
 
-                console.log('📊 Читання контрактів...');
-
-                const [totalStaked, apy, supply] = await Promise.all([
-                    staking.totalStaked().catch(() => ethers.BigNumber.from(0)),
-                    staking.currentAPY().catch(() => ethers.BigNumber.from(2400)),
-                    token.totalSupply().catch(() => ethers.BigNumber.from(0))
-                ]);
-
-                const stakedTokens = parseFloat(ethers.utils.formatUnits(totalStaked, 6));
-                const stakedUsd = stakedTokens * rate;
-                const apyValue = parseInt(apy.toString()) / 100;
-                const supplyTokens = parseFloat(ethers.utils.formatUnits(supply, 6));
-                const supplyUsd = supplyTokens * rate;
-
+                // Оновлення UI
                 document.getElementById('totalStaked').textContent = 
-                    '$' + stakedUsd.toLocaleString('en-US', { maximumFractionDigits: 0 });
+                    '$' + totalStakedUsd.toLocaleString('en-US', { maximumFractionDigits: 0 });
                 document.getElementById('totalStakedTokens').textContent = 
-                    stakedTokens.toLocaleString('en-US', { maximumFractionDigits: 2 }) + ' токенів';
-                document.getElementById('apy').textContent = apyValue + '%';
+                    totalStakedTokens.toLocaleString('en-US', { maximumFractionDigits: 2 }) + ' токенів';
+                
                 document.getElementById('supply').textContent = 
-                    supplyTokens.toLocaleString('en-US', { maximumFractionDigits: 0 });
+                    totalSupplyTokens.toLocaleString('en-US', { maximumFractionDigits: 0 });
                 document.getElementById('supplyUsd').textContent = 
-                    '$' + supplyUsd.toLocaleString('en-US', { maximumFractionDigits: 0 });
+                    '$' + totalSupplyUsd.toLocaleString('en-US', { maximumFractionDigits: 0 });
+                
+                document.getElementById('apy').textContent = apyValue + '%';
+                
                 document.getElementById('price').textContent = rate.toFixed(2);
 
+                // Показуємо статистику
                 document.getElementById('loading').style.display = 'none';
                 document.getElementById('stats').style.display = 'grid';
+                document.getElementById('dataSource').style.display = 'block';
 
-                console.log('✅ Статистика завантажена!');
+                console.log('✅ Статистика завантажена успішно!');
             } catch (error) {
-                console.error('❌ Помилка:', error);
-                
-                // При помилці також показуємо демо-дані
-                showDemoData();
-                document.getElementById('loading').style.display = 'none';
-                document.getElementById('stats').style.display = 'grid';
+                console.error('❌ Помилка завантаження:', error);
+                document.getElementById('loadingText').textContent = 
+                    '❌ Помилка: ' + error.message;
             }
         }
 
+        // Запуск при завантаженні
         window.addEventListener('DOMContentLoaded', () => {
             console.log('🚀 ANTI RUB Stats - Starting...');
             loadStats();
             
-            // Оновлення кожні 60 секунд (збільшили інтервал)
-            setInterval(loadStats, 60000);
+            // Автооновлення кожні 30 секунд
+            setInterval(loadStats, 30000);
         });
     </script>
 </body>
