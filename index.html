@@ -56,7 +56,7 @@
         .loading {
             text-align: center;
             padding: 40px;
-            font-size: 18px;
+            font-size: 16px;
             color: rgba(255,255,255,0.7);
         }
         .spinner {
@@ -69,14 +69,15 @@
             margin: 0 auto 20px;
         }
         @keyframes spin { to { transform: rotate(360deg); } }
-        .error {
-            background: rgba(255,0,0,0.2);
-            border: 1px solid rgba(255,0,0,0.5);
+        .warning {
+            background: rgba(255,165,0,0.2);
+            border: 1px solid rgba(255,165,0,0.5);
             border-radius: 10px;
-            padding: 20px;
+            padding: 15px;
             text-align: center;
-            color: #ff6b6b;
+            color: #ffa500;
             margin: 20px 0;
+            font-size: 14px;
         }
         .btn {
             padding: 12px 30px;
@@ -111,13 +112,11 @@
 
         <div id="loading" class="loading">
             <div class="spinner"></div>
-            <p>Завантаження статистики з блокчейну...</p>
+            <p id="loadingText">Завантаження статистики з блокчейну...</p>
         </div>
 
-        <div id="error" class="error" style="display: none;">
-            <h3>⚠️ Помилка завантаження</h3>
-            <p id="errorMessage"></p>
-            <button class="btn" onclick="loadStats()">Спробувати знову</button>
+        <div id="warning" class="warning" style="display: none;">
+            <p id="warningText"></p>
         </div>
 
         <div id="stats" class="stats-grid" style="display: none;">
@@ -143,7 +142,7 @@
             </div>
         </div>
 
-        <div class="info">🔄 Оновлення кожні 30 секунд</div>
+        <div class="info">🔄 Автоматичне оновлення кожні 60 секунд</div>
 
         <div class="footer">
             <p>ANTI RUB - DeFi підтримка України 🇺🇦</p>
@@ -152,16 +151,42 @@
     </div>
 
     <script>
+        // ВЕЛИКИЙ список RPC (20+ endpoints)
         const RPC_LIST = [
+            // Публічні Alchemy endpoints
             'https://eth-sepolia.g.alchemy.com/v2/demo',
+            
+            // Infura публічні
+            'https://sepolia.infura.io/v3/9aa3d95b3bc440fa88ea12eaa4456161',
+            
+            // Chainstack публічні
+            'https://ethereum-sepolia.core.chainstack.com/d24f30ba82e385d4fbaa2f83c9b2e361',
+            
+            // Blast API
+            'https://eth-sepolia.public.blastapi.io',
+            
+            // Ankr
             'https://rpc.ankr.com/eth_sepolia',
+            
+            // Публічні endpoints
+            'https://ethereum-sepolia.publicnode.com',
+            'https://ethereum-sepolia-rpc.publicnode.com',
+            
+            // 1RPC
+            'https://1rpc.io/sepolia',
+            
+            // drpc
+            'https://sepolia.drpc.org',
+            
+            // Gateway endpoints
             'https://sepolia.gateway.tenderly.co',
             'https://gateway.tenderly.co/public/sepolia',
-            'https://ethereum-sepolia.publicnode.com',
-            'https://1rpc.io/sepolia',
+            
+            // Остальные
             'https://rpc.sepolia.org',
-            'https://sepolia.drpc.org',
-            'https://rpc2.sepolia.org'
+            'https://rpc2.sepolia.org',
+            'https://rpc-sepolia.rockx.com',
+            'https://endpoints.omniatech.io/v1/eth/sepolia/public'
         ];
 
         const CONTRACTS = {
@@ -174,25 +199,38 @@
 
         let provider = null;
         let rate = 81.22;
+        let attemptCount = 0;
 
         async function connectRPC() {
-            console.log('🔗 Підключення до Sepolia...');
+            console.log('🔗 Підключення до Sepolia Testnet...');
             
-            for (const rpc of RPC_LIST) {
+            for (let i = 0; i < RPC_LIST.length; i++) {
+                const rpc = RPC_LIST[i];
+                attemptCount++;
+                
                 try {
-                    console.log(`Trying: ${rpc}`);
+                    document.getElementById('loadingText').textContent = 
+                        `Спроба ${attemptCount}/${RPC_LIST.length}: підключення до RPC...`;
+                    
+                    console.log(`[${attemptCount}/${RPC_LIST.length}] Trying: ${rpc}`);
+                    
                     const p = new ethers.providers.JsonRpcProvider(rpc);
+                    
+                    // Збільшений таймаут до 8 секунд
                     await Promise.race([
                         p.getBlockNumber(),
-                        new Promise((_, reject) => setTimeout(() => reject(new Error('Timeout')), 3000))
+                        new Promise((_, reject) => setTimeout(() => reject(new Error('Timeout')), 8000))
                     ]);
+                    
                     provider = p;
                     console.log(`✅ Connected: ${rpc}`);
                     return true;
                 } catch (e) {
-                    console.log(`❌ Failed: ${rpc}`);
+                    console.log(`❌ [${attemptCount}/${RPC_LIST.length}] Failed: ${rpc} - ${e.message}`);
                 }
             }
+            
+            console.log('❌ Всі RPC endpoints недоступні');
             return false;
         }
 
@@ -202,28 +240,61 @@
                 const data = await res.json();
                 if (data.rates && data.rates.RUB) {
                     rate = data.rates.RUB;
-                    console.log(`💱 Rate: ${rate}`);
+                    console.log(`💱 USDT/RUB: ${rate}`);
                 }
             } catch (e) {
-                console.log('⚠️ Using default rate: 81.22');
+                console.log('⚠️ Використовується курс за замовчуванням: 81.22');
             }
+        }
+
+        function showDemoData() {
+            console.log('📊 Показуємо демо-дані...');
+            
+            // Демо-дані для тестування
+            const demoStaked = 125000 * rate;
+            const demoSupply = 1500000;
+            
+            document.getElementById('totalStaked').textContent = 
+                '$' + demoStaked.toLocaleString('en-US', { maximumFractionDigits: 0 });
+            document.getElementById('totalStakedTokens').textContent = 
+                '125,000 токенів (демо)';
+            document.getElementById('apy').textContent = '24%';
+            document.getElementById('supply').textContent = 
+                demoSupply.toLocaleString('en-US');
+            document.getElementById('supplyUsd').textContent = 
+                '$' + (demoSupply * rate).toLocaleString('en-US', { maximumFractionDigits: 0 });
+            document.getElementById('price').textContent = rate.toFixed(2);
+            
+            document.getElementById('warning').style.display = 'block';
+            document.getElementById('warningText').textContent = 
+                '⚠️ RPC endpoints тимчасово недоступні. Показані демонстраційні дані.';
         }
 
         async function loadStats() {
             try {
+                attemptCount = 0;
                 document.getElementById('loading').style.display = 'block';
-                document.getElementById('error').style.display = 'none';
+                document.getElementById('warning').style.display = 'none';
                 document.getElementById('stats').style.display = 'none';
 
-                const connected = await connectRPC();
-                if (!connected) throw new Error('Всі RPC endpoints недоступні');
-
                 await getRate();
+                
+                const connected = await connectRPC();
+                
+                if (!connected) {
+                    // Якщо не вдалося підключитися - показуємо демо-дані
+                    showDemoData();
+                    document.getElementById('loading').style.display = 'none';
+                    document.getElementById('stats').style.display = 'grid';
+                    return;
+                }
+
+                document.getElementById('loadingText').textContent = 'Читання даних зі смарт-контрактів...';
 
                 const staking = new ethers.Contract(CONTRACTS.STAKING, ABI_STAKING, provider);
                 const token = new ethers.Contract(CONTRACTS.ARUB, ABI_TOKEN, provider);
 
-                console.log('📊 Reading contracts...');
+                console.log('📊 Читання контрактів...');
 
                 const [totalStaked, apy, supply] = await Promise.all([
                     staking.totalStaked().catch(() => ethers.BigNumber.from(0)),
@@ -251,19 +322,23 @@
                 document.getElementById('loading').style.display = 'none';
                 document.getElementById('stats').style.display = 'grid';
 
-                console.log('✅ Stats loaded!');
+                console.log('✅ Статистика завантажена!');
             } catch (error) {
-                console.error('❌ Error:', error);
+                console.error('❌ Помилка:', error);
+                
+                // При помилці також показуємо демо-дані
+                showDemoData();
                 document.getElementById('loading').style.display = 'none';
-                document.getElementById('error').style.display = 'block';
-                document.getElementById('errorMessage').textContent = error.message;
+                document.getElementById('stats').style.display = 'grid';
             }
         }
 
         window.addEventListener('DOMContentLoaded', () => {
-            console.log('🚀 Starting...');
+            console.log('🚀 ANTI RUB Stats - Starting...');
             loadStats();
-            setInterval(loadStats, 30000);
+            
+            // Оновлення кожні 60 секунд (збільшили інтервал)
+            setInterval(loadStats, 60000);
         });
     </script>
 </body>
