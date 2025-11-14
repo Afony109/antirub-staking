@@ -1,1542 +1,1310 @@
 <!DOCTYPE html>
-<html lang="ru">
+<html lang="uk">
 <head>
-  <meta charset="UTF-8" />
-  <title>ARUB Staking v2 — Sepolia</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-
-  <!-- ====== СТИЛИ ПРИЛОЖЕНИЯ ====== -->
-  <style>
-    :root {
-      --bg: #050816;
-      --bg-elevated: #0b1020;
-      --bg-card: #101626;
-      --bg-card-soft: #151c30;
-      --border-subtle: #232842;
-      --accent: #4f8cff;
-      --accent-soft: rgba(79, 140, 255, 0.2);
-      --accent-strong: #7bcfff;
-      --text: #f5f7ff;
-      --text-soft: #9ba4d0;
-      --danger: #ff5252;
-      --success: #6ddf7b;
-      --warn: #ffb300;
-      --shadow-soft: 0 18px 45px rgba(0, 0, 0, 0.55);
-      --radius-lg: 18px;
-      --radius-md: 12px;
-      --radius-sm: 8px;
-      --transition-fast: 0.16s ease-out;
-      --transition-med: 0.22s ease-out;
-      --font-mono: "JetBrains Mono", ui-monospace, Menlo, Monaco, Consolas, "Courier New", monospace;
-    }
-
-    * {
-      box-sizing: border-box;
-    }
-
-    body {
-      margin: 0;
-      min-height: 100vh;
-      background: radial-gradient(circle at 0 0, #182148 0, transparent 45%),
-                  radial-gradient(circle at 100% 0, #261954 0, transparent 50%),
-                  radial-gradient(circle at 50% 100%, #102541 0, transparent 55%),
-                  var(--bg);
-      color: var(--text);
-      font-family: system-ui, -apple-system, BlinkMacSystemFont, "SF Pro Text",
-        "Segoe UI", sans-serif;
-      padding: 0;
-      display: flex;
-      justify-content: center;
-    }
-
-    .app-shell {
-      width: 100%;
-      max-width: 1180px;
-      padding: 20px 16px 40px;
-    }
-
-    @media (min-width: 768px) {
-      .app-shell {
-        padding: 26px 20px 48px;
-      }
-    }
-
-    /* ====== ШАПКА ====== */
-
-    .app-header {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 16px;
-      margin-bottom: 20px;
-    }
-
-    .app-title-block {
-      display: flex;
-      flex-direction: column;
-      gap: 4px;
-    }
-
-    .app-title-row {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-    }
-
-    .app-logo {
-      width: 32px;
-      height: 32px;
-      border-radius: 12px;
-      background: radial-gradient(circle at 30% 20%, #ffffff 0, #ffe488 12%, transparent 40%),
-                  radial-gradient(circle at 70% 70%, #7bcfff 0, transparent 45%),
-                  linear-gradient(135deg, #2f3cff, #f92cff);
-      box-shadow: 0 12px 24px rgba(0,0,0,0.55);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      color: #000;
-      font-weight: 800;
-      font-size: 16px;
-      letter-spacing: 1px;
-    }
-
-    .app-title {
-      font-size: 22px;
-      font-weight: 650;
-      letter-spacing: 0.02em;
-      display: flex;
-      align-items: center;
-      gap: 8px;
-    }
-
-    .badge-version {
-      padding: 2px 8px;
-      border-radius: 999px;
-      background: rgba(124, 179, 255, 0.12);
-      border: 1px solid rgba(124, 179, 255, 0.35);
-      color: var(--accent-strong);
-      font-size: 10px;
-      text-transform: uppercase;
-      letter-spacing: 0.08em;
-    }
-
-    .app-subtitle {
-      font-size: 13px;
-      color: var(--text-soft);
-      display: flex;
-      flex-wrap: wrap;
-      gap: 8px;
-      align-items: center;
-    }
-
-    .pill {
-      padding: 2px 8px;
-      border-radius: 999px;
-      border: 1px solid rgba(155, 164, 208, 0.35);
-      font-size: 11px;
-      color: var(--text-soft);
-      display: inline-flex;
-      align-items: center;
-      gap: 4px;
-    }
-
-    .pill-dot {
-      width: 7px;
-      height: 7px;
-      border-radius: 999px;
-      background: var(--success);
-      box-shadow: 0 0 0 3px rgba(109, 223, 123, 0.2);
-    }
-
-    /* ====== БЛОК КОШЕЛЬКА ====== */
-
-    .wallet-panel {
-      display: flex;
-      flex-direction: column;
-      align-items: flex-end;
-      gap: 8px;
-    }
-
-    .wallet-row {
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      font-size: 12px;
-      color: var(--text-soft);
-      justify-content: flex-end;
-    }
-
-    .wallet-address {
-      font-family: var(--font-mono);
-      font-size: 12px;
-      padding: 4px 8px;
-      border-radius: 999px;
-      border: 1px solid rgba(155, 164, 208, 0.45);
-      background: rgba(9, 11, 26, 0.7);
-      display: inline-flex;
-      align-items: center;
-      gap: 6px;
-    }
-
-    .wallet-address span {
-      opacity: 0.9;
-    }
-
-    .btn-copy {
-      border: none;
-      background: transparent;
-      color: var(--accent-strong);
-      cursor: pointer;
-      font-size: 12px;
-      padding: 0;
-      opacity: 0.85;
-    }
-
-    .btn-copy:hover {
-      opacity: 1;
-      text-decoration: underline;
-    }
-
-    .wallet-button {
-      padding: 6px 14px;
-      border-radius: 999px;
-      border: none;
-      background: linear-gradient(135deg, #4f8cff, #7b5bff);
-      color: #fff;
-      font-size: 13px;
-      font-weight: 550;
-      cursor: pointer;
-      box-shadow: 0 10px 25px rgba(73, 134, 255, 0.4);
-      display: inline-flex;
-      align-items: center;
-      gap: 6px;
-      transition: transform var(--transition-fast),
-                  box-shadow var(--transition-fast),
-                  filter var(--transition-fast);
-    }
-
-    .wallet-button:hover {
-      transform: translateY(-1px);
-      box-shadow: 0 14px 32px rgba(73, 134, 255, 0.55);
-      filter: brightness(1.03);
-    }
-
-    .wallet-button:active {
-      transform: translateY(0);
-      box-shadow: 0 8px 18px rgba(73, 134, 255, 0.35);
-      filter: brightness(0.97);
-    }
-
-    .wallet-small {
-      font-size: 11px;
-      color: var(--text-soft);
-      text-align: right;
-    }
-
-    /* ====== ОСНОВНОЙ ЛЭЙАУТ ====== */
-
-    .layout-main {
-      display: grid;
-      grid-template-columns: minmax(0, 2.1fr) minmax(260px, 1.1fr);
-      gap: 18px;
-    }
-
-    @media (max-width: 900px) {
-      .layout-main {
-        grid-template-columns: minmax(0, 1fr);
-      }
-    }
-
-    /* ====== КАРТОЧКИ ПУЛОВ / ТАБЫ ====== */
-
-    .card {
-      background: radial-gradient(circle at 0 0, rgba(124, 179, 255, 0.1) 0, transparent 50%),
-                  linear-gradient(145deg, rgba(13, 19, 45, 0.96), rgba(12, 16, 34, 0.98));
-      border-radius: var(--radius-lg);
-      border: 1px solid var(--border-subtle);
-      box-shadow: var(--shadow-soft);
-      padding: 16px 16px 14px;
-    }
-
-    .card--flat {
-      box-shadow: 0 10px 28px rgba(1, 6, 22, 0.85);
-      background: linear-gradient(145deg, #0b1020, #050814);
-    }
-
-    .card-header {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 10px;
-      margin-bottom: 10px;
-    }
-
-    .card-title {
-      font-size: 15px;
-      font-weight: 600;
-      display: flex;
-      align-items: center;
-      gap: 7px;
-    }
-
-    .card-title-label {
-      padding: 2px 7px;
-      border-radius: 999px;
-      background: rgba(155, 164, 208, 0.15);
-      color: var(--text-soft);
-      font-size: 10px;
-      text-transform: uppercase;
-      letter-spacing: 0.08em;
-    }
-
-    .pill-apr {
-      font-size: 11px;
-      border-radius: 999px;
-      padding: 2px 8px;
-      background: rgba(114, 204, 255, 0.14);
-      border: 1px solid rgba(114, 204, 255, 0.6);
-      color: var(--accent-strong);
-      display: inline-flex;
-      align-items: center;
-      gap: 4px;
-    }
-
-    .pill-apr-dot {
-      width: 8px;
-      height: 8px;
-      border-radius: 999px;
-      background: linear-gradient(135deg, #ffeb3b, #f4511e);
-      box-shadow: 0 0 0 3px rgba(255, 193, 7, 0.2);
-    }
-
-    .stats-row {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 12px;
-      margin-bottom: 10px;
-    }
-
-    .stat {
-      min-width: 110px;
-    }
-
-    .stat-label {
-      font-size: 11px;
-      color: var(--text-soft);
-      margin-bottom: 2px;
-    }
-
-    .stat-value {
-      font-size: 14px;
-      font-weight: 550;
-    }
-
-    .stat-value-soft {
-      font-size: 13px;
-      color: var(--text-soft);
-    }
-
-    .divider {
-      margin: 8px 0 10px;
-      height: 1px;
-      border-radius: 999px;
-      background: radial-gradient(circle at 50% 0, rgba(79, 140, 255, 0.55), transparent 65%);
-      opacity: 0.9;
-    }
-
-    .inputs-grid {
-      display: grid;
-      grid-template-columns: minmax(0, 1fr);
-      gap: 8px;
-    }
-
-    @media (min-width: 540px) {
-      .inputs-grid {
-        grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
-      }
-    }
-
-    .input-group {
-      display: flex;
-      align-items: center;
-      gap: 6px;
-    }
-
-    .field {
-      position: relative;
-      flex: 1;
-    }
-
-    .field input {
-      width: 100%;
-      padding: 7px 9px 7px 9px;
-      border-radius: var(--radius-md);
-      border: 1px solid rgba(151, 163, 221, 0.4);
-      background: rgba(8, 10, 26, 0.9);
-      color: var(--text);
-      font-size: 13px;
-      outline: none;
-      font-family: var(--font-mono);
-    }
-
-    .field input:focus {
-      border-color: var(--accent);
-      box-shadow: 0 0 0 1px rgba(79, 140, 255, 0.5);
-    }
-
-    .field-hint {
-      position: absolute;
-      right: 7px;
-      top: 50%;
-      transform: translateY(-50%);
-      font-size: 10px;
-      color: var(--text-soft);
-      background: rgba(3, 5, 16, 0.85);
-      padding: 1px 5px;
-      border-radius: 999px;
-      border: 1px solid rgba(155, 164, 208, 0.45);
-    }
-
-    .btn {
-      padding: 7px 10px;
-      border-radius: var(--radius-md);
-      border: none;
-      background: linear-gradient(135deg, #4f8cff, #7b5bff);
-      color: #fff;
-      font-size: 13px;
-      font-weight: 550;
-      cursor: pointer;
-      white-space: nowrap;
-      box-shadow: 0 10px 22px rgba(73, 134, 255, 0.35);
-      transition: transform var(--transition-fast),
-                  box-shadow var(--transition-fast),
-                  filter var(--transition-fast);
-    }
-
-    .btn--subtle {
-      background: rgba(13, 19, 45, 0.9);
-      border: 1px solid rgba(155, 164, 208, 0.4);
-      box-shadow: none;
-      font-weight: 500;
-    }
-
-    .btn:hover:not(:disabled) {
-      transform: translateY(-1px);
-      box-shadow: 0 14px 32px rgba(73, 134, 255, 0.55);
-      filter: brightness(1.04);
-    }
-
-    .btn--subtle:hover:not(:disabled) {
-      transform: translateY(-1px);
-      box-shadow: 0 12px 30px rgba(0, 0, 0, 0.55);
-      filter: none;
-    }
-
-    .btn:active:not(:disabled) {
-      transform: translateY(0);
-      box-shadow: 0 8px 18px rgba(73, 134, 255, 0.35);
-      filter: brightness(0.97);
-    }
-
-    .btn--subtle:active:not(:disabled) {
-      box-shadow: 0 6px 18px rgba(0,0,0,0.6);
-    }
-
-    .btn:disabled {
-      opacity: 0.55;
-      cursor: not-allowed;
-      box-shadow: none;
-    }
-
-    .btn-full {
-      width: 100%;
-      justify-content: center;
-      display: inline-flex;
-      align-items: center;
-      gap: 6px;
-    }
-
-    /* ====== ТАБЫ СПРАВА ====== */
-
-    .tabs {
-      display: flex;
-      gap: 6px;
-      padding: 0 2px 4px;
-      border-bottom: 1px solid rgba(35, 40, 66, 0.9);
-      margin-bottom: 8px;
-    }
-
-    .tab {
-      font-size: 12px;
-      padding: 5px 10px;
-      border-radius: 999px;
-      cursor: pointer;
-      border: none;
-      background: transparent;
-      color: var(--text-soft);
-      display: inline-flex;
-      align-items: center;
-      gap: 6px;
-      transition: background var(--transition-med),
-                  color var(--transition-med),
-                  transform var(--transition-fast);
-    }
-
-    .tab-dot {
-      width: 7px;
-      height: 7px;
-      border-radius: 999px;
-      background: rgba(124, 179, 255, 0.8);
-      opacity: 0;
-      transform: scale(0.6);
-      transition: opacity var(--transition-fast), transform var(--transition-fast);
-    }
-
-    .tab--active {
-      background: radial-gradient(circle at 30% 0, rgba(124, 179, 255, 0.35), transparent 70%);
-      color: var(--accent-strong);
-      transform: translateY(-0.5px);
-    }
-
-    .tab--active .tab-dot {
-      opacity: 1;
-      transform: scale(1);
-    }
-
-    .sidebar-section {
-      font-size: 13px;
-      color: var(--text-soft);
-    }
-
-    .sidebar-section h4 {
-      margin: 4px 0 6px;
-      font-size: 13px;
-      color: var(--text);
-    }
-
-    .sidebar-kv {
-      display: flex;
-      justify-content: space-between;
-      gap: 8px;
-      margin-bottom: 4px;
-      font-size: 12px;
-    }
-
-    .sidebar-kv-key {
-      color: var(--text-soft);
-    }
-
-    .sidebar-kv-val {
-      font-family: var(--font-mono);
-      color: var(--accent-strong);
-    }
-
-    .sidebar-help-item {
-      margin-bottom: 6px;
-      line-height: 1.35;
-    }
-
-    .sidebar-help-item strong {
-      color: var(--accent-strong);
-    }
-
-    .sidebar-footer {
-      margin-top: 10px;
-      font-size: 11px;
-      color: var(--text-soft);
-      opacity: 0.7;
-    }
-
-    /* ====== БЛОК СТАТУСОВ ====== */
-
-    .status-bar {
-      margin-top: 18px;
-      padding: 9px 12px;
-      border-radius: var(--radius-md);
-      background: rgba(7, 10, 26, 0.95);
-      border: 1px solid rgba(35, 40, 66, 0.95);
-      box-shadow: 0 12px 30px rgba(0, 0, 0, 0.7);
-      font-size: 12px;
-      display: flex;
-      align-items: flex-start;
-      gap: 8px;
-    }
-
-    .status-indicator {
-      width: 8px;
-      height: 8px;
-      margin-top: 4px;
-      border-radius: 999px;
-      background: var(--text-soft);
-      box-shadow: 0 0 0 2px rgba(155, 164, 208, 0.3);
-    }
-
-    .status-indicator--idle {
-      background: var(--text-soft);
-      box-shadow: 0 0 0 2px rgba(155, 164, 208, 0.3);
-    }
-
-    .status-indicator--info {
-      background: var(--accent);
-      box-shadow: 0 0 0 2px rgba(79, 140, 255, 0.4);
-    }
-
-    .status-indicator--success {
-      background: var(--success);
-      box-shadow: 0 0 0 2px rgba(109, 223, 123, 0.4);
-    }
-
-    .status-indicator--error {
-      background: var(--danger);
-      box-shadow: 0 0 0 2px rgba(255, 82, 82, 0.45);
-    }
-
-    .status-content {
-      flex: 1;
-    }
-
-    .status-title {
-      font-size: 11px;
-      text-transform: uppercase;
-      letter-spacing: 0.08em;
-      margin-bottom: 2px;
-      opacity: 0.9;
-    }
-
-    .status-text {
-      font-size: 12px;
-      color: var(--text-soft);
-    }
-
-    .status-meta {
-      margin-top: 3px;
-      font-size: 11px;
-      color: rgba(155, 164, 208, 0.7);
-      display: flex;
-      justify-content: space-between;
-      gap: 10px;
-    }
-
-    .status-meta span {
-      white-space: nowrap;
-    }
-
-    /* ====== ФУТЕР ====== */
-
-    .footer {
-      margin-top: 18px;
-      font-size: 11px;
-      color: rgba(148, 158, 214, 0.7);
-      display: flex;
-      justify-content: space-between;
-      flex-wrap: wrap;
-      gap: 8px;
-      padding-top: 4px;
-      border-top: 1px solid rgba(35, 40, 66, 0.7);
-    }
-
-    .footer a {
-      color: var(--accent-strong);
-      text-decoration: none;
-    }
-
-    .footer a:hover {
-      text-decoration: underline;
-    }
-
-  </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ANTI RUB - Стейкінг ARUB та USDT</title>
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' fill='%231a3a52'/><text x='50' y='60' font-size='50' text-anchor='middle' fill='white' font-weight='bold'>₴</text></svg>">
+    
+    <!-- Ethers.js -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/ethers/5.7.2/ethers.umd.min.js"></script>
+    <!-- Chart.js for graphs -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    
+    
+    <style>
+        :root {
+            --primary: #3b82f6;
+            --secondary: #2563eb;
+            --accent: #60a5fa;
+            --dark: #0a0e1a;
+            --gray: #9ca3af;
+            --light-gray: #374151;
+            --border: #1f2937;
+            --bg-card: #111827;
+            --bg-secondary: #1f2937;
+            --text-primary: #f9fafb;
+            --text-secondary: #d1d5db;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        html {
+            scroll-behavior: smooth;
+        }
+        
+        body {
+            font-family: 'Segoe UI', -apple-system, BlinkMacSystemFont, Roboto, sans-serif;
+            background: var(--dark);
+            color: var(--text-primary);
+            overflow-x: hidden;
+            line-height: 1.6;
+        }
+        
+        nav {
+            position: fixed;
+            top: 0;
+            width: 100%;
+            padding: 20px 50px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            z-index: 1000;
+            background: var(--bg-card);
+            border-bottom: 1px solid var(--border);
+            box-shadow: 0 1px 3px rgba(0,0,0,0.3);
+        }
+        
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+        
+        .logo-icon {
+            width: 45px;
+            height: 45px;
+            background: var(--primary);
+            border-radius: 4px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.6em;
+            font-weight: 600;
+            color: white;
+        }
+        
+        .logo-text {
+            font-size: 1.5em;
+            font-weight: 600;
+            color: var(--primary);
+            letter-spacing: -0.5px;
+        }
+        
+        .nav-right {
+            display: flex;
+            gap: 20px;
+            align-items: center;
+        }
+        
+        .lang-switcher {
+            display: flex;
+            gap: 5px;
+            background: var(--bg-secondary);
+            border-radius: 6px;
+            padding: 4px;
+        }
+        
+        .lang-btn {
+            padding: 8px 16px;
+            border-radius: 4px;
+            border: none;
+            background: transparent;
+            color: var(--text-secondary);
+            cursor: pointer;
+            transition: all 0.2s;
+            font-size: 0.9em;
+            font-weight: 500;
+        }
+        
+        .lang-btn.active {
+            background: var(--bg-card);
+            color: var(--primary);
+            box-shadow: 0 1px 2px rgba(0,0,0,0.3);
+        }
+        
+        .connect-btn {
+            padding: 10px 24px;
+            background: var(--primary);
+            border: none;
+            border-radius: 6px;
+            color: white;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s;
+            font-size: 0.95em;
+        }
+        
+        .connect-btn:hover {
+            background: var(--secondary);
+        }
+        
+        .hero {
+            padding: 140px 50px 80px;
+            text-align: center;
+            background: var(--bg-card);
+            border-bottom: 1px solid var(--border);
+        }
+        
+        .hero-title {
+            font-size: 3em;
+            font-weight: 600;
+            margin-bottom: 20px;
+            color: var(--primary);
+            line-height: 1.2;
+            letter-spacing: -1px;
+        }
+        
+        .hero-subtitle {
+            font-size: 1.2em;
+            color: var(--text-secondary);
+            margin-bottom: 40px;
+            max-width: 700px;
+            margin-left: auto;
+            margin-right: auto;
+            font-weight: 400;
+        }
+        
+        .hero-buttons {
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+        
+        .btn-primary {
+            padding: 14px 32px;
+            background: var(--primary);
+            border: none;
+            border-radius: 6px;
+            color: white;
+            font-size: 1em;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        
+        .btn-primary:hover {
+            background: var(--secondary);
+        }
+        
+        .btn-secondary {
+            padding: 14px 32px;
+            background: var(--bg-secondary);
+            border: 1px solid var(--primary);
+            border-radius: 6px;
+            color: var(--primary);
+            font-size: 1em;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        
+        .btn-secondary:hover {
+            background: var(--light-gray);
+        }
+        
+        .stats-bar {
+            background: var(--bg-card);
+            padding: 30px 50px;
+            display: flex;
+            justify-content: space-around;
+            flex-wrap: wrap;
+            gap: 30px;
+            border-bottom: 1px solid var(--border);
+        }
+        
+        .stat-item {
+            text-align: center;
+        }
+        
+        .stat-value {
+            font-size: 2em;
+            font-weight: 600;
+            color: var(--primary);
+            margin-bottom: 5px;
+        }
+        
+        .stat-label {
+            font-size: 0.95em;
+            color: var(--text-secondary);
+            font-weight: 400;
+        }
+        
+        .section {
+            padding: 80px 50px;
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+        
+        .section-title {
+            font-size: 2.2em;
+            font-weight: 600;
+            text-align: center;
+            margin-bottom: 15px;
+            color: var(--primary);
+            letter-spacing: -0.5px;
+        }
+        
+        .section-subtitle {
+            text-align: center;
+            color: var(--text-secondary);
+            margin-bottom: 50px;
+            font-size: 1.1em;
+        }
+        
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 30px;
+            margin-top: 50px;
+        }
+        
+        .feature-card {
+            background: var(--bg-card);
+            padding: 35px;
+            border-radius: 8px;
+            border: 1px solid var(--border);
+            transition: all 0.2s;
+        }
+        
+        .feature-card:hover {
+            box-shadow: 0 4px 12px rgba(0,0,0,0.4);
+            border-color: var(--primary);
+        }
+        
+        .feature-icon {
+            font-size: 2.5em;
+            margin-bottom: 20px;
+            color: var(--primary);
+        }
+        
+        .feature-title {
+            font-size: 1.3em;
+            font-weight: 600;
+            margin-bottom: 12px;
+            color: var(--text-primary);
+        }
+        
+        .feature-text {
+            color: var(--text-secondary);
+            line-height: 1.7;
+        }
+        
+        .staking-section {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 40px;
+            max-width: 600px;
+            margin: 50px auto;
+        }
+        
+        .input-group {
+            margin-bottom: 25px;
+        }
+        
+        .input-label {
+            display: block;
+            margin-bottom: 8px;
+            color: var(--text-primary);
+            font-weight: 500;
+            font-size: 0.95em;
+        }
+        
+        .input-wrapper {
+            position: relative;
+            display: flex;
+            align-items: center;
+        }
+        
+        .token-input {
+            width: 100%;
+            padding: 12px 80px 12px 15px;
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            font-size: 1.1em;
+            font-weight: 500;
+            background: var(--bg-secondary);
+            color: var(--text-primary);
+        }
+        
+        .token-input:focus {
+            outline: none;
+            border-color: var(--primary);
+            background: var(--bg-card);
+        }
+        
+        .max-btn {
+            position: absolute;
+            right: 10px;
+            padding: 6px 14px;
+            background: var(--bg-secondary);
+            border: 1px solid var(--border);
+            border-radius: 4px;
+            color: var(--text-primary);
+            font-weight: 500;
+            cursor: pointer;
+            font-size: 0.85em;
+        }
+        
+        .max-btn:hover {
+            background: var(--light-gray);
+        }
+        
+        .balance-info {
+            margin-top: 8px;
+            color: var(--text-secondary);
+            font-size: 0.9em;
+        }
+        
+        .stake-btn {
+            width: 100%;
+            padding: 14px;
+            background: var(--primary);
+            border: none;
+            border-radius: 6px;
+            color: white;
+            font-size: 1.05em;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s;
+            margin-top: 10px;
+        }
+        
+        .stake-btn:hover {
+            background: var(--secondary);
+        }
+        
+        .stake-btn:disabled {
+            background: var(--bg-secondary);
+            color: var(--gray);
+            cursor: not-allowed;
+        }
+        
+        .info-card {
+            background: var(--bg-secondary);
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            padding: 20px;
+            margin-top: 25px;
+        }
+        
+        .info-row {
+            display: flex;
+            justify-content: space-between;
+            padding: 10px 0;
+            border-bottom: 1px solid var(--border);
+        }
+        
+        .info-row:last-child {
+            border-bottom: none;
+        }
+        
+        .info-label {
+            color: var(--text-secondary);
+            font-size: 0.95em;
+        }
+        
+        .info-value {
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+        
+        .dashboard-section {
+            background: var(--dark);
+            padding: 60px 50px;
+        }
+        
+        .dashboard-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 25px;
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+        
+        .dashboard-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 30px;
+        }
+        
+        .dashboard-label {
+            color: var(--text-secondary);
+            font-size: 0.9em;
+            margin-bottom: 10px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            font-weight: 500;
+        }
+        
+        .dashboard-value {
+            font-size: 2em;
+            font-weight: 600;
+            color: var(--primary);
+            margin-bottom: 5px;
+        }
+        
+        .dashboard-subvalue {
+            color: var(--text-secondary);
+            font-size: 0.95em;
+        }
+        
+        .chart-container {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 30px;
+            margin-top: 25px;
+            height: 300px;
+        }
+        
+        .chart-title {
+            font-size: 1.1em;
+            font-weight: 600;
+            color: var(--text-primary);
+            margin-bottom: 20px;
+        }
+        
+        footer {
+            background: var(--bg-card);
+            color: var(--text-primary);
+            padding: 40px 50px;
+            text-align: center;
+            border-top: 1px solid var(--border);
+        }
+        
+        .footer-content {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        
+        .footer-links {
+            display: flex;
+            justify-content: center;
+            gap: 30px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+        }
+        
+        .footer-link {
+            color: var(--text-secondary);
+            text-decoration: none;
+            transition: opacity 0.2s;
+            font-size: 0.95em;
+        }
+        
+        .footer-link:hover {
+            opacity: 0.8;
+            color: var(--primary);
+        }
+        
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 2000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0,0,0,0.5);
+        }
+        
+        .modal-content {
+            background-color: var(--bg-card);
+            margin: 10% auto;
+            padding: 40px;
+            border-radius: 8px;
+            max-width: 500px;
+            position: relative;
+        }
+        
+        .close {
+            position: absolute;
+            right: 20px;
+            top: 20px;
+            font-size: 28px;
+            font-weight: 300;
+            color: var(--text-secondary);
+            cursor: pointer;
+        }
+        
+        .close:hover {
+            color: var(--text-primary);
+        }
+        
+        .wallet-option {
+            padding: 18px;
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            margin-bottom: 12px;
+            cursor: pointer;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            background: var(--bg-secondary);
+        }
+        
+        .wallet-option:hover {
+            border-color: var(--primary);
+            background: var(--light-gray);
+        }
+        
+        .wallet-icon {
+            font-size: 1.8em;
+        }
+        
+        .wallet-name {
+            font-weight: 500;
+            color: var(--text-primary);
+        }
+        
+        .status-message {
+            padding: 15px;
+            border-radius: 6px;
+            margin-top: 15px;
+            text-align: center;
+            font-size: 0.95em;
+        }
+        
+        .status-success {
+            background: rgba(16, 185, 129, 0.15);
+            color: #6ee7b7;
+            border: 1px solid rgba(110, 231, 183, 0.3);
+        }
+        
+        .status-error {
+            background: rgba(239, 68, 68, 0.15);
+            color: #fca5a5;
+            border: 1px solid rgba(252, 165, 165, 0.3);
+        }
+        
+        .status-warning {
+            background: rgba(245, 158, 11, 0.15);
+            color: #fde68a;
+            border: 1px solid rgba(253, 230, 138, 0.3);
+        }
+        
+        .hidden {
+            display: none;
+        }
+        
+        @media (max-width: 768px) {
+            nav {
+                padding: 15px 20px;
+            }
+            
+            .hero {
+                padding: 100px 20px 60px;
+            }
+            
+            .hero-title {
+                font-size: 2em;
+            }
+            
+            .section {
+                padding: 60px 20px;
+            }
+            
+            .features-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .stats-bar {
+                padding: 30px 20px;
+            }
+        }
+    </style>
 </head>
 <body>
-  <div class="app-shell">
-
-    <!-- ====== ШАПКА ====== -->
-    <header class="app-header">
-      <div class="app-title-block">
-        <div class="app-title-row">
-          <div class="app-logo">A</div>
-          <div class="app-title">
-            ARUB Staking
-            <span class="badge-version">v2 · Sepolia</span>
-          </div>
+    <!-- Navigation -->
+    <nav>
+        <div class="logo">
+            <div class="logo-icon">₴</div>
+            <div class="logo-text">ANTI RUB</div>
         </div>
-        <div class="app-subtitle">
-          <span>Простой стейкинг ARUB / USDT для теста логики.</span>
-          <span class="pill">
-            <span class="pill-dot"></span>
-            <span id="network-label">Sepolia · testnet</span>
-          </span>
+        <div class="nav-right">
+            <div class="lang-switcher">
+                <button class="lang-btn active" data-lang="uk">UA</button>
+                <button class="lang-btn" data-lang="en">EN</button>
+                <button class="lang-btn" data-lang="ru">RU</button>
+            </div>
+            <button class="connect-btn" id="connectWallet">Підключити гаманець</button>
         </div>
-      </div>
+    </nav>
 
-      <div class="wallet-panel">
-        <div class="wallet-row" id="wallet-row-not-connected">
-          <button class="wallet-button" id="btn-connect">
-            Подключить кошелёк
-          </button>
+    <!-- Hero Section -->
+    <section class="hero">
+        <h1 class="hero-title">Професійна платформа для стейкінгу</h1>
+        <p class="hero-subtitle">Отримуйте стабільний дохід від стейкінгу ARUB та USDT з прозорими умовами та гарантованою безпекою</p>
+        <div class="hero-buttons">
+            <button class="btn-primary" onclick="document.getElementById('staking').scrollIntoView({behavior:'smooth'})">Почати стейкінг</button>
+            <button class="btn-secondary" onclick="document.getElementById('about').scrollIntoView({behavior:'smooth'})">Дізнатися більше</button>
         </div>
-
-        <div class="wallet-row" id="wallet-row-connected" style="display:none;">
-          <div class="wallet-address">
-            <span id="wallet-address-short">0x…</span>
-            <button class="btn-copy" id="btn-copy-address">копировать</button>
-          </div>
-        </div>
-
-        <div class="wallet-small" id="wallet-small-status">
-          MetaMask · ожидаем подключение
-        </div>
-      </div>
-    </header>
-
-    <!-- ====== ОСНОВНОЙ ЛЭЙАУТ ====== -->
-    <main class="layout-main">
-
-      <!-- ====== ЛЕВАЯ КОЛОНКА: ПУЛЫ ====== -->
-      <section>
-        <!-- Карточки пулов -->
-        <div style="display:flex; flex-direction:column; gap:16px;">
-
-          <!-- USDT пул -->
-          <article class="card">
-            <header class="card-header">
-              <div class="card-title">
-                USDT пул
-                <span class="card-title-label">Mock</span>
-              </div>
-              <div class="pill-apr" title="Годовая доходность по пулу">
-                <span class="pill-apr-dot"></span>
-                <span>APY: <span id="usdt-apy-label">—</span>%</span>
-              </div>
-            </header>
-
-            <div class="stats-row">
-              <div class="stat">
-                <div class="stat-label">Застейкано</div>
-                <div class="stat-value"><span id="usdt-total-staked">—</span> USDT</div>
-              </div>
-              <div class="stat">
-                <div class="stat-label">Стейкеров</div>
-                <div class="stat-value"><span id="usdt-total-stakers">—</span></div>
-              </div>
-              <div class="stat">
-                <div class="stat-label">Мин. стейк</div>
-                <div class="stat-value-soft">
-                  <span id="min-stake-usdt">—</span> USDT
-                </div>
-              </div>
-            </div>
-
-            <div class="divider"></div>
-
-            <div class="stats-row">
-              <div class="stat">
-                <div class="stat-label">Мой стейк</div>
-                <div class="stat-value">
-                  <span id="user-usdt-staked">—</span> USDT
-                </div>
-              </div>
-            </div>
-
-            <div class="inputs-grid" style="margin-top:6px;">
-              <div class="input-group">
-                <div class="field">
-                  <input id="input-stake-usdt" placeholder="Сумма USDT" inputmode="decimal" />
-                  <div class="field-hint">stake</div>
-                </div>
-                <button class="btn" id="btn-stake-usdt">Stake</button>
-              </div>
-
-              <div class="input-group">
-                <div class="field">
-                  <input id="input-unstake-usdt" placeholder="Сумма USDT" inputmode="decimal" />
-                  <div class="field-hint">unstake</div>
-                </div>
-                <button class="btn btn--subtle" id="btn-unstake-usdt">Unstake</button>
-              </div>
-            </div>
-          </article>
-
-          <!-- ARUB пул -->
-          <article class="card">
-            <header class="card-header">
-              <div class="card-title">
-                ARUB пул
-                <span class="card-title-label">Native</span>
-              </div>
-              <div class="pill-apr" title="Годовая доходность по пулу">
-                <span class="pill-apr-dot"></span>
-                <span>APY: <span id="arub-apy-label">—</span>%</span>
-              </div>
-            </header>
-
-            <div class="stats-row">
-              <div class="stat">
-                <div class="stat-label">Застейкано</div>
-                <div class="stat-value">
-                  <span id="arub-total-staked">—</span> ARUB
-                </div>
-              </div>
-              <div class="stat">
-                <div class="stat-label">Стейкеров</div>
-                <div class="stat-value">
-                  <span id="arub-total-stakers">—</span>
-                </div>
-              </div>
-              <div class="stat">
-                <div class="stat-label">Мин. стейк</div>
-                <div class="stat-value-soft">
-                  <span id="min-stake-arub">—</span> ARUB
-                </div>
-              </div>
-            </div>
-
-            <div class="divider"></div>
-
-            <div class="stats-row">
-              <div class="stat">
-                <div class="stat-label">Мой стейк</div>
-                <div class="stat-value">
-                  <span id="user-arub-staked">—</span> ARUB
-                </div>
-              </div>
-            </div>
-
-            <div class="inputs-grid" style="margin-top:6px;">
-              <div class="input-group">
-                <div class="field">
-                  <input id="input-stake-arub" placeholder="Сумма ARUB" inputmode="decimal" />
-                  <div class="field-hint">stake</div>
-                </div>
-                <button class="btn" id="btn-stake-arub">Stake</button>
-              </div>
-
-              <div class="input-group">
-                <div class="field">
-                  <input id="input-unstake-arub" placeholder="Сумма ARUB" inputmode="decimal" />
-                  <div class="field-hint">unstake</div>
-                </div>
-                <button class="btn btn--subtle" id="btn-unstake-arub">Unstake</button>
-              </div>
-            </div>
-          </article>
-
-          <!-- Общая карточка "Разом" -->
-          <article class="card card--flat">
-            <header class="card-header">
-              <div class="card-title">
-                Разом по стейкингу
-              </div>
-            </header>
-
-            <div class="stats-row">
-              <div class="stat">
-                <div class="stat-label">Всего стейкеров</div>
-                <div class="stat-value">
-                  <span id="total-stakers">—</span>
-                </div>
-              </div>
-              <div class="stat">
-                <div class="stat-label">Наград распределено</div>
-                <div class="stat-value">
-                  <span id="total-rewards">—</span> ARUB
-                </div>
-              </div>
-              <div class="stat">
-                <div class="stat-label">Текущий APY</div>
-                <div class="stat-value">
-                  <span id="current-apy">—</span>%
-                </div>
-              </div>
-            </div>
-
-            <div class="divider"></div>
-
-            <div class="stats-row">
-              <div class="stat">
-                <div class="stat-label">Мои невыплаченные награды</div>
-                <div class="stat-value">
-                  <span id="user-pending-rewards">—</span> ARUB
-                </div>
-              </div>
-              <div class="stat">
-                <div class="stat-label">Последний стейк</div>
-                <div class="stat-value-soft">
-                  <span id="user-last-stake-time">—</span>
-                </div>
-              </div>
-            </div>
-
-            <div style="margin-top:8px;">
-              <button class="btn btn-full" id="btn-claim">
-                Забрать награды
-              </button>
-            </div>
-          </article>
-
-        </div>
-      </section>
-
-      <!-- ====== ПРАВАЯ КОЛОНКА: ТАБЫ/ХЕЛП ====== -->
-      <aside class="card">
-        <nav class="tabs">
-          <button class="tab tab--active" data-tab="overview">
-            <span class="tab-dot"></span>
-            Обзор
-          </button>
-          <button class="tab" data-tab="position">
-            <span class="tab-dot"></span>
-            Моя позиция
-          </button>
-          <button class="tab" data-tab="help">
-            <span class="tab-dot"></span>
-            FAQ / Help
-          </button>
-        </nav>
-
-        <section class="sidebar-section" id="tab-overview">
-          <h4>Сводка по контракту</h4>
-          <div class="sidebar-kv">
-            <span class="sidebar-kv-key">Стейкинг контракт</span>
-            <span class="sidebar-kv-val" id="staking-address-short">
-              0x75A9…53fCf
-            </span>
-          </div>
-          <div class="sidebar-kv">
-            <span class="sidebar-kv-key">USDT (mock)</span>
-            <span class="sidebar-kv-val">
-              0x30E0…85012
-            </span>
-          </div>
-          <div class="sidebar-kv">
-            <span class="sidebar-kv-key">ARUB токен</span>
-            <span class="sidebar-kv-val">
-              0x98fF…4788
-            </span>
-          </div>
-
-          <p style="margin-top:8px;">
-            Этот интерфейс работает только с Sepolia testnet.<br/>
-            В бою подменишь адреса контрактов и, при необходимости, API ключи RPC.
-          </p>
-        </section>
-
-        <section class="sidebar-section" id="tab-position" style="display:none;">
-          <h4>Моя позиция</h4>
-          <p class="sidebar-help-item">
-            Здесь просто текстовое пояснение к тому, что ты видишь слева:
-          </p>
-          <ul style="padding-left:18px; margin-top:4px; margin-bottom:6px;">
-            <li>Суммы стейка по USDT и ARUB;</li>
-            <li>Текущий APY, подтянутый из контракта;</li>
-            <li>Невыплаченные награды, которые можно забрать;</li>
-            <li>Timestamp последнего стейка в виде нормальной даты.</li>
-          </ul>
-          <p class="sidebar-help-item">
-            Логика вся лежит на смарт-контракте, фронт просто:
-            <br/>– дергает <code>getPoolStats()</code> и <code>getUserInfo()</code>,
-            <br/>– вызывает <code>stake*/unstake*/claimRewards</code> по кнопкам.
-          </p>
-        </section>
-
-        <section class="sidebar-section" id="tab-help" style="display:none;">
-          <h4>FAQ / Help</h4>
-          <p class="sidebar-help-item">
-            <strong>1. MetaMask не видит сеть.</strong><br/>
-            Проверь, что выбрана сеть <em>Sepolia</em>. В бою тут будет mainnet/Arbitrum/Base/что угодно.
-          </p>
-          <p class="sidebar-help-item">
-            <strong>2. Транзакция не проходит.</strong><br/>
-            Возможные причины:
-          </p>
-          <ul style="padding-left:18px; margin-top:4px; margin-bottom:6px;">
-            <li>недостаточно test ETH на gas;</li>
-            <li>сумма меньше минимального стейка (см. подсказку внизу статуса);</li>
-            <li>не хватает баланса USDT / ARUB.</li>
-          </ul>
-          <p class="sidebar-help-item">
-            <strong>3. Как перенести всё это в боевой UI?</strong><br/>
-            – меняешь адреса контрактов,<br/>
-            – выносишь JS в отдельные модули,<br/>
-            – втыкаешь в свой React / Next / Vue и подключаешь дизайн системы.
-          </p>
-
-          <div class="sidebar-footer">
-            Это всё фронт. Логику реварда / штрафов ты уже правишь в самом контракте
-            <code>ARUBStakingV2</code>.
-          </div>
-        </section>
-
-      </aside>
-    </main>
-
-    <!-- ====== СТАТУСЫ / ФУТЕР ====== -->
-    <section class="status-bar" id="status-bar">
-      <div class="status-indicator status-indicator--idle" id="status-indicator"></div>
-      <div class="status-content">
-        <div class="status-title" id="status-title">Готов к работе</div>
-        <div class="status-text" id="status-text">
-          Подключи MetaMask и убедись, что выбрана сеть Sepolia.
-        </div>
-        <div class="status-meta">
-          <span id="status-meta-left">Состояние: idle</span>
-          <span id="status-meta-right">Последнее действие: —</span>
-        </div>
-      </div>
     </section>
 
-    <footer class="footer">
-      <div>ARUB Staking v2 · Sepolia test UI</div>
-      <div>
-        Контракты уже задеплоены, фронт читается и переносится в любой фреймворк.
-      </div>
+    <!-- Stats Bar -->
+    <div class="stats-bar">
+        <div class="stat-item">
+            <div class="stat-value" id="dashHeroPrice">-</div>
+            <div class="stat-label">Ціна ARUB</div>
+        </div>
+        <div class="stat-item">
+            <div class="stat-value" id="dashHeroApy">24%</div>
+            <div class="stat-label">Річна ставка</div>
+        </div>
+        <div class="stat-item">
+            <div class="stat-value" id="dashHeroStakers">-</div>
+            <div class="stat-label">Активних інвесторів</div>
+        </div>
+    </div>
+
+    <!-- Features Section -->
+    <section class="section" id="about">
+        <h2 class="section-title">Чому обирають нас</h2>
+        <p class="section-subtitle">Надійна платформа з перевіреними показниками</p>
+        
+        <div class="features-grid">
+            <div class="feature-card">
+                <div class="feature-icon">🔒</div>
+                <h3 class="feature-title">Гарантована безпека</h3>
+                <p class="feature-text">Аудит смарт-контрактів провідними компаніями. Ваші активи під надійним захистом.</p>
+            </div>
+            
+            <div class="feature-card">
+                <div class="feature-icon">📊</div>
+                <h3 class="feature-title">Прозора статистика</h3>
+                <p class="feature-text">Повна звітність в режимі реального часу. Відстежуйте всі показники на блокчейні.</p>
+            </div>
+            
+            <div class="feature-card">
+                <div class="feature-icon">💰</div>
+                <h3 class="feature-title">Стабільний дохід</h3>
+                <p class="feature-text">Фіксована річна ставка 24%. Отримуйте винагороди щодня без прихованих комісій.</p>
+            </div>
+            
+            <div class="feature-card">
+                <div class="feature-icon">⚡</div>
+                <h3 class="feature-title">Швидкі транзакції</h3>
+                <p class="feature-text">Миттєвий стейкінг та виведення коштів на Ethereum Sepolia Network.</p>
+            </div>
+            
+            <div class="feature-card">
+                <div class="feature-icon">🌐</div>
+                <h3 class="feature-title">Доступність 24/7</h3>
+                <p class="feature-text">Платформа працює цілодобово без вихідних. Керуйте активами в будь-який час.</p>
+            </div>
+            
+            <div class="feature-card">
+                <div class="feature-icon">💼</div>
+                <h3 class="feature-title">Професійна підтримка</h3>
+                <p class="feature-text">Команда експертів готова допомогти вам на кожному етапі інвестування.</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Staking Section -->
+    <section class="section" id="staking">
+        <h2 class="section-title">Стейкінг</h2>
+        <p class="section-subtitle">Почніть заробляти вже сьогодні</p>
+        
+        <div class="staking-section">
+            <div id="notConnectedView">
+                <p style="text-align: center; color: var(--text-secondary); margin-bottom: 20px;">
+                    Для початку роботи підключіть криптогаманець
+                </p>
+                <button class="stake-btn" onclick="document.getElementById('connectWallet').click()">
+                    Підключити гаманець
+                </button>
+            </div>
+            
+            <div id="connectedView" class="hidden">
+                <!-- Stake Tab -->
+                <div id="stakeTab">
+                    <div class="input-group">
+                        <label class="input-label">Сума для стейкінгу</label>
+                        <div class="input-wrapper">
+                            <input type="number" class="token-input" id="stakeAmount" placeholder="0.00" min="0" step="0.01">
+                            <button class="max-btn" onclick="setMaxStake()">MAX</button>
+                        </div>
+                        <div class="balance-info">
+                            Баланс: <span id="arubBalance">0</span> ARUB
+                        </div>
+                    </div>
+                    
+                    <div class="info-card">
+                        <div class="info-row">
+                            <span class="info-label">Річна ставка (APY)</span>
+                            <span class="info-value">24%</span>
+                        </div>
+                        <div class="info-row">
+                            <span class="info-label">Прогноз доходу (рік)</span>
+                            <span class="info-value" id="projectedEarnings">0 ARUB</span>
+                        </div>
+                        <div class="info-row">
+                            <span class="info-label">Щоденна винагорода</span>
+                            <span class="info-value" id="dailyEarnings">0 ARUB</span>
+                        </div>
+                    </div>
+                    
+                    <button class="stake-btn" id="approveBtn" onclick="approveTokens()">
+                        Дозволити використання токенів
+                    </button>
+                    <button class="stake-btn hidden" id="stakeBtn" onclick="stakeTokens()">
+                        Застейкати ARUB
+                    </button>
+                    
+                    <div id="stakeStatus"></div>
+                </div>
+                
+                <!-- User Stats -->
+                <div class="info-card" style="margin-top: 40px;">
+                    <h3 style="margin-bottom: 15px; color: var(--primary); font-size: 1.1em;">Ваша статистика</h3>
+                    <div class="info-row">
+                        <span class="info-label">Застейкано</span>
+                        <span class="info-value" id="userStaked">0 ARUB</span>
+                    </div>
+                    <div class="info-row">
+                        <span class="info-label">Доступні винагороди</span>
+                        <span class="info-value" id="userRewards">0 ARUB</span>
+                    </div>
+                    <div class="info-row">
+                        <span class="info-label">Всього зароблено</span>
+                        <span class="info-value" id="userTotalEarned">0 ARUB</span>
+                    </div>
+                    
+                    <button class="stake-btn" onclick="claimRewards()" style="margin-top: 20px;">
+                        Вивести винагороди
+                    </button>
+                    <button class="stake-btn" onclick="unstakeTokens()" style="margin-top: 10px; background: var(--text-secondary);">
+                        Зняти зі стейкінгу
+                    </button>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Dashboard Section -->
+    <section class="dashboard-section" id="dashboard">
+        <h2 class="section-title">Статистика платформи</h2>
+        <p class="section-subtitle" id="dashLoadingText">Завантаження даних...</p>
+        
+        <div class="dashboard-grid" id="dashStatsGrid" style="display: none;">
+            <div class="dashboard-card">
+                <div class="dashboard-label">Загальний TVL</div>
+                <div class="dashboard-value" id="dashTotalStakedUsd">$0</div>
+                <div class="dashboard-subvalue" id="dashTotalStakedTokens">0 ARUB</div>
+            </div>
+            
+            <div class="dashboard-card">
+                <div class="dashboard-label">Емісія токенів</div>
+                <div class="dashboard-value" id="dashTotalSupplyTokens">0 ARUB</div>
+                <div class="dashboard-subvalue" id="dashTotalSupplyUsd">$0</div>
+            </div>
+            
+            <div class="dashboard-card">
+                <div class="dashboard-label">Ціна токена</div>
+                <div class="dashboard-value" id="dashPriceUsd">$0</div>
+                <div class="dashboard-subvalue" id="dashPriceSourceBadge">-</div>
+            </div>
+            
+            <div class="dashboard-card">
+                <div class="dashboard-label">Кількість інвесторів</div>
+                <div class="dashboard-value" id="dashStakersCount">0</div>
+                <div class="dashboard-subvalue">Активних учасників</div>
+            </div>
+        </div>
+        
+        <div style="max-width: 1400px; margin: 50px auto; display: grid; grid-template-columns: repeat(auto-fit, minmax(500px, 1fr)); gap: 25px;">
+            <div class="chart-container">
+                <div class="chart-title">Динаміка TVL</div>
+                <canvas id="dashStakedChart"></canvas>
+            </div>
+            <div class="chart-container">
+                <div class="chart-title">Історія ціни ARUB</div>
+                <canvas id="dashPriceChart"></canvas>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer>
+        <div class="footer-content">
+            <div class="footer-links">
+                <a href="#" class="footer-link">Документація</a>
+                <a href="#" class="footer-link">Умови використання</a>
+                <a href="#" class="footer-link">Політика конфіденційності</a>
+                <a href="#" class="footer-link">Підтримка</a>
+            </div>
+            <p style="margin-top: 20px; opacity: 0.8; font-size: 0.9em;">
+                © 2025 ANTI RUB. Всі права захищені.
+            </p>
+        </div>
     </footer>
 
-  </div>
+    <!-- Wallet Modal -->
+    <div id="walletModal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeWalletModal()">&times;</span>
+            <h2 style="margin-bottom: 25px; color: var(--primary);">Підключити гаманець</h2>
+            <div class="wallet-option" onclick="connectMetaMask()">
+                <div class="wallet-icon">🦊</div>
+                <div class="wallet-name">MetaMask</div>
+            </div>
+            <div class="wallet-option" onclick="connectWalletConnect()">
+                <div class="wallet-icon">🔗</div>
+                <div class="wallet-name">WalletConnect</div>
+            </div>
+        </div>
+    </div>
 
-  <!-- ====== ethers.js CDN ====== -->
-  <script src="https://cdn.jsdelivr.net/npm/ethers@5.7.2/dist/ethers.min.js"></script>
+    <script>
+      // Contracts configuration
+      const ARUB_ADDRESS = "0x64e06532d4e522FCf7Dc94C4e9D36e5c79ACb58D";
+      const STAKING_ADDRESS = "0xa65BBCDa1d06Cd09F59E6aAa9cbe6BB5fE7ef346";
+      const RPC_URLS = [
+        "https://ethereum-sepolia-rpc.publicnode.com",
+        "https://rpc.sepolia.org",
+        "https://1rpc.io/sepolia"
+      ];
+      const TOKEN_DECIMALS = 6;
+      const FIXED_APY = 24;
 
-  <!-- ====== ЛОГИКА ПРИЛОЖЕНИЯ ====== -->
-  <script>
-    // ---------------------------
-    // Конфиг адресов и децималок
-    // ---------------------------
+      let provider = null;
+      let signer = null;
+      let userAddress = null;
+      let arubContract = null;
+      let stakingContract = null;
 
-    const STAKING_ADDRESS = "0x75A9881B5Fe5866cfdd4B463A6312456fEe53fCf";
-    const USDT_ADDRESS    = "0x30E0Cb1EFa2b8D022FC10628A9bDa7f657e85012"; // MockUSDT
-    const ARUB_ADDRESS    = "0x98fFc1A4Ff6eAD8EebFd02cDA54852Bb69744788"; // ARUB
+      // ABIs
+      const ARUB_ABI = [
+        "function balanceOf(address) view returns (uint256)",
+        "function approve(address spender, uint256 amount) returns (bool)",
+        "function allowance(address owner, address spender) view returns (uint256)",
+        "function totalSupply() view returns (uint256)"
+      ];
 
-    const USDT_DECIMALS = 6;
-    const ARUB_DECIMALS = 6;
+      const STAKING_ABI = [
+        "function stake(uint256 amount)",
+        "function unstake(uint256 amount)",
+        "function claimRewards()",
+        "function getStakeInfo(address user) view returns (uint256 stakedAmount, uint256 pendingRewards, uint256 totalEarned, uint256 lastStakeTime)",
+        "function totalStaked() view returns (uint256)",
+        "function getPoolStats() view returns (uint256 totalStaked_, uint256 totalStakers_, uint256 totalRewardsDistributed_, uint256 currentAPY_, uint256 totalStakes_, uint256 totalUnstakes_, uint256 totalClaims_)"
+      ];
 
-    // Human-readable ABI для ARUBStakingV2
-    const STAKING_ABI = [
-      // Views
-      "function getPoolStats() view returns (uint256 totalUsdtStaked_, uint256 totalArubStaked_, uint256 totalUsdtStakers_, uint256 totalArubStakers_, uint256 totalStakers_, uint256 totalRewardsDistributed_, uint256 currentAPY_)",
-      "function getUserInfo(address user) view returns (uint256 usdtStaked_, uint256 arubStaked_, uint256 pendingRewards_, uint256 totalClaimed_, uint256 lastStakeTime_, uint256 currentAPY_)",
-      "function minStakeAmountUsdt() pure returns (uint256)",
-      "function minStakeAmountArub() pure returns (uint256)",
-      // Actions
-      "function stakeUsdt(uint256 amount)",
-      "function stakeArub(uint256 amount)",
-      "function unstakeUsdt(uint256 amount)",
-      "function unstakeArub(uint256 amount)",
-      "function claimRewards(bool compound)"
-    ];
-
-    const ERC20_ABI = [
-      "function balanceOf(address) view returns (uint256)",
-      "function allowance(address owner, address spender) view returns (uint256)",
-      "function approve(address spender, uint256 amount) returns (bool)"
-    ];
-
-    // ---------------------------
-    // Глобальные переменные
-    // ---------------------------
-
-    let provider = null;
-    let signer = null;
-    let userAddress = null;
-    let limitsCache = null;
-    let lastTxType = null;
-
-    // ---------------------------
-    // Утилиты
-    // ---------------------------
-
-    function getStakingContract(providerOrSigner) {
-      return new ethers.Contract(STAKING_ADDRESS, STAKING_ABI, providerOrSigner);
-    }
-
-    function getErc20(address, signerOrProvider) {
-      return new ethers.Contract(address, ERC20_ABI, signerOrProvider);
-    }
-
-    function shortAddress(addr) {
-      if (!addr) return "—";
-      return addr.slice(0, 6) + "…" + addr.slice(-4);
-    }
-
-    function formatNumber(num, decimals = 2) {
-      if (num === null || num === undefined || isNaN(num)) return "0";
-      return Number(num).toLocaleString("ru-RU", {
-        minimumFractionDigits: 0,
-        maximumFractionDigits: decimals,
+      // Connect wallet
+      document.getElementById('connectWallet').addEventListener('click', () => {
+        document.getElementById('walletModal').style.display = 'block';
       });
-    }
 
-    function safeParseFloat(v) {
-      if (typeof v === "string") v = v.replace(",", ".");
-      const parsed = parseFloat(v);
-      if (isNaN(parsed)) return null;
-      return parsed;
-    }
-
-    // ---------------------------
-    // Статус-бар
-    // ---------------------------
-
-    function setStatus(message, type = "idle", metaRight = null) {
-      const indicator = document.getElementById("status-indicator");
-      const titleEl = document.getElementById("status-title");
-      const textEl = document.getElementById("status-text");
-      const metaLeftEl = document.getElementById("status-meta-left");
-      const metaRightEl = document.getElementById("status-meta-right");
-
-      const classBase = "status-indicator";
-      indicator.className = classBase;
-
-      if (type === "info") indicator.classList.add("status-indicator--info");
-      else if (type === "success") indicator.classList.add("status-indicator--success");
-      else if (type === "error") indicator.classList.add("status-indicator--error");
-      else indicator.classList.add("status-indicator--idle");
-
-      if (type === "info") titleEl.textContent = "Операция";
-      else if (type === "success") titleEl.textContent = "Готово";
-      else if (type === "error") titleEl.textContent = "Ошибка";
-      else titleEl.textContent = "Готов к работе";
-
-      textEl.textContent = message;
-
-      metaLeftEl.textContent = "Состояние: " + type;
-      if (metaRight) metaRightEl.textContent = "Последнее действие: " + metaRight;
-    }
-
-    async function withTx(buttonEl, label, fn) {
-      lastTxType = label;
-      try {
-        if (buttonEl) buttonEl.disabled = true;
-        setStatus("Подтверди транзакцию в MetaMask…", "info", label);
-        const tx = await fn();
-        if (tx && tx.hash) {
-          setStatus("Транзакция отправлена, ждём подтверждения…", "info", label);
-          await tx.wait();
-        }
-        setStatus("Транзакция подтверждена, обновляем данные…", "success", label);
-        await refreshUI();
-      } catch (e) {
-        console.error(e);
-        const msg = e && e.message ? e.message.split("\n")[0] : "Неизвестная ошибка транзакции";
-        setStatus("Ошибка: " + msg, "error", label);
-      } finally {
-        if (buttonEl) buttonEl.disabled = false;
-      }
-    }
-
-    // ---------------------------
-    // Загрузка данных
-    // ---------------------------
-
-    async function loadPoolStats(providerOrSigner) {
-      const contract = getStakingContract(providerOrSigner);
-      const [
-        totalUsdtStaked,
-        totalArubStaked,
-        totalUsdtStakers,
-        totalArubStakers,
-        totalStakers,
-        totalRewardsDistributed,
-        currentAPY
-      ] = await contract.getPoolStats();
-
-      return {
-        raw: {
-          totalUsdtStaked,
-          totalArubStaked,
-          totalUsdtStakers,
-          totalArubStakers,
-          totalStakers,
-          totalRewardsDistributed,
-          currentAPY
-        },
-        formatted: {
-          totalUsdtStaked: Number(ethers.utils.formatUnits(totalUsdtStaked, USDT_DECIMALS)),
-          totalArubStaked: Number(ethers.utils.formatUnits(totalArubStaked, ARUB_DECIMALS)),
-          totalUsdtStakers: Number(totalUsdtStakers.toString()),
-          totalArubStakers: Number(totalArubStakers.toString()),
-          totalStakers: Number(totalStakers.toString()),
-          totalRewardsDistributed: Number(
-            ethers.utils.formatUnits(totalRewardsDistributed, ARUB_DECIMALS)
-          ),
-          currentAPYPercent: Number(currentAPY.toString()) / 100
-        }
-      };
-    }
-
-    async function loadUserInfo(providerOrSigner, userAddress) {
-      const contract = getStakingContract(providerOrSigner);
-      const [
-        usdtStaked,
-        arubStaked,
-        pendingRewards,
-        totalClaimed,
-        lastStakeTime,
-        currentAPY
-      ] = await contract.getUserInfo(userAddress);
-
-      const lastStakeMs = Number(lastStakeTime.toString()) * 1000;
-
-      return {
-        raw: {
-          usdtStaked,
-          arubStaked,
-          pendingRewards,
-          totalClaimed,
-          lastStakeTime,
-          currentAPY
-        },
-        formatted: {
-          usdtStaked: Number(ethers.utils.formatUnits(usdtStaked, USDT_DECIMALS)),
-          arubStaked: Number(ethers.utils.formatUnits(arubStaked, ARUB_DECIMALS)),
-          pendingRewards: Number(ethers.utils.formatUnits(pendingRewards, ARUB_DECIMALS)),
-          totalClaimed: Number(ethers.utils.formatUnits(totalClaimed, ARUB_DECIMALS)),
-          lastStakeTimeMs: lastStakeMs,
-          lastStakeTimeHuman:
-            lastStakeMs === 0
-              ? "нет стейка"
-              : new Date(lastStakeMs).toLocaleString(),
-          currentAPYPercent: Number(currentAPY.toString()) / 100
-        }
-      };
-    }
-
-    async function loadLimits(providerOrSigner) {
-      const contract = getStakingContract(providerOrSigner);
-      const minUsdt = await contract.minStakeAmountUsdt();
-      const minArub = await contract.minStakeAmountArub();
-
-      return {
-        raw: {
-          minUsdt,
-          minArub
-        },
-        formatted: {
-          minUsdt: Number(ethers.utils.formatUnits(minUsdt, USDT_DECIMALS)),
-          minArub: Number(ethers.utils.formatUnits(minArub, ARUB_DECIMALS))
-        }
-      };
-    }
-
-    // ---------------------------
-    // Actions: approve + stake/unstake/claim
-    // ---------------------------
-
-    async function ensureAllowance(tokenAddr, amountBN, signer, spender) {
-      const token = getErc20(tokenAddr, signer);
-      const owner = await signer.getAddress();
-      const current = await token.allowance(owner, spender);
-      if (current.gte(amountBN)) return;
-
-      const tx = await token.approve(spender, amountBN);
-      return tx;
-    }
-
-    async function stakeUsdtAction(amountUi) {
-      const contract = getStakingContract(signer);
-      const amountBN = ethers.utils.parseUnits(String(amountUi), USDT_DECIMALS);
-      const txApprove = await ensureAllowance(USDT_ADDRESS, amountBN, signer, contract.address);
-      if (txApprove) await txApprove.wait();
-      return contract.stakeUsdt(amountBN);
-    }
-
-    async function stakeArubAction(amountUi) {
-      const contract = getStakingContract(signer);
-      const amountBN = ethers.utils.parseUnits(String(amountUi), ARUB_DECIMALS);
-      const txApprove = await ensureAllowance(ARUB_ADDRESS, amountBN, signer, contract.address);
-      if (txApprove) await txApprove.wait();
-      return contract.stakeArub(amountBN);
-    }
-
-    async function unstakeUsdtAction(amountUi) {
-      const contract = getStakingContract(signer);
-      const amountBN = ethers.utils.parseUnits(String(amountUi), USDT_DECIMALS);
-      return contract.unstakeUsdt(amountBN);
-    }
-
-    async function unstakeArubAction(amountUi) {
-      const contract = getStakingContract(signer);
-      const amountBN = ethers.utils.parseUnits(String(amountUi), ARUB_DECIMALS);
-      return contract.unstakeArub(amountBN);
-    }
-
-    async function claimRewardsAction(compound = false) {
-      const contract = getStakingContract(signer);
-      return contract.claimRewards(compound);
-    }
-
-    // ---------------------------
-    // Обновление UI
-    // ---------------------------
-
-    async function refreshUI() {
-      if (!provider || !userAddress) return;
-
-      const [pool, user, limits] = await Promise.all([
-        loadPoolStats(provider),
-        loadUserInfo(provider, userAddress),
-        loadLimits(provider)
-      ]);
-
-      limitsCache = limits.formatted;
-
-      // Пул USDT
-      document.getElementById("usdt-total-staked").textContent =
-        formatNumber(pool.formatted.totalUsdtStaked, 2);
-      document.getElementById("usdt-total-stakers").textContent =
-        formatNumber(pool.formatted.totalUsdtStakers, 0);
-      document.getElementById("min-stake-usdt").textContent =
-        formatNumber(limits.formatted.minUsdt, 2);
-
-      // Пул ARUB
-      document.getElementById("arub-total-staked").textContent =
-        formatNumber(pool.formatted.totalArubStaked, 2);
-      document.getElementById("arub-total-stakers").textContent =
-        formatNumber(pool.formatted.totalArubStakers, 0);
-      document.getElementById("min-stake-arub").textContent =
-        formatNumber(limits.formatted.minArub, 2);
-
-      // Общая инфа
-      document.getElementById("total-stakers").textContent =
-        formatNumber(pool.formatted.totalStakers, 0);
-      document.getElementById("total-rewards").textContent =
-        formatNumber(pool.formatted.totalRewardsDistributed, 4);
-      document.getElementById("current-apy").textContent =
-        formatNumber(pool.formatted.currentAPYPercent, 2);
-
-      // APY в шапках пулов (тот же currentAPY)
-      document.getElementById("usdt-apy-label").textContent =
-        formatNumber(pool.formatted.currentAPYPercent, 2);
-      document.getElementById("arub-apy-label").textContent =
-        formatNumber(pool.formatted.currentAPYPercent, 2);
-
-      // Пользователь
-      document.getElementById("user-usdt-staked").textContent =
-        formatNumber(user.formatted.usdtStaked, 2);
-      document.getElementById("user-arub-staked").textContent =
-        formatNumber(user.formatted.arubStaked, 2);
-      document.getElementById("user-pending-rewards").textContent =
-        formatNumber(user.formatted.pendingRewards, 4);
-      document.getElementById("user-last-stake-time").textContent =
-        user.formatted.lastStakeTimeHuman;
-    }
-
-    // ---------------------------
-    // Tabs / Help
-    // ---------------------------
-
-    function initTabs() {
-      const tabs = document.querySelectorAll(".tab");
-      const sections = {
-        overview: document.getElementById("tab-overview"),
-        position: document.getElementById("tab-position"),
-        help: document.getElementById("tab-help"),
-      };
-
-      tabs.forEach(tab => {
-        tab.addEventListener("click", () => {
-          const target = tab.getAttribute("data-tab");
-          tabs.forEach(t => t.classList.remove("tab--active"));
-          tab.classList.add("tab--active");
-
-          Object.entries(sections).forEach(([name, el]) => {
-            el.style.display = name === target ? "block" : "none";
-          });
-        });
-      });
-    }
-
-    // ---------------------------
-    // Wallet / MetaMask
-    // ---------------------------
-
-    async function connectWallet() {
-      if (!window.ethereum) {
-        alert("Установи MetaMask для работы с приложением.");
-        return;
+      function closeWalletModal() {
+        document.getElementById('walletModal').style.display = 'none';
       }
 
-      provider = new ethers.providers.Web3Provider(window.ethereum);
-      const accounts = await provider.send("eth_requestAccounts", []);
-      signer = provider.getSigner();
-      userAddress = accounts[0] || (await signer.getAddress());
-
-      document.getElementById("wallet-row-not-connected").style.display = "none";
-      document.getElementById("wallet-row-connected").style.display = "flex";
-      document.getElementById("wallet-address-short").textContent = shortAddress(userAddress);
-      document.getElementById("staking-address-short").textContent = shortAddress(STAKING_ADDRESS);
-      document.getElementById("wallet-small-status").textContent =
-        "Подключен: " + shortAddress(userAddress);
-
-      setStatus("Загружаем данные стейкинга…", "info", "init");
-      await refreshUI();
-      setStatus("Данные обновлены. Можно работать со стейком.", "success", "init");
-
-      // подписка на смену аккаунта/сети
-      if (window.ethereum && window.ethereum.on) {
-        window.ethereum.on("accountsChanged", async (accountsChanged) => {
-          if (!accountsChanged || !accountsChanged.length) {
-            // дисконнект
-            document.getElementById("wallet-row-not-connected").style.display = "flex";
-            document.getElementById("wallet-row-connected").style.display = "none";
-            document.getElementById("wallet-small-status").textContent =
-              "MetaMask · ожидаем подключение";
-            setStatus("Кошелёк отключён.", "idle", "wallet");
-            provider = null;
-            signer = null;
-            userAddress = null;
+      async function connectMetaMask() {
+        try {
+          if (!window.ethereum) {
+            showStatus('stakeStatus', 'Будь ласка, встановіть MetaMask', 'error');
             return;
           }
-          userAddress = accountsChanged[0];
+
+          await window.ethereum.request({ method: 'eth_requestAccounts' });
+          provider = new ethers.providers.Web3Provider(window.ethereum);
           signer = provider.getSigner();
-          document.getElementById("wallet-address-short").textContent =
-            shortAddress(userAddress);
-          document.getElementById("wallet-small-status").textContent =
-            "Подключен: " + shortAddress(userAddress);
-          setStatus("Аккаунт сменился, обновляем данные…", "info", "accountChanged");
-          await refreshUI();
-          setStatus("Данные обновлены.", "success", "accountChanged");
-        });
+          userAddress = await signer.getAddress();
 
-        window.ethereum.on("chainChanged", async () => {
-          // Просто перезагрузим страницу, чтобы не ловить баги с провайдером
-          window.location.reload();
-        });
+          arubContract = new ethers.Contract(ARUB_ADDRESS, ARUB_ABI, signer);
+          stakingContract = new ethers.Contract(STAKING_ADDRESS, STAKING_ABI, signer);
+
+          document.getElementById('connectWallet').textContent = userAddress.slice(0, 6) + '...' + userAddress.slice(-4);
+          document.getElementById('notConnectedView').classList.add('hidden');
+          document.getElementById('connectedView').classList.remove('hidden');
+
+          closeWalletModal();
+          await updateUserStats();
+        } catch (error) {
+          console.error(error);
+          showStatus('stakeStatus', 'Помилка підключення: ' + error.message, 'error');
+        }
       }
-    }
 
-    function initWalletUI() {
-      const btnConnect = document.getElementById("btn-connect");
-      const btnCopy = document.getElementById("btn-copy-address");
+      async function connectWalletConnect() {
+        showStatus('stakeStatus', 'WalletConnect буде додано незабаром', 'warning');
+      }
 
-      btnConnect.addEventListener("click", () => {
-        connectWallet().catch(err => {
-          console.error(err);
-          setStatus("Не удалось подключить кошелёк.", "error", "connect");
-        });
-      });
-
-      btnCopy.addEventListener("click", async () => {
-        if (!userAddress) return;
+      // Update user stats
+      async function updateUserStats() {
         try {
-          await navigator.clipboard.writeText(userAddress);
-          setStatus("Адрес скопирован в буфер обмена.", "success", "copy-address");
+          const balance = await arubContract.balanceOf(userAddress);
+          const balanceFormatted = ethers.utils.formatUnits(balance, TOKEN_DECIMALS);
+          document.getElementById('arubBalance').textContent = parseFloat(balanceFormatted).toFixed(2);
+
+          const stakeInfo = await stakingContract.getStakeInfo(userAddress);
+          const stakedAmount = ethers.utils.formatUnits(stakeInfo[0], TOKEN_DECIMALS);
+          const pendingRewards = ethers.utils.formatUnits(stakeInfo[1], TOKEN_DECIMALS);
+          const totalEarned = ethers.utils.formatUnits(stakeInfo[2], TOKEN_DECIMALS);
+
+          document.getElementById('userStaked').textContent = parseFloat(stakedAmount).toFixed(2) + ' ARUB';
+          document.getElementById('userRewards').textContent = parseFloat(pendingRewards).toFixed(4) + ' ARUB';
+          document.getElementById('userTotalEarned').textContent = parseFloat(totalEarned).toFixed(4) + ' ARUB';
+        } catch (error) {
+          console.error('Error updating user stats:', error);
+        }
+      }
+
+      // Calculate earnings
+      document.getElementById('stakeAmount').addEventListener('input', (e) => {
+        const amount = parseFloat(e.target.value) || 0;
+        const yearlyEarnings = amount * (FIXED_APY / 100);
+        const dailyEarnings = yearlyEarnings / 365;
+        
+        document.getElementById('projectedEarnings').textContent = yearlyEarnings.toFixed(2) + ' ARUB';
+        document.getElementById('dailyEarnings').textContent = dailyEarnings.toFixed(4) + ' ARUB';
+      });
+
+      function setMaxStake() {
+        const balance = document.getElementById('arubBalance').textContent;
+        document.getElementById('stakeAmount').value = balance;
+        document.getElementById('stakeAmount').dispatchEvent(new Event('input'));
+      }
+
+      // Approve tokens
+      async function approveTokens() {
+        try {
+          const amount = document.getElementById('stakeAmount').value;
+          if (!amount || amount <= 0) {
+            showStatus('stakeStatus', 'Введіть суму', 'warning');
+            return;
+          }
+
+          const amountWei = ethers.utils.parseUnits(amount, TOKEN_DECIMALS);
+          const tx = await arubContract.approve(STAKING_ADDRESS, amountWei);
+          
+          showStatus('stakeStatus', 'Очікування підтвердження транзакції...', 'warning');
+          await tx.wait();
+          
+          showStatus('stakeStatus', 'Дозвіл отримано! Тепер можна стейкати', 'success');
+          document.getElementById('approveBtn').classList.add('hidden');
+          document.getElementById('stakeBtn').classList.remove('hidden');
+        } catch (error) {
+          console.error(error);
+          showStatus('stakeStatus', 'Помилка: ' + error.message, 'error');
+        }
+      }
+
+      // Stake tokens
+      async function stakeTokens() {
+        try {
+          const amount = document.getElementById('stakeAmount').value;
+          if (!amount || amount <= 0) {
+            showStatus('stakeStatus', 'Введіть суму', 'warning');
+            return;
+          }
+
+          const amountWei = ethers.utils.parseUnits(amount, TOKEN_DECIMALS);
+          const tx = await stakingContract.stake(amountWei);
+          
+          showStatus('stakeStatus', 'Обробка транзакції...', 'warning');
+          await tx.wait();
+          
+          showStatus('stakeStatus', 'Успішно застейкано!', 'success');
+          document.getElementById('stakeAmount').value = '';
+          await updateUserStats();
+        } catch (error) {
+          console.error(error);
+          showStatus('stakeStatus', 'Помилка: ' + error.message, 'error');
+        }
+      }
+
+      // Claim rewards
+      async function claimRewards() {
+        try {
+          const tx = await stakingContract.claimRewards();
+          showStatus('stakeStatus', 'Обробка виведення...', 'warning');
+          await tx.wait();
+          showStatus('stakeStatus', 'Винагороди отримано!', 'success');
+          await updateUserStats();
+        } catch (error) {
+          console.error(error);
+          showStatus('stakeStatus', 'Помилка: ' + error.message, 'error');
+        }
+      }
+
+      // Unstake tokens
+      async function unstakeTokens() {
+        try {
+          const staked = document.getElementById('userStaked').textContent;
+          const amount = parseFloat(staked);
+          
+          if (amount <= 0) {
+            showStatus('stakeStatus', 'Немає застейканих токенів', 'warning');
+            return;
+          }
+
+          const amountWei = ethers.utils.parseUnits(amount.toString(), TOKEN_DECIMALS);
+          const tx = await stakingContract.unstake(amountWei);
+          
+          showStatus('stakeStatus', 'Обробка зняття...', 'warning');
+          await tx.wait();
+          
+          showStatus('stakeStatus', 'Токени знято зі стейкінгу!', 'success');
+          await updateUserStats();
+        } catch (error) {
+          console.error(error);
+          showStatus('stakeStatus', 'Помилка: ' + error.message, 'error');
+        }
+      }
+
+      function showStatus(elementId, message, type) {
+        const statusEl = document.getElementById(elementId);
+        statusEl.innerHTML = `<div class="status-message status-${type}">${message}</div>`;
+        setTimeout(() => {
+          if (type === 'success' || type === 'error') {
+            statusEl.innerHTML = '';
+          }
+        }, 5000);
+      }
+
+      // Dashboard logic
+      let stakedChart = null;
+      let priceChart = null;
+      const labels = [];
+      const stakedHistory = [];
+      const priceHistory = [];
+
+      function hexToBigInt(hex) {
+        if (!hex || hex === "0x") return 0n;
+        return BigInt(hex);
+      }
+
+      function bigIntToFloat(bi, decimals) {
+        return Number(bi) / Math.pow(10, decimals);
+      }
+
+      async function rpcCall(to, data) {
+        for (const url of RPC_URLS) {
+          try {
+            const res = await fetch(url, {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify({
+                jsonrpc: "2.0",
+                id: 1,
+                method: "eth_call",
+                params: [{ to, data }, "latest"]
+              })
+            });
+            const json = await res.json();
+            if (json.result) return json.result;
+          } catch (e) {
+            console.warn("[dashboard rpc]", url, e.message);
+          }
+        }
+        throw new Error("Усі RPC-ноди недоступні");
+      }
+
+      async function getPriceFromDexScreener() {
+        const url = "https://api.dexscreener.com/latest/dex/tokens/" + ARUB_ADDRESS;
+        const res = await fetch(url);
+        if (!res.ok) throw new Error("DexScreener HTTP " + res.status);
+        const data = await res.json();
+        if (data && data.pairs && data.pairs.length > 0) {
+          const pair = data.pairs[0];
+          if (pair.priceUsd) return parseFloat(pair.priceUsd);
+        }
+        throw new Error("DexScreener: no priceUsd");
+      }
+
+      async function getPriceFromFX() {
+        const res = await fetch("https://api.exchangerate-api.com/v4/latest/USD");
+        if (!res.ok) throw new Error("FX HTTP " + res.status);
+        const data = await res.json();
+        if (data && data.rates && data.rates.RUB) {
+          return data.rates.RUB;
+        }
+        throw new Error("FX: no RUB rate");
+      }
+
+      function updateCharts(label, stakedUsd, priceUsd) {
+        if (!window.Chart) return;
+        labels.push(label);
+        stakedHistory.push(stakedUsd);
+        priceHistory.push(priceUsd);
+        if (labels.length > 50) {
+          labels.shift();
+          stakedHistory.shift();
+          priceHistory.shift();
+        }
+
+        const stakedCtx = document.getElementById("dashStakedChart");
+        const priceCtx = document.getElementById("dashPriceChart");
+        if (!stakedCtx || !priceCtx) return;
+
+        if (!stakedChart) {
+          stakedChart = new Chart(stakedCtx.getContext("2d"), {
+            type: "line",
+            data: {
+              labels,
+              datasets: [{
+                label: "TVL, USD",
+                data: stakedHistory,
+                fill: true,
+                borderColor: '#3b82f6',
+                backgroundColor: 'rgba(59, 130, 246, 0.2)',
+                tension: 0.4
+              }]
+            },
+            options: {
+              plugins: { 
+                legend: { display: false }
+              },
+              scales: {
+                x: { 
+                  display: false 
+                },
+                y: {
+                  ticks: {
+                    callback: v => "$" + v.toLocaleString("en-US"),
+                    color: '#9ca3af'
+                  },
+                  grid: {
+                    color: 'rgba(255, 255, 255, 0.1)'
+                  }
+                }
+              }
+            }
+          });
+        } else {
+          stakedChart.data.labels = labels;
+          stakedChart.data.datasets[0].data = stakedHistory;
+          stakedChart.update("none");
+        }
+
+        if (!priceChart) {
+          priceChart = new Chart(priceCtx.getContext("2d"), {
+            type: "line",
+            data: {
+              labels,
+              datasets: [{
+                label: "Ціна ARUB, USD",
+                data: priceHistory,
+                fill: false,
+                borderColor: '#60a5fa',
+                tension: 0.4
+              }]
+            },
+            options: {
+              plugins: { 
+                legend: { display: false }
+              },
+              scales: {
+                x: { 
+                  display: false 
+                },
+                y: {
+                  ticks: {
+                    callback: v => "$" + v.toFixed(3),
+                    color: '#9ca3af'
+                  },
+                  grid: {
+                    color: 'rgba(255, 255, 255, 0.1)'
+                  }
+                }
+              }
+            }
+          });
+        } else {
+          priceChart.data.labels = labels;
+          priceChart.data.datasets[0].data = priceHistory;
+          priceChart.update("none");
+        }
+      }
+
+      async function loadDashboardStats() {
+        const loadingEl = document.getElementById("dashLoadingText");
+        const gridEl = document.getElementById("dashStatsGrid");
+        if (!loadingEl || !gridEl) return;
+
+        loadingEl.textContent = "Завантаження даних з блокчейну...";
+
+        try {
+          let priceUsd;
+          let priceSource = "DexScreener";
+          try {
+            priceUsd = await getPriceFromDexScreener();
+          } catch (eDex) {
+            console.warn("[dashboard] DexScreener error:", eDex.message);
+            priceUsd = await getPriceFromFX();
+            priceSource = "FX USD/RUB";
+          }
+
+          const totalStakedHex = await rpcCall(STAKING_ADDRESS, "0x817b1cd2");
+          const totalSupplyHex = await rpcCall(ARUB_ADDRESS, "0x18160ddd");
+
+          const stakedBI = hexToBigInt(totalStakedHex);
+          const supplyBI = hexToBigInt(totalSupplyHex);
+          const stakedTokens = bigIntToFloat(stakedBI, TOKEN_DECIMALS);
+          const supplyTokens = bigIntToFloat(supplyBI, TOKEN_DECIMALS);
+          const stakedUsd = stakedTokens * priceUsd;
+          const supplyUsd = supplyTokens * priceUsd;
+
+          let stakersCountText = "N/A";
+          try {
+            const viewProvider = new ethers.providers.JsonRpcProvider(RPC_URLS[0]);
+            const STAKING_ABI_VIEW = [
+              "function getPoolStats() view returns (uint256 totalStaked_,uint256 totalStakers_,uint256 totalRewardsDistributed_,uint256 currentAPY_,uint256 totalStakes_,uint256 totalUnstakes_,uint256 totalClaims_)"
+            ];
+            const stakingView = new ethers.Contract(STAKING_ADDRESS, STAKING_ABI_VIEW, viewProvider);
+            const pool = await stakingView.getPoolStats();
+            const totalStakers = pool.totalStakers_ || pool[1];
+            stakersCountText = Number(totalStakers).toLocaleString("en-US");
+          } catch (ePool) {
+            console.warn("[dashboard] getPoolStats error:", ePool.message);
+          }
+
+          const setText = (id, text) => {
+            const el = document.getElementById(id);
+            if (el) el.textContent = text;
+          };
+
+          setText("dashTotalStakedUsd",
+            "$" + stakedUsd.toLocaleString("en-US", { maximumFractionDigits: 0 }));
+          setText("dashTotalStakedTokens",
+            stakedTokens.toLocaleString("en-US", { maximumFractionDigits: 2 }) + " ARUB");
+
+          setText("dashTotalSupplyTokens",
+            supplyTokens.toLocaleString("en-US", { maximumFractionDigits: 0 }) + " ARUB");
+          setText("dashTotalSupplyUsd",
+            "$" + supplyUsd.toLocaleString("en-US", { maximumFractionDigits: 0 }));
+
+          setText("dashStakersCount", stakersCountText);
+          setText("dashHeroStakers", stakersCountText);
+
+          setText("dashPriceUsd", "$" + priceUsd.toFixed(4));
+          setText("dashHeroPrice", "$" + priceUsd.toFixed(2));
+
+          setText("dashPriceSourceBadge", "Джерело: " + priceSource);
+
+          setText("dashHeroApy", FIXED_APY + "%");
+
+          const now = new Date();
+          const label = now.toLocaleTimeString("uk-UA", {
+            hour: "2-digit",
+            minute: "2-digit",
+            second: "2-digit"
+          });
+          updateCharts(label, stakedUsd, priceUsd);
+
+          loadingEl.textContent = "Дані успішно оновлено";
+          gridEl.style.display = "grid";
         } catch (e) {
-          console.error(e);
-          setStatus("Не удалось скопировать адрес.", "error", "copy-address");
+          console.error("[dashboard] loadDashboardStats error:", e);
+          loadingEl.textContent = "Помилка завантаження: " + (e.message || e);
         }
+      }
+
+      document.addEventListener("DOMContentLoaded", function() {
+        loadDashboardStats();
+        setInterval(loadDashboardStats, 30000);
       });
-    }
-
-    // ---------------------------
-    // Init стейкинг-кнопок
-    // ---------------------------
-
-    function initStakingButtons() {
-      const btnStakeUsdt = document.getElementById("btn-stake-usdt");
-      const btnStakeArub = document.getElementById("btn-stake-arub");
-      const btnUnstakeUsdt = document.getElementById("btn-unstake-usdt");
-      const btnUnstakeArub = document.getElementById("btn-unstake-arub");
-      const btnClaim = document.getElementById("btn-claim");
-
-      btnStakeUsdt.addEventListener("click", async () => {
-        if (!signer || !limitsCache) {
-          setStatus("Сначала подключи кошелёк и дождись загрузки лимитов.", "error", "stake-usdt");
-          return;
-        }
-        const raw = document.getElementById("input-stake-usdt").value;
-        const val = safeParseFloat(raw);
-        if (val === null || val <= 0) {
-          setStatus("Введи сумму USDT больше 0.", "error", "stake-usdt");
-          return;
-        }
-        if (val < limitsCache.minUsdt) {
-          setStatus(
-            "Сумма меньше минимального стейка USDT: " +
-              formatNumber(limitsCache.minUsdt, 2),
-            "error",
-            "stake-usdt"
-          );
-          return;
-        }
-
-        await withTx(btnStakeUsdt, "stake-usdt", () => stakeUsdtAction(val));
-      });
-
-      btnStakeArub.addEventListener("click", async () => {
-        if (!signer || !limitsCache) {
-          setStatus("Сначала подключи кошелёк и дождись загрузки лимитов.", "error", "stake-arub");
-          return;
-        }
-        const raw = document.getElementById("input-stake-arub").value;
-        const val = safeParseFloat(raw);
-        if (val === null || val <= 0) {
-          setStatus("Введи сумму ARUB больше 0.", "error", "stake-arub");
-          return;
-        }
-        if (val < limitsCache.minArub) {
-          setStatus(
-            "Сумма меньше минимального стейка ARUB: " +
-              formatNumber(limitsCache.minArub, 2),
-            "error",
-            "stake-arub"
-          );
-          return;
-        }
-
-        await withTx(btnStakeArub, "stake-arub", () => stakeArubAction(val));
-      });
-
-      btnUnstakeUsdt.addEventListener("click", async () => {
-        if (!signer) {
-          setStatus("Подключи кошелёк перед unstake.", "error", "unstake-usdt");
-          return;
-        }
-        const raw = document.getElementById("input-unstake-usdt").value;
-        const val = safeParseFloat(raw);
-        if (val === null || val <= 0) {
-          setStatus("Введи сумму USDT больше 0.", "error", "unstake-usdt");
-          return;
-        }
-
-        await withTx(btnUnstakeUsdt, "unstake-usdt", () => unstakeUsdtAction(val));
-      });
-
-      btnUnstakeArub.addEventListener("click", async () => {
-        if (!signer) {
-          setStatus("Подключи кошелёк перед unstake.", "error", "unstake-arub");
-          return;
-        }
-        const raw = document.getElementById("input-unstake-arub").value;
-        const val = safeParseFloat(raw);
-        if (val === null || val <= 0) {
-          setStatus("Введи сумму ARUB больше 0.", "error", "unstake-arub");
-          return;
-        }
-
-        await withTx(btnUnstakeArub, "unstake-arub", () => unstakeArubAction(val));
-      });
-
-      btnClaim.addEventListener("click", async () => {
-        if (!signer) {
-          setStatus("Подключи кошелёк перед claim.", "error", "claim");
-          return;
-        }
-
-        await withTx(btnClaim, "claim", () => claimRewardsAction(false));
-      });
-    }
-
-    // ---------------------------
-    // Старт приложения
-    // ---------------------------
-
-    window.addEventListener("load", () => {
-      document.getElementById("network-label").textContent = "Sepolia · testnet";
-      initTabs();
-      initWalletUI();
-      initStakingButtons();
-      setStatus("Подключи кошелёк, чтобы начать работать со стейкингом.", "idle", "boot");
-    });
-  </script>
+    </script>
 </body>
 </html>
